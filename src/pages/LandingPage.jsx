@@ -1074,22 +1074,194 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer
         style={{
-          paddingTop: '2rem',
-          paddingBottom: '2rem',
+          backgroundColor: '#1a1613',
+          paddingTop: '60px',
+          paddingBottom: '40px',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
-          borderTop: '1px solid #d4c9bc',
-          backgroundColor: '#f5f0e8',
         }}
       >
         <div style={{
-          maxWidth: '1200px',
+          maxWidth: '1120px',
           margin: '0 auto',
-          textAlign: 'center',
-          fontSize: '0.875rem',
-          color: '#6b5d50',
         }}>
-          <p>© 2026 UrbAI · Documente urbanistice cu AI</p>
+          {/* Link Columns Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '2rem',
+            marginBottom: '40px',
+          }}>
+            {/* Column 1: Produs */}
+            <div>
+              <h3 style={{
+                fontSize: '13px',
+                fontWeight: '700',
+                color: '#ffffff',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                margin: '0 0 16px 0',
+              }}>
+                Produs
+              </h3>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Funcționalități</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Prețuri</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Generare Documente</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Chat AI</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Extragere OCR</a></li>
+              </ul>
+            </div>
+
+            {/* Column 2: Resurse */}
+            <div>
+              <h3 style={{
+                fontSize: '13px',
+                fontWeight: '700',
+                color: '#ffffff',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                margin: '0 0 16px 0',
+              }}>
+                Resurse
+              </h3>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Documentație</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Ghid Utilizare</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Legislație Urbanistică</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Blog</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Actualizări</a></li>
+              </ul>
+            </div>
+
+            {/* Column 3: Legal */}
+            <div>
+              <h3 style={{
+                fontSize: '13px',
+                fontWeight: '700',
+                color: '#ffffff',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                margin: '0 0 16px 0',
+              }}>
+                Legal
+              </h3>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Termeni și Condiții</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Politica de Confidențialitate</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>GDPR</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Politica Cookies</a></li>
+              </ul>
+            </div>
+
+            {/* Column 4: Companie */}
+            <div>
+              <h3 style={{
+                fontSize: '13px',
+                fontWeight: '700',
+                color: '#ffffff',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                margin: '0 0 16px 0',
+              }}>
+                Companie
+              </h3>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Despre Noi</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Contact</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Cariere</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Pentru Dezvoltatori (API)</a></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Separator */}
+          <div style={{
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            margin: '40px 0 24px',
+          }} />
+
+          {/* Bottom Row */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '1rem',
+          }}>
+            {/* Social Icons */}
+            <div style={{
+              display: 'flex',
+              gap: '16px',
+              alignItems: 'center',
+            }}>
+              {/* LinkedIn */}
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  display: 'inline-flex',
+                  color: '#9a938a',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#9a938a'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.731-2.004 1.438-.103.249-.129.597-.129.946v5.421h-3.554s.05-8.736 0-9.646h3.554v1.348c.421-.649 1.175-1.574 2.864-1.574 2.091 0 3.661 1.366 3.661 4.305v5.567zM5.337 9.433c-1.144 0-1.915-.762-1.915-1.715 0-.955.77-1.715 1.904-1.715.engaged 1.715.77 1.715 1.915 1.715-.001.953-.771 1.715-1.904 1.715zm1.946 11.019H3.39V9.806h3.893v10.646zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
+                </svg>
+              </a>
+
+              {/* Twitter/X */}
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  display: 'inline-flex',
+                  color: '#9a938a',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#9a938a'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.514l-5.106-6.67-5.829 6.67H2.42l7.728-8.835L1.24 2.25h6.684l4.59 6.07 5.3-6.07zM17.45 18.389l-10.662-14.04h-2.16L15.29 18.39h2.16z" />
+                </svg>
+              </a>
+
+              {/* Instagram */}
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  display: 'inline-flex',
+                  color: '#9a938a',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#9a938a'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" strokeWidth="2" />
+                  <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="none" stroke="currentColor" strokeWidth="2" />
+                  <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" />
+                </svg>
+              </a>
+            </div>
+
+            {/* Copyright */}
+            <p style={{
+              fontSize: '13px',
+              color: '#9a938a',
+              margin: 0,
+              textAlign: 'right',
+            }}>
+              © 2026 UrbAI. Toate drepturile rezervate.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
