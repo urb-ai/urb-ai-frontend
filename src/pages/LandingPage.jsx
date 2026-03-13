@@ -106,17 +106,18 @@ export default function LandingPage() {
           height: '100%',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          gap: '0',
         }}>
           {/* Logo - Left */}
           <div
             onClick={() => navigate('/')}
             style={{
+              flex: 1,
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               cursor: 'pointer',
-              flexShrink: 0,
+              justifyContent: 'flex-start',
             }}
           >
             <span style={{ fontSize: '18px' }}>📐</span>
@@ -132,10 +133,10 @@ export default function LandingPage() {
 
           {/* Center Links */}
           <div style={{
+            flex: 1,
             display: 'flex',
             gap: '32px',
             alignItems: 'center',
-            flex: 1,
             justifyContent: 'center',
           }}>
             <a
@@ -230,10 +231,11 @@ export default function LandingPage() {
 
           {/* Right Actions */}
           <div style={{
+            flex: 1,
             display: 'flex',
-            gap: '24px',
+            gap: '12px',
             alignItems: 'center',
-            flexShrink: 0,
+            justifyContent: 'flex-end',
           }}>
             {/* Language Button */}
             <button
@@ -364,6 +366,7 @@ export default function LandingPage() {
               lineHeight: '1.2',
               marginBottom: '1.5rem',
               letterSpacing: '-1px',
+              textAlign: 'center',
             }}
           >
             Documente urbanistice generate cu{' '}
