@@ -92,17 +92,18 @@ export default function LandingPage() {
           position: 'fixed',
           top: 0,
           width: '100%',
+          height: '56px',
           zIndex: 50,
           backgroundColor: scrolled ? 'rgba(245, 240, 232, 0.95)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(10px)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(212, 201, 188, 0.3)' : 'none',
+          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          borderBottom: scrolled ? '1px solid rgba(212, 201, 188, 0.2)' : 'none',
           transition: 'all 0.3s ease',
         }}
       >
         <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '1.25rem 1.5rem',
+          maxWidth: '100%',
+          padding: '0 2.5rem',
+          height: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -111,11 +112,12 @@ export default function LandingPage() {
           <div
             onClick={() => navigate('/')}
             style={{
-              fontSize: '1.5rem',
-              fontWeight: '300',
+              fontSize: '1.125rem',
+              fontWeight: '400',
               fontFamily: 'Georgia, serif',
               cursor: 'pointer',
-              letterSpacing: '-0.5px',
+              letterSpacing: '-0.3px',
+              flexShrink: 0,
             }}
           >
             Urb<span style={{ color: '#c4893a', fontWeight: 500 }}>AI</span>
@@ -136,14 +138,15 @@ export default function LandingPage() {
                 document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
               }}
               style={{
-                fontSize: '0.875rem',
-                color: '#1a1613',
+                fontSize: '14px',
+                color: '#9b8b7e',
                 textDecoration: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.2s ease',
+                fontWeight: '400',
               }}
-              onMouseEnter={(e) => e.target.style.color = '#c4893a'}
-              onMouseLeave={(e) => e.target.style.color = '#1a1613'}
+              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
+              onMouseLeave={(e) => e.target.style.color = '#9b8b7e'}
             >
               Funcționalități
             </a>
@@ -154,76 +157,131 @@ export default function LandingPage() {
                 document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
               }}
               style={{
-                fontSize: '0.875rem',
-                color: '#1a1613',
+                fontSize: '14px',
+                color: '#9b8b7e',
                 textDecoration: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.2s ease',
+                fontWeight: '400',
               }}
-              onMouseEnter={(e) => e.target.style.color = '#c4893a'}
-              onMouseLeave={(e) => e.target.style.color = '#1a1613'}
+              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
+              onMouseLeave={(e) => e.target.style.color = '#9b8b7e'}
             >
               Prețuri
+            </a>
+            <a
+              href="#"
+              onClick={(e) => e.preventDefault()}
+              style={{
+                fontSize: '14px',
+                color: '#9b8b7e',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                transition: 'color 0.2s ease',
+                fontWeight: '400',
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
+              onMouseLeave={(e) => e.target.style.color = '#9b8b7e'}
+            >
+              Despre
             </a>
           </div>
 
           {/* Right Buttons */}
           <div style={{
             display: 'flex',
-            gap: '1rem',
+            gap: '0.75rem',
             alignItems: 'center',
+            flexShrink: 0,
           }}>
-            {!user && (
-              <button
-                onClick={() => navigate('/login')}
-                style={{
-                  fontSize: '0.875rem',
-                  color: '#1a1613',
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'color 0.2s ease',
-                  padding: '0.5rem 1rem',
-                }}
-                onMouseEnter={(e) => e.target.style.color = '#c4893a'}
-                onMouseLeave={(e) => e.target.style.color = '#1a1613'}
-              >
-                Autentificare
-              </button>
-            )}
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                fontSize: '14px',
+                color: '#ffffff',
+                backgroundColor: '#1a1613',
+                border: 'none',
+                borderRadius: '9999px',
+                padding: '8px 20px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                fontWeight: '500',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#2a2623';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#1a1613';
+              }}
+            >
+              Sign in
+            </button>
             <button
               onClick={handleGetStarted}
               style={{
-                fontSize: '0.875rem',
-                backgroundColor: '#c4893a',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '0.375rem',
-                padding: '0.5rem 1rem',
+                fontSize: '14px',
+                color: '#1a1613',
+                backgroundColor: 'transparent',
+                border: '1px solid #1a1613',
+                borderRadius: '9999px',
+                padding: '8px 20px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                fontWeight: 500,
+                fontWeight: '500',
+                fontFamily: 'inherit',
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#b07a2f';
-                e.target.style.transform = 'translateY(-1px)';
+                e.target.style.backgroundColor = 'rgba(26, 22, 19, 0.05)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#c4893a';
-                e.target.style.transform = 'translateY(0)';
+                e.target.style.backgroundColor = 'transparent';
               }}
             >
-              {user ? 'Dashboard' : 'Începe gratuit'}
+              Sign up
             </button>
           </div>
         </div>
       </nav>
 
+      {/* ANNOUNCEMENT BAR */}
+      <div
+        onClick={() => {
+          document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        style={{
+          position: 'fixed',
+          top: '56px',
+          width: '100%',
+          zIndex: 49,
+          backgroundColor: '#ebe3d9',
+          padding: '0.75rem 1.5rem',
+          textAlign: 'center',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#e3dbd0';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = '#ebe3d9';
+        }}
+      >
+        <p style={{
+          fontSize: '13px',
+          color: '#6b5d50',
+          margin: '0',
+          fontWeight: '400',
+        }}>
+          UrbAI — platforma AI #1 pentru documente urbanistice din România →
+        </p>
+      </div>
+
       {/* HERO SECTION */}
       <section
         id="hero"
         style={{
-          paddingTop: '6rem',
+          paddingTop: 'calc(12rem + 96px)',
           paddingBottom: '5rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
