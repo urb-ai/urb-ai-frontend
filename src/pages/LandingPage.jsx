@@ -234,7 +234,7 @@ export default function LandingPage() {
               Sign in
             </button>
             <button
-              onClick={handleGetStarted}
+              onClick={() => navigate('/login')}
               style={{
                 fontSize: '14px',
                 color: '#1a1613',
