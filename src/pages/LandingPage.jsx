@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 
@@ -6,6 +6,10 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [scrolled, setScrolled] = useState(false);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const [docCount, setDocCount] = useState(0);
+  const [hoursCount, setHoursCount] = useState(0);
+  const statsRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,6 +19,55 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // IntersectionObserver pentru animația statisticilor
+  useEffect(() => {
+    if (statsVisible) {
+      // Animare documente (0 -> 12847)
+      let startTime = null;
+      const duration = 2500; // 2.5 secunde
+      const finalDocs = 12847;
+
+      const animateCounter = (currentTime) => {
+        if (startTime === null) startTime = currentTime;
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Ease-out: 1 - (1 - progress)^3
+        const easeOutProgress = 1 - Math.pow(1 - progress, 3);
+
+        setDocCount(Math.floor(finalDocs * easeOutProgress));
+
+        if (progress < 1) {
+          requestAnimationFrame(animateCounter);
+        }
+      };
+
+      requestAnimationFrame(animateCounter);
+    }
+  }, [statsVisible]);
+
+  // IntersectionObserver setup
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !statsVisible) {
+          setStatsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => {
+      if (statsRef.current) {
+        observer.unobserve(statsRef.current);
+      }
+    };
+  }, [statsVisible]);
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/app');
@@ -22,6 +75,14 @@ export default function LandingPage() {
       navigate('/login');
     }
   };
+
+  // Format numbers with thousand separator
+  const formatNumber = (num) => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  // Calcul ore economisitte (documente × 1.13)
+  const hoursEconomized = Math.round(docCount * 1.13);
 
   return (
     <div style={{ backgroundColor: '#f5f0e8', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>
@@ -277,6 +338,117 @@ export default function LandingPage() {
             <span>✓ 20 credite gratuite</span>
             <span>✓ Fără card bancar</span>
           </p>
+        </div>
+      </section>
+
+      {/* STATISTICS SECTION */}
+      <section
+        ref={statsRef}
+        style={{
+          paddingTop: '3rem',
+          paddingBottom: '3rem',
+          paddingLeft: '1.5rem',
+          paddingRight: '1.5rem',
+          backgroundColor: '#ffffff',
+          borderTop: '1px solid #d4c9bc',
+          borderBottom: '1px solid #d4c9bc',
+        }}
+      >
+        <div style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+        }}>
+          {/* Stats Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '2rem',
+            marginBottom: '2rem',
+          }}>
+            {/* Stat 1: Documents */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                fontSize: '2.75rem',
+                fontWeight: '700',
+                color: '#c4893a',
+                marginBottom: '0.5rem',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+              }}>
+                {formatNumber(docCount)}
+              </div>
+              <div style={{
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: '#6b5d50',
+              }}>
+                Documente Generate
+              </div>
+            </div>
+
+            {/* Stat 2: Hours */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                fontSize: '2.75rem',
+                fontWeight: '700',
+                color: '#c4893a',
+                marginBottom: '0.5rem',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+              }}>
+                {formatNumber(hoursEconomized)}+
+              </div>
+              <div style={{
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: '#6b5d50',
+              }}>
+                Ore Economisitte
+              </div>
+            </div>
+
+            {/* Stat 3: Satisfaction */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                fontSize: '2.75rem',
+                fontWeight: '700',
+                color: '#c4893a',
+                marginBottom: '0.5rem',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+              }}>
+                98.7%
+              </div>
+              <div style={{
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: '#6b5d50',
+              }}>
+                Rată de Satisfacție
+              </div>
+            </div>
+          </div>
+
+          {/* Subtext */}
+          <div style={{
+            textAlign: 'center',
+            paddingTop: '1.5rem',
+            borderTop: '1px solid #e8ddd0',
+          }}>
+            <p style={{
+              fontSize: '0.9375rem',
+              color: '#6b5d50',
+              fontStyle: 'italic',
+              lineHeight: '1.6',
+              maxWidth: '600px',
+              margin: '0 auto',
+            }}>
+              Platforma UrbAI ajută urbaniști din toată România să genereze documente profesionale mai rapid.
+            </p>
+          </div>
         </div>
       </section>
 
