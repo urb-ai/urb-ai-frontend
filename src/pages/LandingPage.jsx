@@ -1244,9 +1244,9 @@ export default function LandingPage() {
                 onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
                 onMouseLeave={(e) => e.currentTarget.style.color = '#9a938a'}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" strokeWidth="2" />
-                  <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="none" stroke="currentColor" strokeWidth="2" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" />
                   <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" />
                 </svg>
               </a>
