@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { supabase } from '../lib/supabase';
+import { getSupabase } from '../lib/supabase';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ export default function Login() {
     try {
       setLoading(true);
       setError('');
+      const supabase = getSupabase();
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -43,6 +44,7 @@ export default function Login() {
     try {
       setLoading(true);
       setError('');
+      const supabase = getSupabase();
       await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: {
