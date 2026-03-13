@@ -333,12 +333,12 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⚡</div>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📄</div>
               <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                Generare AI
+                Generare Documente Complexe
               </h3>
               <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
-                Generează documente complete în câteva secunde folosind inteligență artificială avansată
+                Economisește ore întregi de muncă. Memorii tehnice, PUZ-uri, PUD-uri și Certificate de Urbanism — redactate automat cu limbaj tehnico-juridic conform Legii 350/2001. Rezultatul: documente profesionale, gata de semnat.
               </p>
             </div>
 
@@ -360,12 +360,12 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📄</div>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📊</div>
               <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                Export DOCX
+                Export Multi-Format
               </h3>
               <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
-                Exportează direct în Word cu formatare profesională și ușor de editat
+                Un click, orice format. Documentele tale exportate instant în DOCX, PDF, XLS sau PPT — cu antet personalizat, logo firmă, cuprins automat și paginare. Așa cum le-ai face manual, doar că în 10 secunde.
               </p>
             </div>
 
@@ -387,12 +387,12 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔍</div>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>💬</div>
               <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                Extragere CF
+                Chat AI Multi-Model
               </h3>
               <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
-                Extrage automat date din certificatele de urbanism existente
+                Consultantul tău urbanistic, disponibil 24/7. Pune orice întrebare despre legislație, zonare sau reglementări — primești răspuns instant cu sursă exactă. Alege între Claude, GPT, DeepSeek, Gemini sau LLaMA.
               </p>
             </div>
 
@@ -414,12 +414,12 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>✓</div>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔍</div>
               <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                Validare
+                Extragere Automată OCR
               </h3>
               <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
-                Validează automat conformitatea cu regulamentele locale și nationale
+                Nu mai transcrie manual din CF-uri. Uploadează orice document — extras carte funciară, plan cadastral, avize, PUG-uri scanate — și AI-ul extrage automat toate datele relevante cu precizie ridicată.
               </p>
             </div>
 
@@ -441,12 +441,12 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>💬</div>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎨</div>
               <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                Chat AI
+                Generare Imagini & Randări
               </h3>
               <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
-                Conversează cu AI pentru clarificări și recomandări profesionale
+                Impresionează clienții din prima prezentare. Randări arhitecturale, schițe conceptuale și vizualizări fotorealiste generate cu AI — perfecte pentru documentații, studii de fezabilitate și pitch-uri.
               </p>
             </div>
 
@@ -468,12 +468,12 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>👥</div>
+              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>✅</div>
               <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                Multi-User
+                Validare Automată
               </h3>
               <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
-                Colaborează cu echipa cu acces controlat și historia completă
+                Niciun document nu pleacă cu erori. Fiecare fișier trece prin verificare automată: completitudine secțiuni, coerență POT/CUT/Rh, referințe legislative valide. Primești un scor de calitate și lista exactă de corecturi.
               </p>
             </div>
           </div>
