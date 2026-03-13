@@ -342,7 +342,7 @@ export default function LandingPage() {
       <section
         id="hero"
         style={{
-          paddingTop: 'calc(12rem + 96px)',
+          paddingTop: '80px',
           paddingBottom: '5rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
