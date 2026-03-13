@@ -16,7 +16,7 @@ export default function Layout({ children }) {
   const isActive = (path) => location.pathname === path;
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { path: '/app', label: 'Dashboard', icon: '📊' },
     { path: '/proiectanti', label: 'Proiectanți', icon: '👔' },
     { path: '/beneficiari', label: 'Beneficiari', icon: '👥' },
     { path: '/proiecte', label: 'Proiecte', icon: '📁' },
@@ -35,7 +35,7 @@ export default function Layout({ children }) {
           <div className="flex items-center justify-between">
             {sidebarOpen && (
               <h2 className="text-lg font-serif text-warm-text font-light cursor-pointer"
-                  onClick={() => navigate('/dashboard')}>
+                  onClick={() => navigate('/app')}>
                 Urb<span className="text-urbai-gold font-semibold">AI</span>
               </h2>
             )}

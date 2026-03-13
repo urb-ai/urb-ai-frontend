@@ -36,7 +36,7 @@ export default function App() {
 
         {/* Protected Routes */}
         <Route
-          path="/dashboard"
+          path="/app"
           element={
             <AuthGuard>
               <Dashboard />

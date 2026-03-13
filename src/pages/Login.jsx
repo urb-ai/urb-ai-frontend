@@ -8,7 +8,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard', { replace: true });
+      navigate('/app', { replace: true });
     }
   }, [user, navigate]);
 

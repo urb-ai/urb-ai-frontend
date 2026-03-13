@@ -14,7 +14,7 @@ export default function NotFound() {
           Pare că adresa pe care o cauți nu există
         </p>
         <button
-          onClick={() => navigate(user ? '/dashboard' : '/')}
+          onClick={() => navigate(user ? '/app' : '/')}
           className="px-6 py-2 rounded-lg bg-urbai-gold text-white hover:bg-urbai-gold/90 transition-colors"
         >
           {user ? 'Înapoi la Dashboard' : 'Înapoi la Home'}
