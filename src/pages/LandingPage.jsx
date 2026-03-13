@@ -185,6 +185,22 @@ export default function LandingPage() {
             >
               Despre
             </a>
+            <a
+              href="#"
+              onClick={(e) => e.preventDefault()}
+              style={{
+                fontSize: '14px',
+                color: '#9b8b7e',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                transition: 'color 0.2s ease',
+                fontWeight: '400',
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
+              onMouseLeave={(e) => e.target.style.color = '#9b8b7e'}
+            >
+              Resurse
+            </a>
           </div>
 
           {/* Right Buttons */}
