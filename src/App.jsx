@@ -14,6 +14,12 @@ import SelectTipDocument from './pages/SelectTipDocument';
 import WizardDocument from './pages/WizardDocument';
 import NotFound from './pages/NotFound';
 
+// Legal Pages
+import TermeniConditii from './pages/legal/TermeniConditii';
+import PoliticaConfidentialitate from './pages/legal/PoliticaConfidentialitate';
+import GDPR from './pages/legal/GDPR';
+import PoliticaCookies from './pages/legal/PoliticaCookies';
+
 export default function App() {
   const { initAuth, cleanup } = useAuthStore();
 
@@ -111,6 +117,12 @@ export default function App() {
             </AuthGuard>
           }
         />
+
+        {/* Legal Pages */}
+        <Route path="/termeni-conditii" element={<TermeniConditii />} />
+        <Route path="/politica-confidentialitate" element={<PoliticaConfidentialitate />} />
+        <Route path="/gdpr" element={<GDPR />} />
+        <Route path="/politica-cookies" element={<PoliticaCookies />} />
 
         {/* 404 and redirects */}
         <Route path="/404" element={<NotFound />} />

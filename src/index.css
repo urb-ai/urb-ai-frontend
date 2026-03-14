@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..146,100..900;1,9..146,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..146,100..900;1,9..146,100..900&family=Instrument+Serif:ital@0;1&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -15,7 +15,142 @@ html {
 }
 
 body {
-  background-color: #1e2433;
-  color: #ffffff;
+  background-color: #f5f0e8;
+  color: #1a1613;
   font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  color: #1a1613;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #1a1613;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #3a3230;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #1a1613;
+  padding: 10px 20px;
+  border: 1px solid #d4c9bc;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-color: #1a1613;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: #1a1613;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.btn-accent {
+  background-color: #c4893a;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.btn-accent:hover {
+  background-color: #b07a2f;
+}
+
+/* Cards */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #d4c9bc;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-color: #c4893a;
+}
+
+/* Inputs */
+input, textarea, select {
+  background-color: #ffffff;
+  color: #1a1613;
+  border: 1px solid #d4c9bc;
+  border-radius: 0.5rem;
+  padding: 10px 14px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #c4893a;
+  box-shadow: 0 0 0 3px rgba(196, 137, 58, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+  color: #6b5d50;
+}
+
+/* Sidebar items */
+.sidebar-item {
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #1a1613;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.sidebar-item.active {
+  background-color: #c4893a;
+  color: white;
+}
+
+/* Links */
+a {
+  color: #c4893a;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #b07a2f;
 }

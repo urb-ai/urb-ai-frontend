@@ -3,24 +3,51 @@ import { useAuthStore } from '../stores/authStore';
 import { apiGet } from '../api/client';
 import Layout from '../components/Layout';
 
+const DOCUMENT_TEMPLATES = [
+  {
+    id: 1,
+    title: 'Memoriu CU',
+    description: 'Memoriu de urbanism pentru Certificat de Urbanism',
+    icon: '📋',
+  },
+  {
+    id: 2,
+    title: 'Aviz Oportunitate PUZ',
+    description: 'Aviz de oportunitate în Planul Urbanistic Zonal',
+    icon: '✅',
+  },
+  {
+    id: 3,
+    title: 'Memoriu PUD',
+    description: 'Memoriu de urbanism pentru Plan Urbanistic Detaliat',
+    icon: '📐',
+  },
+  {
+    id: 4,
+    title: 'Certificat Urbanism',
+    description: 'Certificat de Urbanism cu analiză detaliată',
+    icon: '🏛️',
+  },
+];
+
 export default function Dashboard() {
   const { user } = useAuthStore();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     const checkHealthAndLoadProjects = async () => {
       try {
-        // Test backend connection with health endpoint
         const healthResponse = await apiGet('/api/health');
-        console.log('Backend health:', healthResponse);
+        console.log('✅ Backend health:', healthResponse);
 
         // Load projects (mock for now)
         setProjects([]);
         setError(null);
       } catch (err) {
-        console.error('Dashboard error:', err);
+        console.error('❌ Dashboard error:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -30,100 +57,112 @@ export default function Dashboard() {
     checkHealthAndLoadProjects();
   }, []);
 
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="inline-block mb-4">
+              <svg
+                className="animate-spin h-8 w-8 text-urbai-gold"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+            <p className="text-warm-text-secondary">Se încarcă...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white text-opacity-60 text-sm">Total Proiecte</p>
-              <p className="text-gold text-3xl font-bold mt-2">
-                {projects.length}
-              </p>
-            </div>
-            <span className="text-4xl">📁</span>
-          </div>
+      {/* Welcome Screen - when no project selected */}
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-serif text-warm-text mb-3 font-light">
+            Bună, <span className="font-semibold">{user?.email?.split('@')[0]}</span>!
+          </h1>
+          <p className="text-xl text-warm-text-secondary">
+            Ce document vrei să generezi?
+          </p>
         </div>
 
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white text-opacity-60 text-sm">Credite Disponibile</p>
-              <p className="text-gold text-3xl font-bold mt-2">1,000</p>
-            </div>
-            <span className="text-4xl">💎</span>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white text-opacity-60 text-sm">Generat Astăzi</p>
-              <p className="text-gold text-3xl font-bold mt-2">0</p>
-            </div>
-            <span className="text-4xl">✨</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-900 bg-opacity-30 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-6">
-          <p className="font-semibold">Eroare conexiune</p>
-          <p className="text-sm">{error}</p>
-        </div>
-      )}
-
-      {/* Projects Section */}
-      <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-white">Proiecte Recente</h2>
-          <button className="btn-gold">+ Proiect Nou</button>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gold border-opacity-30 border-t-gold"></div>
-            </div>
-            <p className="mt-4 text-white text-opacity-60">Se încarcă proiecte...</p>
-          </div>
-        ) : projects.length === 0 ? (
-          <div className="card text-center py-12">
-            <p className="text-4xl mb-4">📭</p>
-            <p className="text-white text-lg font-semibold">Niciun proiect inca</p>
-            <p className="text-white text-opacity-60 mt-2 mb-6">
-              Creează un proiect nou pentru a genera documente urbanistice cu AI
-            </p>
-            <button className="btn-gold">Creează Primul Proiect</button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
-              <div key={project.id} className="card hover:border-gold transition-all duration-200 cursor-pointer">
-                <h3 className="text-white font-semibold text-lg mb-2">
-                  {project.name}
-                </h3>
-                <p className="text-white text-opacity-60 text-sm mb-4">
-                  {project.description}
-                </p>
-                <div className="flex gap-2">
-                  <button className="flex-1 btn-outline text-sm">Editează</button>
-                  <button className="flex-1 btn-gold text-sm">Generează</button>
-                </div>
-              </div>
-            ))}
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-8">
+            <p className="font-semibold">Eroare conexiune</p>
+            <p className="text-sm">{error}</p>
           </div>
         )}
-      </div>
 
-      {/* Test Connection Status */}
-      {!error && (
-        <div className="mt-8 text-center text-white text-opacity-60 text-sm">
-          ✓ Conectat la backend (API v1)
+        {/* Document Templates Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {DOCUMENT_TEMPLATES.map((template) => (
+            <div
+              key={template.id}
+              className="card cursor-pointer hover:border-urbai-gold hover:shadow-md group"
+              onClick={() => setSelectedProject(template.id)}
+            >
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">{template.icon}</div>
+                <div>
+                  <h3 className="text-lg font-serif font-light text-warm-text mb-1">
+                    {template.title}
+                  </h3>
+                  <p className="text-sm text-warm-text-secondary">
+                    {template.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+
+        {/* Stats */}
+        <div className="mt-12 pt-8 border-t border-warm-border">
+          <div className="grid grid-cols-3 gap-8 text-center">
+            <div>
+              <p className="text-3xl font-serif text-urbai-gold mb-2">1000</p>
+              <p className="text-sm text-warm-text-secondary">Credite disponibile</p>
+            </div>
+            <div>
+              <p className="text-3xl font-serif text-warm-text mb-2">0</p>
+              <p className="text-sm text-warm-text-secondary">Documente generate</p>
+            </div>
+            <div>
+              <p className="text-3xl font-serif text-warm-text mb-2">Free</p>
+              <p className="text-sm text-warm-text-secondary">Plan curent</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Backend Status */}
+        <div className="mt-12 text-center">
+          {!error && (
+            <p className="text-xs text-warm-text-secondary">
+              ✓ Conectat la backend (API v1)
+            </p>
+          )}
+        </div>
+      </div>
     </Layout>
   );
 }

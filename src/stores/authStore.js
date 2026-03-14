@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { getSupabase } from '../lib/supabase';
 
+let authUnsubscribe = null;
+
 export const useAuthStore = create((set, get) => ({
   user: null,
   session: null,
@@ -12,21 +14,32 @@ export const useAuthStore = create((set, get) => ({
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
 
-  checkSession: async () => {
+  // Initialize auth state and listen for changes
+  initAuth: async () => {
     try {
       set({ loading: true });
-      const supabase = getSupabase();
+      let supabase;
+
+      try {
+        supabase = getSupabase();
+      } catch (err) {
+        console.error('❌ Supabase not configured:', err.message);
+        set({ error: err.message, loading: false });
+        return null;
+      }
 
       // Check for existing session
       const { data: { session }, error } = await supabase.auth.getSession();
 
-      if (error || !session) {
-        set({ user: null, session: null, loading: false });
+      if (error) {
+        console.error('❌ Session check error:', error.message);
+        set({ error: error.message, loading: false });
         return null;
       }
 
-      // Extract user info from session
-      if (session.user) {
+      // Set user from existing session
+      if (session?.user) {
+        console.log('✅ Existing session found:', session.user.email);
         set({
           user: {
             id: session.user.id,
@@ -35,14 +48,42 @@ export const useAuthStore = create((set, get) => ({
           },
           session,
           loading: false,
+          error: null,
         });
-        return session.user;
+      } else {
+        console.log('ℹ️ No existing session');
+        set({ user: null, session: null, loading: false });
       }
 
-      set({ loading: false });
-      return null;
+      // Listen for auth state changes (OAuth redirect, etc.)
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          console.log('🔄 Auth state changed:', event);
+
+          if (event === 'SIGNED_IN' && session?.user) {
+            console.log('✅ User signed in:', session.user.email);
+            set({
+              user: {
+                id: session.user.id,
+                email: session.user.email,
+                user_metadata: session.user.user_metadata,
+              },
+              session,
+              error: null,
+            });
+          } else if (event === 'SIGNED_OUT') {
+            console.log('✅ User signed out');
+            set({ user: null, session: null });
+          }
+        }
+      );
+
+      // Save unsubscribe function for cleanup
+      authUnsubscribe = subscription.unsubscribe;
+
+      return session?.user || null;
     } catch (err) {
-      console.error('Session check error:', err);
+      console.error('❌ Init auth error:', err);
       set({ error: err.message, loading: false });
       return null;
     }
@@ -50,21 +91,36 @@ export const useAuthStore = create((set, get) => ({
 
   login: async () => {
     try {
-      set({ loading: true });
-      const supabase = getSupabase();
+      set({ loading: true, error: null });
+      console.log('🔐 Login initiated...');
+
+      let supabase;
+      try {
+        supabase = getSupabase();
+      } catch (err) {
+        console.error('❌ Supabase initialization failed:', err.message);
+        set({ error: err.message, loading: false });
+        return;
+      }
+
+      console.log('✅ Supabase client initialized');
+      console.log('🔗 Redirecting to Google OAuth...');
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          // Redirect to current origin (works on any port)
+          redirectTo: window.location.origin,
         },
       });
 
       if (error) {
         throw error;
       }
+
+      console.log('✅ OAuth flow started');
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('❌ Login error:', err);
       set({ error: err.message, loading: false });
     }
   },
@@ -80,9 +136,10 @@ export const useAuthStore = create((set, get) => ({
         throw error;
       }
 
-      set({ user: null, session: null, loading: false });
+      console.log('✅ User logged out');
+      set({ user: null, session: null, loading: false, error: null });
     } catch (err) {
-      console.error('Logout error:', err);
+      console.error('❌ Logout error:', err);
       set({ error: err.message, loading: false });
     }
   },
@@ -90,5 +147,12 @@ export const useAuthStore = create((set, get) => ({
   getToken: () => {
     const state = get();
     return state.session?.access_token || null;
+  },
+
+  // Cleanup auth listener on unload
+  cleanup: () => {
+    if (authUnsubscribe) {
+      authUnsubscribe();
+    }
   },
 }));

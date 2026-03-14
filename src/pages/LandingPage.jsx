@@ -10,6 +10,10 @@ export default function LandingPage() {
   const [docCount, setDocCount] = useState(0);
   const [hoursCount, setHoursCount] = useState(0);
   const statsRef = useRef(null);
+  const [billingPeriod, setBillingPeriod] = useState('monthly'); // 'monthly', 'quarterly', 'annual'
+  const [selectedPlan, setSelectedPlan] = useState(null); // Track selected plan
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,10 +26,10 @@ export default function LandingPage() {
   // IntersectionObserver pentru animația statisticilor
   useEffect(() => {
     if (statsVisible) {
-      // Animare documente (0 -> 12847)
+      // Animare documente (0 -> 5847)
       let startTime = null;
       const duration = 2500; // 2.5 secunde
-      const finalDocs = 12847;
+      const finalDocs = 5847;
 
       const animateCounter = (currentTime) => {
         if (startTime === null) startTime = currentTime;
@@ -81,8 +85,22 @@ export default function LandingPage() {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
-  // Calcul ore economisitte (documente × 1.13)
-  const hoursEconomized = Math.round(docCount * 1.13);
+  // Calcul ore economisitte (documente × 2.3)
+  const hoursEconomized = Math.round(docCount * 2.3);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [menuOpen]);
 
   return (
     <div style={{ backgroundColor: '#f5f0e8', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>
@@ -344,7 +362,7 @@ export default function LandingPage() {
       <section
         id="hero"
         style={{
-          paddingTop: '80px',
+          paddingTop: '40px',
           paddingBottom: '5rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
@@ -460,6 +478,258 @@ export default function LandingPage() {
             <span>✓ 20 credite gratuite</span>
             <span>✓ Fără card bancar</span>
           </p>
+
+          {/* Chat Bar */}
+          <div ref={menuRef} style={{ marginTop: '40px', maxWidth: '600px', margin: '40px auto 0', width: '100%', position: 'relative' }}>
+            <div style={{
+              backgroundColor: '#ffffff',
+              border: '1px solid #ddd4c8',
+              borderRadius: '24px',
+              padding: '14px 18px 14px 22px',
+              display: 'flex',
+              alignItems: 'center',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              gap: '12px',
+            }}>
+              {/* Plus Icon */}
+              <button style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                flexShrink: 0,
+                padding: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                borderRadius: '6px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(26, 22, 19, 0.05)';
+                e.currentTarget.style.opacity = '0.8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.opacity = '1';
+              }}
+              onClick={() => setMenuOpen(!menuOpen)}
+              title="Adaugă"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+
+              {/* Input */}
+              <input
+                type="text"
+                placeholder="Întreabă orice despre urbanism, legislație, PUZ, CU..."
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    alert('Creează un cont gratuit pentru a folosi Chat AI');
+                    setTimeout(() => navigate('/login'), 2000);
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  outline: 'none',
+                  fontSize: '14px',
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  color: '#1a1613',
+                  backgroundColor: 'transparent',
+                  '::placeholder': {
+                    color: '#9a938a',
+                  }
+                }}
+              />
+
+              {/* UrbAI Chat Text */}
+              <span style={{
+                fontSize: '11px',
+                color: '#9a938a',
+                marginRight: '8px',
+                whiteSpace: 'nowrap',
+              }}>
+                UrbAI Chat
+              </span>
+
+              {/* Microphone Button */}
+              <button style={{
+                width: '28px',
+                height: '28px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                flexShrink: 0,
+                transition: 'opacity 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.6';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+              onClick={() => {
+                alert('Funcția de dictare va fi disponibilă în curând');
+              }}
+              title="Dictare"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              </button>
+
+              {/* Send Button */}
+              <button
+                onClick={() => {
+                  alert('Creează un cont gratuit pentru a folosi Chat AI');
+                  setTimeout(() => navigate('/login'), 2000);
+                }}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  backgroundColor: '#1a1613',
+                  border: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#2a2623';
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#1a1613';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                {/* Arrow Up SVG */}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="19" x2="12" y2="5"></line>
+                  <polyline points="5 12 12 5 19 12"></polyline>
+                </svg>
+              </button>
+            </div>
+
+            {/* Dropdown Menu */}
+            {menuOpen && (
+              <div style={{
+                position: 'absolute',
+                bottom: '100%',
+                left: 0,
+                marginBottom: '8px',
+                background: '#ffffff',
+                border: '1px solid #e8e0d6',
+                borderRadius: '10px',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                padding: '4px',
+                minWidth: '200px',
+                zIndex: 10
+              }}>
+                {/* Option 1: Search Web */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'background 150ms',
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  fontSize: '13px',
+                  fontWeight: '400',
+                  color: '#1a1613',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f5f0e8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+                onClick={() => {
+                  setMenuOpen(false);
+                  alert('Creează un cont gratuit pentru acces');
+                }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5c5466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  Search Web
+                </div>
+
+                {/* Option 2: Research */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'background 150ms',
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  fontSize: '13px',
+                  fontWeight: '400',
+                  color: '#1a1613',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f5f0e8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+                onClick={() => {
+                  setMenuOpen(false);
+                  alert('Creează un cont gratuit pentru acces');
+                }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5c5466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                  Research
+                </div>
+
+                {/* Option 3: Add a Photo */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'background 150ms',
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  fontSize: '13px',
+                  fontWeight: '400',
+                  color: '#1a1613',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f5f0e8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+                onClick={() => {
+                  setMenuOpen(false);
+                  alert('Creează un cont gratuit pentru acces');
+                }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5c5466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  Add a Photo
+                </div>
+              </div>
+            )}
+
+            {/* Chat Description */}
+            <p style={{
+              fontSize: '12px',
+              color: '#9a938a',
+              marginTop: '10px',
+              textAlign: 'center',
+            }}>
+              Chat AI gratuit · Specializat pe urbanism românesc · Legislație verificată
+            </p>
+          </div>
         </div>
       </section>
 
@@ -611,7 +881,7 @@ export default function LandingPage() {
           }}>
             {/* Feature 1 */}
             <div style={{
-              padding: '2rem',
+              padding: '16px',
               border: '1px solid #d4c9bc',
               borderRadius: '0.5rem',
               backgroundColor: '#f5f0e8',
@@ -627,18 +897,18 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📄</div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
                 Generare Documente Complexe
               </h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Economisește ore întregi de muncă. Memorii tehnice, PUZ-uri, PUD-uri și Certificate de Urbanism — redactate automat cu limbaj tehnico-juridic conform Legii 350/2001. Rezultatul: documente profesionale, gata de semnat.
               </p>
             </div>
 
             {/* Feature 2 */}
             <div style={{
-              padding: '2rem',
+              padding: '16px',
               border: '1px solid #d4c9bc',
               borderRadius: '0.5rem',
               backgroundColor: '#f5f0e8',
@@ -654,18 +924,18 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📊</div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
                 Export Multi-Format
               </h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Un click, orice format. Documentele tale exportate instant în DOCX, PDF, XLS sau PPT — cu antet personalizat, logo firmă, cuprins automat și paginare. Așa cum le-ai face manual, doar că în 10 secunde.
               </p>
             </div>
 
             {/* Feature 3 */}
             <div style={{
-              padding: '2rem',
+              padding: '16px',
               border: '1px solid #d4c9bc',
               borderRadius: '0.5rem',
               backgroundColor: '#f5f0e8',
@@ -681,18 +951,18 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>💬</div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
                 Chat AI Multi-Model
               </h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Consultantul tău urbanistic, disponibil 24/7. Pune orice întrebare despre legislație, zonare sau reglementări — primești răspuns instant cu sursă exactă. Alege între Claude, GPT, DeepSeek, Gemini sau LLaMA.
               </p>
             </div>
 
             {/* Feature 4 */}
             <div style={{
-              padding: '2rem',
+              padding: '16px',
               border: '1px solid #d4c9bc',
               borderRadius: '0.5rem',
               backgroundColor: '#f5f0e8',
@@ -708,18 +978,18 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔍</div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
                 Extragere Automată OCR
               </h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Nu mai transcrie manual din CF-uri. Uploadează orice document — extras carte funciară, plan cadastral, avize, PUG-uri scanate — și AI-ul extrage automat toate datele relevante cu precizie ridicată.
               </p>
             </div>
 
             {/* Feature 5 */}
             <div style={{
-              padding: '2rem',
+              padding: '16px',
               border: '1px solid #d4c9bc',
               borderRadius: '0.5rem',
               backgroundColor: '#f5f0e8',
@@ -735,18 +1005,18 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎨</div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
                 Generare Imagini & Randări
               </h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Impresionează clienții din prima prezentare. Randări arhitecturale, schițe conceptuale și vizualizări fotorealiste generate cu AI — perfecte pentru documentații, studii de fezabilitate și pitch-uri.
               </p>
             </div>
 
             {/* Feature 6 */}
             <div style={{
-              padding: '2rem',
+              padding: '16px',
               border: '1px solid #d4c9bc',
               borderRadius: '0.5rem',
               backgroundColor: '#f5f0e8',
@@ -762,12 +1032,93 @@ export default function LandingPage() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>✅</div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
                 Validare Automată
               </h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.9375rem', lineHeight: '1.6' }}>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Niciun document nu pleacă cu erori. Fiecare fișier trece prin verificare automată: completitudine secțiuni, coerență POT/CUT/Rh, referințe legislative valide. Primești un scor de calitate și lista exactă de corecturi.
+              </p>
+            </div>
+
+            {/* Feature 7 */}
+            <div style={{
+              padding: '16px',
+              border: '1px solid #d4c9bc',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f5f0e8',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/><line x1="7" y1="18" x2="16" y2="18"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+                Management Proiecte
+              </h3>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+                Planifică și urmărește fiecare etapă a proiectului urbanistic cu Gantt charts interactive. De la cerere CU până la aprobare consiliu local.
+              </p>
+            </div>
+
+            {/* Feature 8 */}
+            <div style={{
+              padding: '16px',
+              border: '1px solid #d4c9bc',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f5f0e8',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+                Soluții Dedicate
+              </h3>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+                Soluții personalizate pentru birouri de arhitectură, dezvoltatori imobiliari și autorități locale. Configurare per nevoie specifică.
+              </p>
+            </div>
+
+            {/* Feature 9 */}
+            <div style={{
+              padding: '16px',
+              border: '1px solid #d4c9bc',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f5f0e8',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+                Arhivă Digitală Inteligentă
+              </h3>
+              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+                Toate documentele, avizele și corespondența organizate automat per proiect. Căutare instant în orice document cu AI.
               </p>
             </div>
           </div>
@@ -782,7 +1133,7 @@ export default function LandingPage() {
           paddingBottom: '4rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
-          backgroundColor: '#f5f0e8',
+          backgroundColor: '#ebe3d9',
         }}
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -791,16 +1142,54 @@ export default function LandingPage() {
             <h2
               style={{
                 fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
-                fontFamily: 'Georgia, serif',
+                fontFamily: '"DM Sans", system-ui, sans-serif',
                 fontWeight: '400',
-                marginBottom: '1rem',
+                marginBottom: '0.5rem',
               }}
             >
-              Prețuri simple
+              Prețuri simple, fără surprize
             </h2>
-            <p style={{ color: '#6b5d50', fontSize: '1.0625rem' }}>
-              Alege planul potrivit pentru tine, fără taxe ascunse
+            <p style={{ color: '#6b5d50', fontSize: '1.0625rem', marginBottom: '2rem' }}>
+              Toate prețurile includ TVA 21%. Creditele se resetează lunar.
             </p>
+
+            {/* Billing Period Toggle */}
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '3rem' }}>
+              {[
+                { value: 'monthly', label: 'Lunar' },
+                { value: 'quarterly', label: 'Trimestrial -15%' },
+                { value: 'annual', label: 'Anual -30%' }
+              ].map(period => (
+                <button
+                  key={period.value}
+                  onClick={() => setBillingPeriod(period.value)}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '0.375rem',
+                    border: billingPeriod === period.value ? 'none' : '1px solid #d4c9bc',
+                    backgroundColor: billingPeriod === period.value ? '#c4893a' : '#ffffff',
+                    color: billingPeriod === period.value ? '#ffffff' : '#1a1613',
+                    cursor: 'pointer',
+                    fontSize: '0.9375rem',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    fontFamily: 'inherit',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (billingPeriod !== period.value) {
+                      e.target.style.borderColor = '#c4893a';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (billingPeriod !== period.value) {
+                      e.target.style.borderColor = '#d4c9bc';
+                    }
+                  }}
+                >
+                  {period.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Pricing Grid */}
@@ -811,238 +1200,484 @@ export default function LandingPage() {
             marginBottom: '3rem',
           }}>
             {/* Free Plan */}
-            <div style={{
-              padding: '2rem',
-              border: '1px solid #d4c9bc',
-              borderRadius: '0.5rem',
-              backgroundColor: '#ffffff',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-            >
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>Free</h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Perfect pentru testare</p>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '2rem', fontWeight: '600' }}>€0</span>
-                <span style={{ color: '#6b5d50' }}> one-time</span>
-              </div>
-              <div style={{
-                padding: '0.75rem 1rem',
-                backgroundColor: '#f5f0e8',
-                borderRadius: '0.375rem',
-                marginBottom: '1rem',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-              }}>
-                20 credite gratuite
-              </div>
-              <button style={{
-                width: '100%',
-                padding: '0.625rem 1rem',
-                border: '1px solid #d4c9bc',
-                borderRadius: '0.375rem',
-                backgroundColor: '#ffffff',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#f5f0e8';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#ffffff';
-              }}
-              onClick={handleGetStarted}
-              >
-                Alege plan
-              </button>
-            </div>
+            {(() => {
+              const basePrices = { monthly: 0, quarterly: 0, annual: 0 };
+              const multiplier = { monthly: 1, quarterly: 0.85, annual: 0.7 }[billingPeriod];
+              const price = Math.round(basePrices.monthly * multiplier);
+              const isSelected = selectedPlan === 'free';
+              return (
+                <div style={{
+                  padding: '2rem',
+                  border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
+                  borderRadius: '0.5rem',
+                  backgroundColor: '#ffffff',
+                  transition: 'all 0.25s ease',
+                  boxShadow: isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.transform = 'scale(1.03)';
+                    e.currentTarget.style.border = '2px solid #c4893a';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(196,137,58,0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.border = '1px solid #d4c9bc';
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                  }
+                }}
+                onClick={() => setSelectedPlan('free')}
+                >
+                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Free</h3>
+                  <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru a testa platforma</p>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a1613' }}>€0</span>
+                    <span style={{ color: '#6b5d50', fontSize: '1rem' }}>/lună</span>
+                  </div>
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
+                  <div style={{ marginBottom: '1.5rem', flex: 1 }}>
+                    {['20 credite (one-time)', '1-2 documente demo', 'Export cu watermark', 'Suport email'].map(feature => (
+                      <div key={feature} style={{ fontSize: '0.9375rem', color: '#1a1613', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button style={{
+                    width: '100%',
+                    padding: '0.75rem 1.5rem',
+                    border: '2px solid #1a1613',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#ffffff',
+                    color: '#1a1613',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    fontSize: '0.9375rem',
+                    fontWeight: '600',
+                    fontFamily: 'inherit',
+                    marginTop: 'auto',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#1a1613';
+                    e.target.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#ffffff';
+                    e.target.style.color = '#1a1613';
+                  }}
+                  onClick={handleGetStarted}
+                  >
+                    Începe Gratuit
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* Pro Plan (Popular) */}
-            <div style={{
-              padding: '2rem',
-              border: '2px solid #c4893a',
-              borderRadius: '0.5rem',
-              backgroundColor: '#ffffff',
-              position: 'relative',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-            >
-              <div style={{
-                position: 'absolute',
-                top: '-12px',
-                right: '1.5rem',
-                backgroundColor: '#c4893a',
-                color: '#ffffff',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '0.25rem',
-                fontSize: '0.75rem',
-                fontWeight: '600',
-                letterSpacing: '0.5px',
-              }}>
-                POPULAR
-              </div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>Pro</h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Cea mai bună alegere</p>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '2rem', fontWeight: '600' }}>€50</span>
-                <span style={{ color: '#6b5d50' }}>/lună</span>
-              </div>
-              <div style={{
-                padding: '0.75rem 1rem',
-                backgroundColor: 'rgba(196, 137, 58, 0.08)',
-                borderRadius: '0.375rem',
-                marginBottom: '1rem',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-              }}>
-                200 credite/lună
-              </div>
-              <button style={{
-                width: '100%',
-                padding: '0.625rem 1rem',
-                backgroundColor: '#c4893a',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '0.375rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#b07a2f';
-                e.target.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#c4893a';
-                e.target.style.transform = 'translateY(0)';
-              }}
-              onClick={handleGetStarted}
-              >
-                Alege plan
-              </button>
-            </div>
+            {(() => {
+              const basePrices = { monthly: 50, quarterly: 50 * 0.85, annual: 50 * 0.7 };
+              const multiplier = { monthly: 1, quarterly: 0.85, annual: 0.7 }[billingPeriod];
+              const price = Math.round(50 * multiplier);
+              const oldPrice = billingPeriod !== 'monthly' ? 50 : null;
+              const isSelected = selectedPlan === 'pro';
+              return (
+                <div style={{
+                  padding: '2rem',
+                  border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
+                  borderRadius: '0.5rem',
+                  backgroundColor: '#ffffff',
+                  position: 'relative',
+                  transition: 'all 0.25s ease',
+                  boxShadow: isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.border = '2px solid #c4893a';
+                  }
+                  e.currentTarget.style.transform = 'scale(1.03)';
+                  e.currentTarget.style.boxShadow = '0 8px 30px rgba(196,137,58,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.border = '1px solid #d4c9bc';
+                  }
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)';
+                }}
+                onClick={() => setSelectedPlan('pro')}
+                >
+                  <div style={{
+                    position: 'absolute',
+                    top: '-12px',
+                    right: '1.5rem',
+                    backgroundColor: '#c4893a',
+                    color: '#ffffff',
+                    padding: '0.35rem 0.85rem',
+                    borderRadius: '9999px',
+                    fontSize: '0.7rem',
+                    fontWeight: '700',
+                    letterSpacing: '0.5px',
+                  }}>
+                    POPULAR
+                  </div>
+                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Pro</h3>
+                  <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru proiectanți individuali</p>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                    <span style={{ color: '#6b5d50', fontSize: '1rem' }}>/lună</span>
+                    {oldPrice && <span style={{ color: '#9a938a', fontSize: '0.875rem', marginLeft: '0.5rem', textDecoration: 'line-through' }}>€{oldPrice}</span>}
+                  </div>
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
+                  <div style={{ marginBottom: '1.5rem', flex: 1 }}>
+                    {['200 credite/lună', '~15-20 documente', 'RAG legislativ complet', 'Export DOCX profesional', 'Chat AI cu legislație', 'Suport prioritar'].map(feature => (
+                      <div key={feature} style={{ fontSize: '0.9375rem', color: '#1a1613', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button style={{
+                    width: '100%',
+                    padding: '0.75rem 1.5rem',
+                    border: '2px solid #1a1613',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#ffffff',
+                    color: '#1a1613',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    fontSize: '0.9375rem',
+                    fontWeight: '600',
+                    fontFamily: 'inherit',
+                    marginTop: 'auto',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#1a1613';
+                    e.target.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#ffffff';
+                    e.target.style.color = '#1a1613';
+                  }}
+                  onClick={handleGetStarted}
+                  >
+                    Alege Pro
+                  </button>
+                </div>
+              );
+            })()}
+
+            {/* Business Plan */}
+            {(() => {
+              const basePrices = { monthly: 75, quarterly: 75 * 0.85, annual: 75 * 0.7 };
+              const multiplier = { monthly: 1, quarterly: 0.85, annual: 0.7 }[billingPeriod];
+              const price = Math.round(75 * multiplier);
+              const oldPrice = billingPeriod !== 'monthly' ? 75 : null;
+              const isSelected = selectedPlan === 'business';
+              return (
+                <div style={{
+                  padding: '2rem',
+                  border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
+                  borderRadius: '0.5rem',
+                  backgroundColor: '#ffffff',
+                  transition: 'all 0.25s ease',
+                  boxShadow: isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.transform = 'scale(1.03)';
+                    e.currentTarget.style.border = '2px solid #c4893a';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(196,137,58,0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.border = '1px solid #d4c9bc';
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                  }
+                }}
+                onClick={() => setSelectedPlan('business')}
+                >
+                  <div style={{
+                    position: 'absolute',
+                    top: '-12px',
+                    right: '1.5rem',
+                    backgroundColor: '#c4893a',
+                    color: '#ffffff',
+                    padding: '0.35rem 0.85rem',
+                    borderRadius: '9999px',
+                    fontSize: '0.7rem',
+                    fontWeight: '700',
+                    letterSpacing: '0.5px',
+                  }}>
+                    BEST VALUE
+                  </div>
+                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Business</h3>
+                  <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru birouri de proiectare</p>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                    <span style={{ color: '#6b5d50', fontSize: '1rem' }}>/lună</span>
+                    {oldPrice && <span style={{ color: '#9a938a', fontSize: '0.875rem', marginLeft: '0.5rem', textDecoration: 'line-through' }}>€{oldPrice}</span>}
+                  </div>
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
+                  <div style={{ marginBottom: '1.5rem', flex: 1 }}>
+                    {['400 credite/lună', '~30-40 documente', 'Tot ce e în Pro', '3 utilizatori incluși', 'Template DOCX personalizabil', 'Dashboard consum echipă'].map(feature => (
+                      <div key={feature} style={{ fontSize: '0.9375rem', color: '#1a1613', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button style={{
+                    width: '100%',
+                    padding: '0.75rem 1.5rem',
+                    border: '2px solid #1a1613',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#ffffff',
+                    color: '#1a1613',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    fontSize: '0.9375rem',
+                    fontWeight: '600',
+                    fontFamily: 'inherit',
+                    marginTop: 'auto',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#1a1613';
+                    e.target.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#ffffff';
+                    e.target.style.color = '#1a1613';
+                  }}
+                  onClick={handleGetStarted}
+                  >
+                    Alege Business
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* Enterprise Plan */}
-            <div style={{
-              padding: '2rem',
-              border: '1px solid #d4c9bc',
-              borderRadius: '0.5rem',
-              backgroundColor: '#ffffff',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-            >
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>Enterprise</h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru departamente mari</p>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '2rem', fontWeight: '600' }}>€100</span>
-                <span style={{ color: '#6b5d50' }}>/lună</span>
-                <div style={{ fontSize: '0.75rem', color: '#6b5d50', marginTop: '0.25rem' }}>+ €15/seat</div>
-              </div>
-              <div style={{
-                padding: '0.75rem 1rem',
-                backgroundColor: '#f5f0e8',
-                borderRadius: '0.375rem',
-                marginBottom: '1rem',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-              }}>
-                600 credite pool
-              </div>
-              <button style={{
-                width: '100%',
-                padding: '0.625rem 1rem',
-                border: '1px solid #d4c9bc',
-                borderRadius: '0.375rem',
-                backgroundColor: '#ffffff',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#f5f0e8';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#ffffff';
-              }}
-              onClick={handleGetStarted}
-              >
-                Contactează
-              </button>
-            </div>
+            {(() => {
+              const basePrices = { monthly: 100, quarterly: 85, annual: 70 };
+              const price = basePrices[billingPeriod];
+              const isSelected = selectedPlan === 'enterprise';
+              return (
+                <div style={{
+                  padding: '2rem',
+                  border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
+                  borderRadius: '0.5rem',
+                  backgroundColor: '#ffffff',
+                  transition: 'all 0.25s ease',
+                  boxShadow: isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.transform = 'scale(1.03)';
+                    e.currentTarget.style.border = '2px solid #c4893a';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(196,137,58,0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.border = '1px solid #d4c9bc';
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                  }
+                }}
+                onClick={() => setSelectedPlan('enterprise')}
+                >
+                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Enterprise</h3>
+                  <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru echipe mari</p>
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                    <span style={{ color: '#6b5d50', fontSize: '1rem' }}>/lună</span>
+                    <div style={{ fontSize: '0.875rem', color: '#6b5d50', marginTop: '0.25rem' }}>+ €15/membru extra</div>
+                  </div>
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
+                  <div style={{ marginBottom: '1.5rem', flex: 1 }}>
+                    {['600 credite pool/lună', 'Utilizatori nelimitați', 'Tot ce e în Business', 'Pool credite partajat', 'Roluri: admin, manager, proiectant', 'Suport dedicat'].map(feature => (
+                      <div key={feature} style={{ fontSize: '0.9375rem', color: '#1a1613', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button style={{
+                    width: '100%',
+                    padding: '0.75rem 1.5rem',
+                    border: '2px solid #1a1613',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#ffffff',
+                    color: '#1a1613',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    fontSize: '0.9375rem',
+                    fontWeight: '600',
+                    fontFamily: 'inherit',
+                    marginTop: 'auto',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#1a1613';
+                    e.target.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#ffffff';
+                    e.target.style.color = '#1a1613';
+                  }}
+                  onClick={handleGetStarted}
+                  >
+                    Contactează-ne
+                  </button>
+                </div>
+              );
+            })()}
+          </div>
 
-            {/* Chat AI Add-on */}
+          {/* Add-ons Section */}
+          <div style={{ marginBottom: '3rem' }}>
+            <h3 style={{ textAlign: 'center', fontSize: '20px', fontWeight: '600', color: '#1a1613', marginBottom: '1.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Add-on-uri</h3>
             <div style={{
-              padding: '2rem',
-              border: '1px solid #d4c9bc',
-              borderRadius: '0.5rem',
-              backgroundColor: '#ffffff',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-            >
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.5rem' }}>Chat AI</h3>
-              <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Add-on pentru orice plan</p>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '2rem', fontWeight: '600' }}>€25</span>
-                <span style={{ color: '#6b5d50' }}>/lună</span>
-              </div>
-              <div style={{
-                padding: '0.75rem 1rem',
-                backgroundColor: '#f5f0e8',
-                borderRadius: '0.375rem',
-                marginBottom: '1rem',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-              }}>
-                150 credite bonus
-              </div>
-              <button style={{
-                width: '100%',
-                padding: '0.625rem 1rem',
-                border: '1px solid #d4c9bc',
-                borderRadius: '0.375rem',
-                backgroundColor: '#ffffff',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#f5f0e8';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#ffffff';
-              }}
-              onClick={handleGetStarted}
-              >
-                Adaugă
-              </button>
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '1.5rem',
+            }}>
+              {/* Agent Autonom */}
+              {(() => {
+                const price = 18;
+                return (
+                  <div style={{
+                    padding: '1.5rem',
+                    border: '1px solid #d4c9bc',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#ffffff',
+                    transition: 'all 0.3s ease',
+                    textAlign: 'center',
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                  }}
+                  >
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="11"/><circle cx="8" cy="16" r="1" fill="#1a1613"/><circle cx="16" cy="16" r="1" fill="#1a1613"/></svg>
+                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1a1613', marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Agent Autonom AI</h4>
+                    <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1rem' }}>Dă-i o sarcină complexă — face totul singur: research, analiză, document complet</p>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                      <span style={{ color: '#6b5d50', fontSize: '0.875rem' }}>/lună</span>
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#1a1613', marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
+                      <span style={{ color: '#c4893a', fontWeight: 'bold', flexShrink: 0 }}>✓</span>
+                      <span>100 credite agent/lună</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#c4893a', fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
+                      Add-on la orice plan
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Generare Imagini */}
+              {(() => {
+                const price = 18;
+                return (
+                  <div style={{
+                    padding: '1.5rem',
+                    border: '1px solid #d4c9bc',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#ffffff',
+                    transition: 'all 0.3s ease',
+                    textAlign: 'center',
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                  }}
+                  >
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="#1a1613"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1a1613', marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Imagini & Randări AI</h4>
+                    <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1rem' }}>Randări arhitecturale, schițe conceptuale, vizualizări fotorealiste pentru prezentări</p>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                      <span style={{ color: '#6b5d50', fontSize: '0.875rem' }}>/lună</span>
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#1a1613', marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
+                      <span style={{ color: '#c4893a', fontWeight: 'bold', flexShrink: 0 }}>✓</span>
+                      <span>100 credite imagine/lună</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#c4893a', fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
+                      Add-on la orice plan
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Project Management */}
+              {(() => {
+                const basePrices = { monthly: 18, quarterly: 15, annual: 13 };
+                const price = basePrices[billingPeriod];
+                return (
+                  <div style={{
+                    padding: '1.5rem',
+                    border: '1px solid #d4c9bc',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#ffffff',
+                    transition: 'all 0.3s ease',
+                    textAlign: 'center',
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                  }}
+                  >
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/><line x1="7" y1="18" x2="16" y2="18"/></svg>
+                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1a1613', marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Project Management</h4>
+                    <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1rem' }}>Gantt charts interactive, urmărire etape proiect, deadline-uri și notificări automate pentru echipa ta</p>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                      <span style={{ color: '#6b5d50', fontSize: '0.875rem' }}>/lună</span>
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#1a1613', marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
+                      <span style={{ color: '#c4893a', fontWeight: 'bold', flexShrink: 0 }}>✓</span>
+                      <span>100 credite/lună</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#c4893a', fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
+                      Add-on la orice plan
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
 
@@ -1053,11 +1688,437 @@ export default function LandingPage() {
             backgroundColor: '#ffffff',
             borderRadius: '0.5rem',
             border: '1px solid #d4c9bc',
+            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
           }}>
-            <p style={{ fontSize: '0.9375rem', color: '#1a1613' }}>
-              <strong>Credite extra:</strong>{' '}
-              <span style={{ color: '#c4893a', fontWeight: '600' }}>€10 = 50 credite</span>
+            <p style={{ fontSize: '0.9375rem', color: '#1a1613', margin: 0 }}>
+              <strong>Credite suplimentare:</strong>{' '}
+              <span style={{ color: '#c4893a', fontWeight: '600' }}>€10 = 50 credite</span> · Disponibile pe orice plan
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS SECTION */}
+      <section
+        style={{
+          paddingTop: '4rem',
+          paddingBottom: '4rem',
+          paddingLeft: '1.5rem',
+          paddingRight: '1.5rem',
+          backgroundColor: '#ebe3d9',
+        }}
+      >
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          {/* Section Title */}
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h2
+              style={{
+                fontSize: '28px',
+                fontFamily: 'Georgia, serif',
+                fontWeight: '400',
+                marginBottom: '0.5rem',
+                color: '#1a1613',
+              }}
+            >
+              Ce spun utilizatorii noștri
+            </h2>
+            <p style={{ fontSize: '14px', color: '#6b5d50', marginTop: '0.5rem' }}>
+              Profesioniști din urbanism care folosesc UrbAI zilnic
+            </p>
+          </div>
+
+          {/* Testimonials Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '20px',
+            }}
+          >
+            {/* Card 1 - C.B. */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e8e0d6',
+                borderRadius: '12px',
+                padding: '24px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = '#c4893a';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#e8e0d6';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    backgroundColor: '#c4893a',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                  }}
+                >
+                  CB
+                </div>
+                <div style={{ marginLeft: '12px' }}>
+                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>C.B.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Arhitect urbanist, Cluj-Napoca</p>
+                </div>
+              </div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <p
+                style={{
+                  fontSize: '14px',
+                  lineHeight: '1.7',
+                  color: '#5c5466',
+                  fontStyle: 'italic',
+                  margin: '0',
+                }}
+              >
+                Am redus timpul de redactare a memoriilor tehnice de la 6 ore la 30 de minute. Calitatea documentelor e impecabilă, cu referințe legislative corecte.
+              </p>
+            </div>
+
+            {/* Card 2 - A.B. */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e8e0d6',
+                borderRadius: '12px',
+                padding: '24px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = '#c4893a';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#e8e0d6';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    backgroundColor: '#2563eb',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                  }}
+                >
+                  AB
+                </div>
+                <div style={{ marginLeft: '12px' }}>
+                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>A.B.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Inginer proiectant, București</p>
+                </div>
+              </div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <p
+                style={{
+                  fontSize: '14px',
+                  lineHeight: '1.7',
+                  color: '#5c5466',
+                  fontStyle: 'italic',
+                  margin: '0',
+                }}
+              >
+                Extragerea automată din CF ne-a eliminat complet transcrierea manuală. Economia de timp e enormă când ai 20+ proiecte pe lună.
+              </p>
+            </div>
+
+            {/* Card 3 - C.D. */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e8e0d6',
+                borderRadius: '12px',
+                padding: '24px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = '#c4893a';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#e8e0d6';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    backgroundColor: '#1f7a45',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                  }}
+                >
+                  CD
+                </div>
+                <div style={{ marginLeft: '12px' }}>
+                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>C.D.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Director birou arhitectură, Timișoara</p>
+                </div>
+              </div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <p
+                style={{
+                  fontSize: '14px',
+                  lineHeight: '1.7',
+                  color: '#5c5466',
+                  fontStyle: 'italic',
+                  margin: '0',
+                }}
+              >
+                Am trecut tot biroul pe UrbAI. Pool-ul de credite partajat și dashboard-ul de consum ne ajută să ținem evidența perfectă pe fiecare proiect.
+              </p>
+            </div>
+
+            {/* Card 4 - D.D. */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e8e0d6',
+                borderRadius: '12px',
+                padding: '24px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = '#c4893a';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#e8e0d6';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    backgroundColor: '#7c52c9',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                  }}
+                >
+                  DD
+                </div>
+                <div style={{ marginLeft: '12px' }}>
+                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>D.D.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Urbanist, Brașov</p>
+                </div>
+              </div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <p
+                style={{
+                  fontSize: '14px',
+                  lineHeight: '1.7',
+                  color: '#5c5466',
+                  fontStyle: 'italic',
+                  margin: '0',
+                }}
+              >
+                Chat-ul AI specializat pe legislație urbanistică e fenomenal. Pun întrebări despre Legea 350 și primesc răspunsuri cu articolul exact. Ca un consultant disponibil 24/7.
+              </p>
+            </div>
+
+            {/* Card 5 - A.V. */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e8e0d6',
+                borderRadius: '12px',
+                padding: '24px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = '#c4893a';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#e8e0d6';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    backgroundColor: '#b83232',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                  }}
+                >
+                  AV
+                </div>
+                <div style={{ marginLeft: '12px' }}>
+                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>A.V.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Arhitect, Iași</p>
+                </div>
+              </div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★☆</div>
+              <p
+                style={{
+                  fontSize: '14px',
+                  lineHeight: '1.7',
+                  color: '#5c5466',
+                  fontStyle: 'italic',
+                  margin: '0',
+                }}
+              >
+                Exportul DOCX cu antet firmă și paginare automată mi-a salvat ore de formatare. Documentele ies gata de semnat, direct din platformă.
+              </p>
+            </div>
+
+            {/* Card 6 - A.C. */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e8e0d6',
+                borderRadius: '12px',
+                padding: '24px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = '#c4893a';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#e8e0d6';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    backgroundColor: '#c4893a',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                  }}
+                >
+                  AC
+                </div>
+                <div style={{ marginLeft: '12px' }}>
+                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>A.C.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Inginer cadastru, Constanța</p>
+                </div>
+              </div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <p
+                style={{
+                  fontSize: '14px',
+                  lineHeight: '1.7',
+                  color: '#5c5466',
+                  fontStyle: 'italic',
+                  margin: '0',
+                }}
+              >
+                Procesez zeci de extrase CF lunar. Cu UrbAI uploadez documentul și datele apar automat în formularul de proiect. Pur și simplu funcționează.
+              </p>
+            </div>
+
+            {/* Card 7 - C.M. */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e8e0d6',
+                borderRadius: '12px',
+                padding: '24px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
+                e.currentTarget.style.borderColor = '#c4893a';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#e8e0d6';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    backgroundColor: '#1a1613',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                  }}
+                >
+                  CM
+                </div>
+                <div style={{ marginLeft: '12px' }}>
+                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>C.M.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Arhitect șef, Arad</p>
+                </div>
+              </div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <p
+                style={{
+                  fontSize: '14px',
+                  lineHeight: '1.7',
+                  color: '#5c5466',
+                  fontStyle: 'italic',
+                  margin: '0',
+                }}
+              >
+                Validarea automată ne prinde erorile înainte să trimitem documentația. Coerența POT/CUT/Rh e verificată instant. Nu mai trimitem documente cu greșeli.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -1149,6 +2210,7 @@ export default function LandingPage() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 margin: '0 0 16px 0',
+                fontFamily: '"DM Sans", system-ui, sans-serif',
               }}>
                 Produs
               </h3>
@@ -1170,6 +2232,7 @@ export default function LandingPage() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 margin: '0 0 16px 0',
+                fontFamily: '"DM Sans", system-ui, sans-serif',
               }}>
                 Resurse
               </h3>
@@ -1191,14 +2254,15 @@ export default function LandingPage() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 margin: '0 0 16px 0',
+                fontFamily: '"DM Sans", system-ui, sans-serif',
               }}>
                 Legal
               </h3>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Termeni și Condiții</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Politica de Confidențialitate</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>GDPR</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Politica Cookies</a></li>
+                <li><button onClick={() => navigate('/termeni-conditii')} style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Termeni și Condiții</button></li>
+                <li><button onClick={() => navigate('/politica-confidentialitate')} style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Politica de Confidențialitate</button></li>
+                <li><button onClick={() => navigate('/gdpr')} style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>GDPR</button></li>
+                <li><button onClick={() => navigate('/politica-cookies')} style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Politica Cookies</button></li>
               </ul>
             </div>
 
@@ -1211,6 +2275,7 @@ export default function LandingPage() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 margin: '0 0 16px 0',
+                fontFamily: '"DM Sans", system-ui, sans-serif',
               }}>
                 Companie
               </h3>
@@ -1218,7 +2283,6 @@ export default function LandingPage() {
                 <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Despre Noi</a></li>
                 <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Contact</a></li>
                 <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Cariere</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Pentru Dezvoltatori (API)</a></li>
               </ul>
             </div>
           </div>
