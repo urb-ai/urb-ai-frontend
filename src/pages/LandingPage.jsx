@@ -104,6 +104,33 @@ export default function LandingPage() {
 
   return (
     <div style={{ backgroundColor: '#f5f0e8', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>
+      <style>{`
+        .pricing-grid {
+          display: grid;
+          gap: 12px;
+          margin-bottom: 2rem;
+        }
+        @media (min-width: 1400px) {
+          .pricing-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+        @media (min-width: 1024px) and (max-width: 1399px) {
+          .pricing-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .pricing-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 767px) {
+          .pricing-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
       {/* NAVBAR */}
       <nav
         style={{
@@ -387,8 +414,9 @@ export default function LandingPage() {
               textAlign: 'center',
             }}
           >
-            Documente urbanistice generate cu{' '}
-            <span style={{ color: '#c4893a' }}>inteligență artificială</span>
+            Documente generate cu{' '}
+            <span style={{ color: '#c4893a', fontStyle: 'italic' }}>inteligență artificială</span>
+            {' '}în domeniul proiectării
           </h1>
 
           {/* Subtitle */}
@@ -727,7 +755,7 @@ export default function LandingPage() {
               marginTop: '10px',
               textAlign: 'center',
             }}>
-              Chat AI gratuit · Specializat pe urbanism românesc · Legislație verificată
+              Chat AI gratuit · Specializat pe legislația din România · Legislație verificată
             </p>
           </div>
         </div>
@@ -1129,8 +1157,8 @@ export default function LandingPage() {
       <section
         id="pricing"
         style={{
-          paddingTop: '4rem',
-          paddingBottom: '4rem',
+          paddingTop: '2rem',
+          paddingBottom: '2rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
           backgroundColor: '#ebe3d9',
@@ -1138,23 +1166,23 @@ export default function LandingPage() {
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           {/* Section Title */}
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
             <h2
               style={{
-                fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
+                fontSize: '30px',
                 fontFamily: '"DM Sans", system-ui, sans-serif',
-                fontWeight: '400',
-                marginBottom: '0.5rem',
+                fontWeight: '600',
+                marginBottom: '4px',
               }}
             >
               Prețuri simple, fără surprize
             </h2>
-            <p style={{ color: '#6b5d50', fontSize: '1.0625rem', marginBottom: '2rem' }}>
-              Toate prețurile includ TVA 21%. Creditele se resetează lunar.
+            <p style={{ color: '#6b5d50', fontSize: '15px', marginBottom: '0px' }}>
+              Toate prețurile includ TVA 19%. Creditele se resetează lunar.
             </p>
 
             {/* Billing Period Toggle */}
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1rem' }}>
               {[
                 { value: 'monthly', label: 'Lunar' },
                 { value: 'quarterly', label: 'Trimestrial -15%' },
@@ -1164,13 +1192,13 @@ export default function LandingPage() {
                   key={period.value}
                   onClick={() => setBillingPeriod(period.value)}
                   style={{
-                    padding: '0.75rem 1.5rem',
+                    padding: '8px 20px',
                     borderRadius: '0.375rem',
                     border: billingPeriod === period.value ? 'none' : '1px solid #d4c9bc',
                     backgroundColor: billingPeriod === period.value ? '#c4893a' : '#ffffff',
                     color: billingPeriod === period.value ? '#ffffff' : '#1a1613',
                     cursor: 'pointer',
-                    fontSize: '0.9375rem',
+                    fontSize: '14px',
                     fontWeight: '500',
                     transition: 'all 0.2s ease',
                     fontFamily: 'inherit',
@@ -1193,12 +1221,7 @@ export default function LandingPage() {
           </div>
 
           {/* Pricing Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.5rem',
-            marginBottom: '3rem',
-          }}>
+          <div className="pricing-grid">
             {/* Free Plan */}
             {(() => {
               const basePrices = { monthly: 0, quarterly: 0, annual: 0 };
@@ -1207,7 +1230,7 @@ export default function LandingPage() {
               const isSelected = selectedPlan === 'free';
               return (
                 <div style={{
-                  padding: '2rem',
+                  padding: '16px 18px',
                   border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
                   borderRadius: '0.5rem',
                   backgroundColor: '#ffffff',
@@ -1236,13 +1259,13 @@ export default function LandingPage() {
                   <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Free</h3>
                   <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru a testa platforma</p>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a1613' }}>€0</span>
-                    <span style={{ color: '#6b5d50', fontSize: '1rem' }}>/lună</span>
+                    <span style={{ fontSize: '32px', fontWeight: '700', color: '#1a1613' }}>€0</span>
+                    <span style={{ color: '#6b5d50', fontSize: '13px' }}>/lună</span>
                   </div>
                   <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
                   <div style={{ marginBottom: '1.5rem', flex: 1 }}>
                     {['20 credite (one-time)', '1-2 documente demo', 'Export cu watermark', 'Suport email'].map(feature => (
-                      <div key={feature} style={{ fontSize: '0.9375rem', color: '#1a1613', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                      <div key={feature} style={{ fontSize: '12.5px', color: '#1a1613', marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
                         <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
                         <span>{feature}</span>
                       </div>
@@ -1250,14 +1273,14 @@ export default function LandingPage() {
                   </div>
                   <button style={{
                     width: '100%',
-                    padding: '0.75rem 1.5rem',
+                    padding: '10px 16px',
                     border: '2px solid #1a1613',
                     borderRadius: '0.5rem',
                     backgroundColor: '#ffffff',
                     color: '#1a1613',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    fontSize: '0.9375rem',
+                    fontSize: '13px',
                     fontWeight: '600',
                     fontFamily: 'inherit',
                     marginTop: 'auto',
@@ -1331,14 +1354,14 @@ export default function LandingPage() {
                   <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Pro</h3>
                   <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru proiectanți individuali</p>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                    <span style={{ color: '#6b5d50', fontSize: '1rem' }}>/lună</span>
+                    <span style={{ fontSize: '32px', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                    <span style={{ color: '#6b5d50', fontSize: '13px' }}>/lună</span>
                     {oldPrice && <span style={{ color: '#9a938a', fontSize: '0.875rem', marginLeft: '0.5rem', textDecoration: 'line-through' }}>€{oldPrice}</span>}
                   </div>
                   <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
                   <div style={{ marginBottom: '1.5rem', flex: 1 }}>
                     {['200 credite/lună', '~15-20 documente', 'RAG legislativ complet', 'Export DOCX profesional', 'Chat AI cu legislație', 'Suport prioritar'].map(feature => (
-                      <div key={feature} style={{ fontSize: '0.9375rem', color: '#1a1613', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                      <div key={feature} style={{ fontSize: '12.5px', color: '#1a1613', marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
                         <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
                         <span>{feature}</span>
                       </div>
@@ -1346,14 +1369,14 @@ export default function LandingPage() {
                   </div>
                   <button style={{
                     width: '100%',
-                    padding: '0.75rem 1.5rem',
+                    padding: '10px 16px',
                     border: '2px solid #1a1613',
                     borderRadius: '0.5rem',
                     backgroundColor: '#ffffff',
                     color: '#1a1613',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    fontSize: '0.9375rem',
+                    fontSize: '13px',
                     fontWeight: '600',
                     fontFamily: 'inherit',
                     marginTop: 'auto',
@@ -1427,14 +1450,14 @@ export default function LandingPage() {
                   <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Business</h3>
                   <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru birouri de proiectare</p>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                    <span style={{ color: '#6b5d50', fontSize: '1rem' }}>/lună</span>
+                    <span style={{ fontSize: '32px', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                    <span style={{ color: '#6b5d50', fontSize: '13px' }}>/lună</span>
                     {oldPrice && <span style={{ color: '#9a938a', fontSize: '0.875rem', marginLeft: '0.5rem', textDecoration: 'line-through' }}>€{oldPrice}</span>}
                   </div>
                   <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
                   <div style={{ marginBottom: '1.5rem', flex: 1 }}>
                     {['400 credite/lună', '~30-40 documente', 'Tot ce e în Pro', '3 utilizatori incluși', 'Template DOCX personalizabil', 'Dashboard consum echipă'].map(feature => (
-                      <div key={feature} style={{ fontSize: '0.9375rem', color: '#1a1613', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                      <div key={feature} style={{ fontSize: '12.5px', color: '#1a1613', marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
                         <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
                         <span>{feature}</span>
                       </div>
@@ -1442,14 +1465,14 @@ export default function LandingPage() {
                   </div>
                   <button style={{
                     width: '100%',
-                    padding: '0.75rem 1.5rem',
+                    padding: '10px 16px',
                     border: '2px solid #1a1613',
                     borderRadius: '0.5rem',
                     backgroundColor: '#ffffff',
                     color: '#1a1613',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    fontSize: '0.9375rem',
+                    fontSize: '13px',
                     fontWeight: '600',
                     fontFamily: 'inherit',
                     marginTop: 'auto',
@@ -1477,7 +1500,7 @@ export default function LandingPage() {
               const isSelected = selectedPlan === 'enterprise';
               return (
                 <div style={{
-                  padding: '2rem',
+                  padding: '16px 18px',
                   border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
                   borderRadius: '0.5rem',
                   backgroundColor: '#ffffff',
@@ -1506,14 +1529,14 @@ export default function LandingPage() {
                   <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Enterprise</h3>
                   <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru echipe mari</p>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                    <span style={{ color: '#6b5d50', fontSize: '1rem' }}>/lună</span>
+                    <span style={{ fontSize: '32px', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
+                    <span style={{ color: '#6b5d50', fontSize: '13px' }}>/lună</span>
                     <div style={{ fontSize: '0.875rem', color: '#6b5d50', marginTop: '0.25rem' }}>+ €15/membru extra</div>
                   </div>
                   <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
                   <div style={{ marginBottom: '1.5rem', flex: 1 }}>
                     {['600 credite pool/lună', 'Utilizatori nelimitați', 'Tot ce e în Business', 'Pool credite partajat', 'Roluri: admin, manager, proiectant', 'Suport dedicat'].map(feature => (
-                      <div key={feature} style={{ fontSize: '0.9375rem', color: '#1a1613', marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                      <div key={feature} style={{ fontSize: '12.5px', color: '#1a1613', marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
                         <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
                         <span>{feature}</span>
                       </div>
@@ -1521,14 +1544,14 @@ export default function LandingPage() {
                   </div>
                   <button style={{
                     width: '100%',
-                    padding: '0.75rem 1.5rem',
+                    padding: '10px 16px',
                     border: '2px solid #1a1613',
                     borderRadius: '0.5rem',
                     backgroundColor: '#ffffff',
                     color: '#1a1613',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    fontSize: '0.9375rem',
+                    fontSize: '13px',
                     fontWeight: '600',
                     fontFamily: 'inherit',
                     marginTop: 'auto',
@@ -1551,19 +1574,19 @@ export default function LandingPage() {
           </div>
 
           {/* Add-ons Section */}
-          <div style={{ marginBottom: '3rem' }}>
-            <h3 style={{ textAlign: 'center', fontSize: '20px', fontWeight: '600', color: '#1a1613', marginBottom: '1.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Add-on-uri</h3>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h3 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '600', color: '#1a1613', margin: '16px 0 8px', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Add-on-uri</h3>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '1.5rem',
+              gap: '12px',
             }}>
               {/* Agent Autonom */}
               {(() => {
                 const price = 18;
                 return (
                   <div style={{
-                    padding: '1.5rem',
+                    padding: '14px',
                     border: '1px solid #d4c9bc',
                     borderRadius: '0.5rem',
                     backgroundColor: '#ffffff',
@@ -1603,7 +1626,7 @@ export default function LandingPage() {
                 const price = 18;
                 return (
                   <div style={{
-                    padding: '1.5rem',
+                    padding: '14px',
                     border: '1px solid #d4c9bc',
                     borderRadius: '0.5rem',
                     backgroundColor: '#ffffff',
@@ -1644,7 +1667,7 @@ export default function LandingPage() {
                 const price = basePrices[billingPeriod];
                 return (
                   <div style={{
-                    padding: '1.5rem',
+                    padding: '14px',
                     border: '1px solid #d4c9bc',
                     borderRadius: '0.5rem',
                     backgroundColor: '#ffffff',
