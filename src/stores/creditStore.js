@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const useCreditStore = create((set) => ({
+export const useCreditStore = create((set, get) => ({
   credits: 1000, // Default free plan credits
   creditsUsed: 0,
 
