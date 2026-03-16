@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Proiectanti from './pages/Proiectanti';
 import Beneficiari from './pages/Beneficiari';
+import Proiecte from './pages/Proiecte';
 import ProiectNou from './pages/ProiectNou';
 import SelectTipDocument from './pages/SelectTipDocument';
 import WizardDocument from './pages/WizardDocument';
@@ -108,12 +109,12 @@ export default function App() {
           }
         />
 
-        {/* Placeholder for projects list */}
+        {/* Projects Management */}
         <Route
           path="/proiecte"
           element={
             <AuthGuard>
-              <Dashboard />
+              <Proiecte />
             </AuthGuard>
           }
         />

@@ -1,36 +1,34 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { apiGet } from '../api/client';
 import Layout from '../components/Layout';
 
-const DOCUMENT_TEMPLATES = [
-  {
-    id: 1,
-    title: 'Memoriu CU',
-    description: 'Memoriu de urbanism pentru Certificat de Urbanism',
-  },
-  {
-    id: 2,
-    title: 'Aviz Oportunitate PUZ',
-    description: 'Aviz de oportunitate în Plan Urbanistic Zonal',
-  },
-  {
-    id: 3,
-    title: 'Memoriu PUD',
-    description: 'Memoriu de urbanism pentru Plan Urbanistic Detaliat',
-  },
-  {
-    id: 4,
-    title: 'Certificat Urbanism',
-    description: 'Certificat de Urbanism cu analiză detaliată',
-  },
+const ACTION_CHIPS = [
+  { id: 1, label: 'Generează document', icon: '📄', path: '/proiect/nou' },
+  { id: 2, label: 'Caută legislație', icon: '⚖️', path: '/search' },
+  { id: 3, label: 'Management proiect', icon: '📋', path: '/proiecte' },
+  { id: 4, label: 'Checklist documente', icon: '✓', path: '/checklist' },
+  { id: 5, label: 'Chat AI', icon: '🤖', path: '/chat' },
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
+  const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
+    // Set dynamic greeting based on time of day
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      setGreeting('☀️ Bună dimineața');
+    } else if (hour >= 12 && hour < 18) {
+      setGreeting('🌤️ Bună ziua');
+    } else {
+      setGreeting('🌙 Bună seara');
+    }
+
     const checkHealth = async () => {
       try {
         await apiGet('/api/health');
@@ -90,21 +88,22 @@ export default function Dashboard() {
           alignItems: 'center',
           justifyContent: 'center',
           minHeight: 'calc(100vh - 48px)',
-          textAlign: 'center',
+          paddingTop: '48px',
+          paddingBottom: '48px',
         }}
       >
-        {/* Header */}
-        <div style={{ marginBottom: '28px' }}>
+        {/* Dynamic Greeting */}
+        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
           <h1
             style={{
-              fontFamily: 'Instrument Serif, Georgia, serif',
-              fontSize: '28px',
+              fontFamily: '"DM Sans", sans-serif',
+              fontSize: '32px',
               color: '#1a1613',
               margin: '0 0 8px 0',
-              fontWeight: '400',
+              fontWeight: '600',
             }}
           >
-            Bună, <strong style={{ fontWeight: '600' }}>{user?.email?.split('@')[0]}</strong>!
+            {greeting}
           </h1>
           <p
             style={{
@@ -114,150 +113,193 @@ export default function Dashboard() {
               fontFamily: '"DM Sans", sans-serif',
             }}
           >
-            Ce document vrei să generezi?
+            {user?.email?.split('@')[0]}, ce vrei să faci azi?
           </p>
         </div>
 
-        {/* Document Templates Grid 2x2 */}
+        {/* Chat Input Bar */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
+            maxWidth: '680px',
+            width: '100%',
+            background: 'white',
+            border: '1px solid #ddd4c8',
+            borderRadius: '16px',
+            padding: '16px 20px',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
             gap: '12px',
-            maxWidth: '500px',
-            marginBottom: '32px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            transition: 'all 0.2s',
+            cursor: 'text',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#c4893a';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(196,137,58,0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#ddd4c8';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
           }}
         >
-          {DOCUMENT_TEMPLATES.map((template) => (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a938a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Descrie ce document ai nevoie sau ce operație vrei..."
+            style={{
+              flex: 1,
+              border: 'none',
+              background: 'transparent',
+              fontSize: '14px',
+              fontFamily: '"DM Sans", sans-serif',
+              color: '#1a1613',
+              outline: 'none',
+              padding: 0,
+            }}
+          />
+          <button
+            style={{
+              background: '#c4893a',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '8px 16px',
+              color: 'white',
+              fontSize: '13px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              fontFamily: '"DM Sans", sans-serif',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#b07632';
+              e.currentTarget.style.transform = 'scale(1.02)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#c4893a';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            Trimite
+          </button>
+        </div>
+
+        {/* Credit Usage Bar */}
+        <div
+          style={{
+            maxWidth: '680px',
+            width: '100%',
+            marginBottom: '32px',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '8px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '12px',
+                color: '#9a938a',
+                margin: 0,
+                fontFamily: '"DM Sans", sans-serif',
+              }}
+            >
+              Credite disponibile
+            </p>
+            <p
+              style={{
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#1a1613',
+                margin: 0,
+                fontFamily: '"DM Sans", sans-serif',
+              }}
+            >
+              850 / 1000
+            </p>
+          </div>
+          <div
+            style={{
+              width: '100%',
+              height: '6px',
+              background: '#e8e0d6',
+              borderRadius: '4px',
+              overflow: 'hidden',
+            }}
+          >
             <div
-              key={template.id}
+              style={{
+                height: '100%',
+                width: '85%',
+                background: 'linear-gradient(to right, #c4893a, #d9a855)',
+                borderRadius: '4px',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Action Chips */}
+        <div
+          style={{
+            maxWidth: '680px',
+            width: '100%',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gap: '12px',
+          }}
+        >
+          {ACTION_CHIPS.map((chip) => (
+            <button
+              key={chip.id}
+              onClick={() => navigate(chip.path)}
               style={{
                 background: 'white',
-                border: '1px solid #e8e0d6',
-                borderRadius: '10px',
-                padding: '18px',
+                border: '1px solid #ddd4c8',
+                borderRadius: '12px',
+                padding: '16px 12px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '8px',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
+                transition: 'all 0.2s',
+                fontFamily: '"DM Sans", sans-serif',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#c4893a';
-                e.currentTarget.style.boxShadow = '0 2px 12px rgba(196,137,58,0.08)';
+                e.currentTarget.style.background = '#faf8f5';
                 e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(196,137,58,0.1)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#e8e0d6';
-                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#ddd4c8';
+                e.currentTarget.style.background = 'white';
                 e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <h3
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#1a1613',
-                  margin: '0 0 6px 0',
-                  fontFamily: '"DM Sans", sans-serif',
-                }}
-              >
-                {template.title}
-              </h3>
-              <p
+              <span style={{ fontSize: '24px' }}>{chip.icon}</span>
+              <span
                 style={{
                   fontSize: '12px',
-                  color: '#9a938a',
-                  margin: 0,
-                  fontFamily: '"DM Sans", sans-serif',
+                  fontWeight: '500',
+                  color: '#1a1613',
+                  textAlign: 'center',
+                  lineHeight: '1.3',
                 }}
               >
-                {template.description}
-              </p>
-            </div>
+                {chip.label}
+              </span>
+            </button>
           ))}
-        </div>
-
-        {/* Stats Bar */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '40px',
-            textAlign: 'center',
-            marginTop: '32px',
-            paddingTop: '32px',
-            borderTop: '1px solid #ddd4c8',
-            width: '100%',
-            maxWidth: '500px',
-            justifyContent: 'center',
-          }}
-        >
-          <div>
-            <p
-              style={{
-                fontSize: '20px',
-                fontWeight: '700',
-                color: '#1a1613',
-                margin: '0 0 4px 0',
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              1000
-            </p>
-            <p
-              style={{
-                fontSize: '11px',
-                color: '#9a938a',
-                margin: 0,
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              Credite
-            </p>
-          </div>
-          <div>
-            <p
-              style={{
-                fontSize: '20px',
-                fontWeight: '700',
-                color: '#1a1613',
-                margin: '0 0 4px 0',
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              0
-            </p>
-            <p
-              style={{
-                fontSize: '11px',
-                color: '#9a938a',
-                margin: 0,
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              Documente
-            </p>
-          </div>
-          <div>
-            <p
-              style={{
-                fontSize: '20px',
-                fontWeight: '700',
-                color: '#1a1613',
-                margin: '0 0 4px 0',
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              Free
-            </p>
-            <p
-              style={{
-                fontSize: '11px',
-                color: '#9a938a',
-                margin: 0,
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              Plan
-            </p>
-          </div>
         </div>
       </div>
     </Layout>
