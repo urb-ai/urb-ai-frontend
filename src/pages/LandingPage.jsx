@@ -13,6 +13,7 @@ export default function LandingPage() {
   const [billingPeriod, setBillingPeriod] = useState('monthly'); // 'monthly', 'quarterly', 'annual'
   const [selectedPlan, setSelectedPlan] = useState(null); // Track selected plan
   const [selectedAddon, setSelectedAddon] = useState(null); // Track selected add-on
+  const [selectedFeature, setSelectedFeature] = useState(null); // Track selected feature
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const [isListening, setIsListening] = useState(false);
@@ -1325,22 +1326,33 @@ export default function LandingPage() {
             gap: '2rem',
           }}>
             {/* Feature 1 */}
+            {(() => {
+              const isSelected = selectedFeature === 'generare';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'generare' ? null : 'generare')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1350,24 +1362,37 @@ export default function LandingPage() {
                 Economisește ore întregi de muncă. Memorii tehnice, PUZ-uri, PUD-uri și Certificate de Urbanism — redactate automat cu limbaj tehnico-juridic conform Legii 350/2001. Rezultatul: documente profesionale, gata de semnat.
               </p>
             </div>
+              );
+            })()}
 
             {/* Feature 2 */}
+            {(() => {
+              const isSelected = selectedFeature === 'export';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'export' ? null : 'export')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1377,24 +1402,37 @@ export default function LandingPage() {
                 Un click, orice format. Documentele tale exportate instant în DOCX, PDF, XLS sau PPT — cu antet personalizat, logo firmă, cuprins automat și paginare. Așa cum le-ai face manual, doar că în 10 secunde.
               </p>
             </div>
+              );
+            })()}
 
             {/* Feature 3 */}
+            {(() => {
+              const isSelected = selectedFeature === 'chat';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'chat' ? null : 'chat')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1404,24 +1442,37 @@ export default function LandingPage() {
                 Consultantul tău urbanistic, disponibil 24/7. Pune orice întrebare despre legislație, zonare sau reglementări — primești răspuns instant cu sursă exactă. Alege între Claude, GPT, DeepSeek, Gemini sau LLaMA.
               </p>
             </div>
+              );
+            })()}
 
             {/* Feature 4 */}
+            {(() => {
+              const isSelected = selectedFeature === 'ocr';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'ocr' ? null : 'ocr')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1431,24 +1482,37 @@ export default function LandingPage() {
                 Nu mai transcrie manual din CF-uri. Uploadează orice document — extras carte funciară, plan cadastral, avize, PUG-uri scanate — și AI-ul extrage automat toate datele relevante cu precizie ridicată.
               </p>
             </div>
+              );
+            })()}
 
             {/* Feature 5 */}
+            {(() => {
+              const isSelected = selectedFeature === 'imagini';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'imagini' ? null : 'imagini')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1458,24 +1522,37 @@ export default function LandingPage() {
                 Impresionează clienții din prima prezentare. Randări arhitecturale, schițe conceptuale și vizualizări fotorealiste generate cu AI — perfecte pentru documentații, studii de fezabilitate și pitch-uri.
               </p>
             </div>
+              );
+            })()}
 
             {/* Feature 6 */}
+            {(() => {
+              const isSelected = selectedFeature === 'validare';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'validare' ? null : 'validare')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1485,24 +1562,37 @@ export default function LandingPage() {
                 Niciun document nu pleacă cu erori. Fiecare fișier trece prin verificare automată: completitudine secțiuni, coerență POT/CUT/Rh, referințe legislative valide. Primești un scor de calitate și lista exactă de corecturi.
               </p>
             </div>
+              );
+            })()}
 
             {/* Feature 7 */}
+            {(() => {
+              const isSelected = selectedFeature === 'management';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'management' ? null : 'management')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/><line x1="7" y1="18" x2="16" y2="18"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1512,24 +1602,37 @@ export default function LandingPage() {
                 Planifică și urmărește fiecare etapă a proiectului urbanistic cu Gantt charts interactive. De la cerere CU până la aprobare consiliu local.
               </p>
             </div>
+              );
+            })()}
 
             {/* Feature 8 */}
+            {(() => {
+              const isSelected = selectedFeature === 'solutii';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'solutii' ? null : 'solutii')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1539,24 +1642,37 @@ export default function LandingPage() {
                 Soluții personalizate pentru birouri de arhitectură, dezvoltatori imobiliari și autorități locale. Configurare per nevoie specifică.
               </p>
             </div>
+              );
+            })()}
 
             {/* Feature 9 */}
+            {(() => {
+              const isSelected = selectedFeature === 'arhiva';
+              return (
             <div style={{
               padding: '16px',
-              border: '1px solid var(--border)',
+              border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '0.5rem',
               backgroundColor: 'var(--surface)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.25s ease',
               cursor: 'pointer',
+              boxShadow: isSelected ? '0 8px 30px rgba(37,99,235,0.15)' : '0 1px 2px rgba(0,0,0,0.04)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.border = '2px solid var(--accent)';
+                e.currentTarget.style.boxShadow = '0 8px 30px rgba(37,99,235,0.15)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '0.8';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isSelected) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.border = '1px solid var(--border)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.04)';
+              }
             }}
+            onClick={() => setSelectedFeature(selectedFeature === 'arhiva' ? null : 'arhiva')}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
               <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
@@ -1566,6 +1682,8 @@ export default function LandingPage() {
                 Toate documentele, avizele și corespondența organizate automat per proiect. Căutare instant în orice document cu AI.
               </p>
             </div>
+              );
+            })()}
           </div>
         </div>
       </section>
