@@ -19,6 +19,10 @@ export default function LandingPage() {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('landingTheme') || 'arctic');
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const themeMenuRef = useRef(null);
+  const [currentLanguage, setCurrentLanguage] = useState(localStorage.getItem('language') || 'ro');
+  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+  const languageMenuRef = useRef(null);
+  const [toastMessage, setToastMessage] = useState('');
 
   const themes = {
     arctic: {
@@ -148,6 +152,15 @@ export default function LandingPage() {
     setCurrentTheme(theme);
   };
 
+  const changeLanguage = (lang) => {
+    localStorage.setItem('language', lang);
+    setCurrentLanguage(lang);
+    setLanguageMenuOpen(false);
+    const langName = lang === 'ro' ? 'Română' : 'English';
+    setToastMessage(`Limba schimbată în ${langName}`);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
   useEffect(() => {
     const savedTheme = localStorage.getItem('landingTheme') || 'arctic';
     applyTheme(savedTheme);
@@ -165,6 +178,19 @@ export default function LandingPage() {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [themeMenuOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target)) {
+        setLanguageMenuOpen(false);
+      }
+    };
+
+    if (languageMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [languageMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -328,6 +354,15 @@ export default function LandingPage() {
           }
           100% {
             box-shadow: 0 0 0 0 rgba(184, 50, 50, 0);
+          }
+        }
+
+        @keyframes fadeInOut {
+          0%, 100% {
+            opacity: 0;
+          }
+          10%, 90% {
+            opacity: 1;
           }
         }
 
@@ -588,26 +623,91 @@ export default function LandingPage() {
             )}
 
             {/* Language Button */}
-            <button
-              onClick={(e) => e.preventDefault()}
-              style={{
-                fontSize: '18px',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'opacity 0.2s ease',
-                opacity: 1,
-              }}
-              onMouseEnter={(e) => e.target.style.opacity = '0.7'}
-              onMouseLeave={(e) => e.target.style.opacity = '1'}
-              title="Language"
-            >
-              🌐
-            </button>
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setLanguageMenuOpen(!languageMenuOpen)}
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'opacity 0.2s ease',
+                  padding: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = '0.7';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                }}
+                title="Schimbare limbă"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              </button>
+
+              {/* Language Dropdown */}
+              {languageMenuOpen && (
+                <div ref={languageMenuRef} style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: '8px',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+                  padding: '4px',
+                  minWidth: '160px',
+                  zIndex: 1000,
+                }}>
+                  {[
+                    { key: 'ro', flag: '🇷🇴', label: 'Română' },
+                    { key: 'en', flag: '🇬🇧', label: 'English' },
+                  ].map(lang => (
+                    <button
+                      key={lang.key}
+                      onClick={() => changeLanguage(lang.key)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: 'transparent',
+                        cursor: 'pointer',
+                        fontSize: '13px',
+                        color: "var(--text2)",
+                        fontFamily: '"DM Sans", system-ui, sans-serif',
+                        transition: 'background 0.2s',
+                        width: '100%',
+                        justifyContent: 'flex-start',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "var(--bg-alt)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      <span>{lang.flag}</span>
+                      <span style={{ flex: 1 }}>{lang.label}</span>
+                      {currentLanguage === lang.key && (
+                        <span style={{ fontSize: '14px', color: "var(--accent)" }}>✓</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Sign In */}
             <button
@@ -2771,6 +2871,26 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Toast Message */}
+      {toastMessage && (
+        <div style={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: "var(--text)",
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 2000,
+          animation: 'fadeInOut 3s ease-in-out',
+        }}>
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }
