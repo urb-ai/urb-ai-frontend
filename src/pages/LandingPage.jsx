@@ -14,6 +14,157 @@ export default function LandingPage() {
   const [selectedPlan, setSelectedPlan] = useState(null); // Track selected plan
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const [isListening, setIsListening] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('landingTheme') || 'arctic');
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const themeMenuRef = useRef(null);
+
+  const themes = {
+    arctic: {
+      '--bg': '#ffffff',
+      '--bg-alt': '#f5f6f8',
+      '--text': '#111827',
+      '--text-accent': '#2563eb',
+      '--text2': '#4b5563',
+      '--text3': '#9ca3af',
+      '--accent': '#2563eb',
+      '--border': '#d1d5db',
+      '--border-hover': '#2563eb',
+      '--btn-primary-bg': '#2563eb',
+      '--btn-primary-text': '#ffffff',
+      '--btn-secondary-bg': '#ffffff',
+      '--btn-secondary-border': '#d1d5db',
+      '--btn-secondary-text': '#111827',
+      '--btn-signup-bg': '#111827',
+      '--btn-signup-text': '#ffffff',
+      '--chat-bg': '#f5f6f8',
+      '--chat-border': '#d1d5db',
+      '--chat-send-bg': '#2563eb',
+      '--navbar-bg': '#ffffff',
+      '--navbar-border': '#e5e7eb',
+      '--stats-color': '#2563eb',
+      '--checkmark-color': '#2563eb',
+      '--footer-bg': '#111827',
+      '--footer-text': '#9ca3af',
+      '--footer-text-main': '#ffffff',
+      '--surface': '#ffffff',
+    },
+    midnight: {
+      '--bg': '#0f1219',
+      '--bg-alt': '#171c28',
+      '--text': '#f0eef5',
+      '--text-accent': '#a78bfa',
+      '--text2': '#b0adc0',
+      '--text3': '#706d80',
+      '--accent': '#a78bfa',
+      '--border': '#2a2d3e',
+      '--border-hover': '#a78bfa',
+      '--btn-primary-bg': '#a78bfa',
+      '--btn-primary-text': '#0f1219',
+      '--btn-secondary-bg': 'transparent',
+      '--btn-secondary-border': '#a78bfa',
+      '--btn-secondary-text': '#a78bfa',
+      '--btn-signup-bg': '#a78bfa',
+      '--btn-signup-text': '#0f1219',
+      '--chat-bg': '#171c28',
+      '--chat-border': '#2a2d3e',
+      '--chat-send-bg': '#a78bfa',
+      '--navbar-bg': '#0f1219',
+      '--navbar-border': '#2a2d3e',
+      '--stats-color': '#a78bfa',
+      '--checkmark-color': '#a78bfa',
+      '--footer-bg': '#080a10',
+      '--footer-text': '#706d80',
+      '--footer-text-main': '#b0adc0',
+      '--surface': 'rgba(255,255,255,0.04)',
+    },
+    forest: {
+      '--bg': '#f4f1ec',
+      '--bg-alt': '#ebe7e0',
+      '--text': '#1a1f16',
+      '--text-accent': '#16794e',
+      '--text2': '#555a4f',
+      '--text3': '#8a8e84',
+      '--accent': '#16794e',
+      '--border': '#c9c4b8',
+      '--border-hover': '#16794e',
+      '--btn-primary-bg': '#16794e',
+      '--btn-primary-text': '#ffffff',
+      '--btn-secondary-bg': '#ffffff',
+      '--btn-secondary-border': '#c9c4b8',
+      '--btn-secondary-text': '#1a1f16',
+      '--btn-signup-bg': '#1a1f16',
+      '--btn-signup-text': '#ffffff',
+      '--chat-bg': '#ffffff',
+      '--chat-border': '#c9c4b8',
+      '--chat-send-bg': '#16794e',
+      '--navbar-bg': '#f4f1ec',
+      '--navbar-border': '#d5d0c6',
+      '--stats-color': '#16794e',
+      '--checkmark-color': '#16794e',
+      '--footer-bg': '#1a1f16',
+      '--footer-text': '#8a8e84',
+      '--footer-text-main': '#d5d0c6',
+      '--surface': '#ffffff',
+    },
+    charcoal: {
+      '--bg': '#1c1917',
+      '--bg-alt': '#262220',
+      '--text': '#f5f0eb',
+      '--text-accent': '#d4a853',
+      '--text2': '#b8b0a5',
+      '--text3': '#7a7268',
+      '--accent': '#d4a853',
+      '--border': '#3a3430',
+      '--border-hover': '#d4a853',
+      '--btn-primary-bg': '#d4a853',
+      '--btn-primary-text': '#1c1917',
+      '--btn-secondary-bg': 'transparent',
+      '--btn-secondary-border': '#d4a853',
+      '--btn-secondary-text': '#d4a853',
+      '--btn-signup-bg': '#d4a853',
+      '--btn-signup-text': '#1c1917',
+      '--chat-bg': '#262220',
+      '--chat-border': '#3a3430',
+      '--chat-send-bg': '#d4a853',
+      '--navbar-bg': '#1c1917',
+      '--navbar-border': '#3a3430',
+      '--stats-color': '#d4a853',
+      '--checkmark-color': '#d4a853',
+      '--footer-bg': '#0f0d0c',
+      '--footer-text': '#7a7268',
+      '--footer-text-main': '#b8b0a5',
+      '--surface': 'rgba(255,255,255,0.04)',
+    },
+  };
+
+  const applyTheme = (theme) => {
+    const t = themes[theme];
+    Object.entries(t).forEach(([key, val]) => {
+      document.documentElement.style.setProperty(key, val);
+    });
+    localStorage.setItem('landingTheme', theme);
+    setCurrentTheme(theme);
+  };
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('landingTheme') || 'arctic';
+    applyTheme(savedTheme);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
+        setThemeMenuOpen(false);
+      }
+    };
+
+    if (themeMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [themeMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,6 +239,41 @@ export default function LandingPage() {
   // Calcul ore economisitte (documente × 2.3)
   const hoursEconomized = Math.round(docCount * 2.3);
 
+  // Web Speech API for voice-to-text dictation
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Browserul tău nu suportă dictarea. Folosește Chrome, Edge sau Safari.');
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ro-RO';
+    recognition.interimResults = true;
+    recognition.continuous = false;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join('');
+      setChatInput(transcript);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -103,10 +289,12 @@ export default function LandingPage() {
   }, [menuOpen]);
 
   return (
-    <div style={{ backgroundColor: '#f5f0e8', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>
+    <div style={{ backgroundColor: 'var(--bg)', color: 'var(--text)', fontFamily: '"DM Sans", system-ui, sans-serif', transition: 'background-color 0.3s, color 0.3s' }}>
       <style>{`
         .pricing-grid {
           display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          align-items: stretch;
           gap: 12px;
           margin-bottom: 2rem;
         }
@@ -130,6 +318,22 @@ export default function LandingPage() {
             grid-template-columns: 1fr;
           }
         }
+
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(184, 50, 50, 0.7);
+          }
+          70% {
+            box-shadow: 0 0 0 6px rgba(184, 50, 50, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(184, 50, 50, 0);
+          }
+        }
+
+        .mic-listening {
+          animation: pulse 1.5s infinite;
+        }
       `}</style>
       {/* NAVBAR */}
       <nav
@@ -139,8 +343,8 @@ export default function LandingPage() {
           width: '100%',
           height: '56px',
           zIndex: 100,
-          backgroundColor: '#ffffff',
-          borderBottom: '1px solid #e8e0d6',
+          backgroundColor: 'var(--surface)',
+          borderBottom: '1px solid var(--navbar-border)',
           transition: 'all 0.3s ease',
         }}
       >
@@ -169,7 +373,7 @@ export default function LandingPage() {
             <span style={{
               fontSize: '16px',
               fontWeight: '600',
-              color: '#1a1613',
+              color: "var(--text)",
               fontFamily: 'inherit',
             }}>
               UrbAI
@@ -189,15 +393,15 @@ export default function LandingPage() {
               onClick={(e) => e.preventDefault()}
               style={{
                 fontSize: '14px',
-                color: '#4a4a4a',
+                color: 'var(--text2)',
                 textDecoration: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.2s ease',
                 fontWeight: '400',
                 fontFamily: 'inherit',
               }}
-              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
-              onMouseLeave={(e) => e.target.style.color = '#4a4a4a'}
+              onMouseEnter={(e) => e.target.style.color = "var(--text)"}
+              onMouseLeave={(e) => e.target.style.color = 'var(--text2)'}
             >
               Produs
             </a>
@@ -206,15 +410,15 @@ export default function LandingPage() {
               onClick={(e) => e.preventDefault()}
               style={{
                 fontSize: '14px',
-                color: '#4a4a4a',
+                color: 'var(--text2)',
                 textDecoration: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.2s ease',
                 fontWeight: '400',
                 fontFamily: 'inherit',
               }}
-              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
-              onMouseLeave={(e) => e.target.style.color = '#4a4a4a'}
+              onMouseEnter={(e) => e.target.style.color = "var(--text)"}
+              onMouseLeave={(e) => e.target.style.color = 'var(--text2)'}
             >
               Documentație
             </a>
@@ -223,15 +427,15 @@ export default function LandingPage() {
               onClick={(e) => e.preventDefault()}
               style={{
                 fontSize: '14px',
-                color: '#4a4a4a',
+                color: 'var(--text2)',
                 textDecoration: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.2s ease',
                 fontWeight: '400',
                 fontFamily: 'inherit',
               }}
-              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
-              onMouseLeave={(e) => e.target.style.color = '#4a4a4a'}
+              onMouseEnter={(e) => e.target.style.color = "var(--text)"}
+              onMouseLeave={(e) => e.target.style.color = 'var(--text2)'}
             >
               Blog
             </a>
@@ -243,15 +447,15 @@ export default function LandingPage() {
               }}
               style={{
                 fontSize: '14px',
-                color: '#4a4a4a',
+                color: 'var(--text2)',
                 textDecoration: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.2s ease',
                 fontWeight: '400',
                 fontFamily: 'inherit',
               }}
-              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
-              onMouseLeave={(e) => e.target.style.color = '#4a4a4a'}
+              onMouseEnter={(e) => e.target.style.color = "var(--text)"}
+              onMouseLeave={(e) => e.target.style.color = 'var(--text2)'}
             >
               Prețuri
             </a>
@@ -260,15 +464,15 @@ export default function LandingPage() {
               onClick={(e) => e.preventDefault()}
               style={{
                 fontSize: '14px',
-                color: '#4a4a4a',
+                color: 'var(--text2)',
                 textDecoration: 'none',
                 cursor: 'pointer',
                 transition: 'color 0.2s ease',
                 fontWeight: '400',
                 fontFamily: 'inherit',
               }}
-              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
-              onMouseLeave={(e) => e.target.style.color = '#4a4a4a'}
+              onMouseEnter={(e) => e.target.style.color = "var(--text)"}
+              onMouseLeave={(e) => e.target.style.color = 'var(--text2)'}
             >
               Despre
             </a>
@@ -309,7 +513,7 @@ export default function LandingPage() {
               onClick={() => navigate('/login')}
               style={{
                 fontSize: '14px',
-                color: '#4a4a4a',
+                color: 'var(--text2)',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -318,8 +522,8 @@ export default function LandingPage() {
                 fontFamily: 'inherit',
                 transition: 'color 0.2s ease',
               }}
-              onMouseEnter={(e) => e.target.style.color = '#1a1613'}
-              onMouseLeave={(e) => e.target.style.color = '#4a4a4a'}
+              onMouseEnter={(e) => e.target.style.color = "var(--text)"}
+              onMouseLeave={(e) => e.target.style.color = 'var(--text2)'}
             >
               Sign In
             </button>
@@ -329,8 +533,8 @@ export default function LandingPage() {
               onClick={() => navigate('/login')}
               style={{
                 fontSize: '13px',
-                color: '#ffffff',
-                backgroundColor: '#1a1613',
+                color: 'var(--btn-signup-text)',
+                backgroundColor: 'var(--btn-signup-bg)',
                 border: 'none',
                 borderRadius: '6px',
                 padding: '8px 18px',
@@ -340,10 +544,10 @@ export default function LandingPage() {
                 fontFamily: 'inherit',
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#2a2623';
+                e.target.style.opacity = '0.8';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#1a1613';
+                e.target.style.opacity = '1';
               }}
             >
               Sign Up
@@ -362,22 +566,22 @@ export default function LandingPage() {
           top: '56px',
           width: '100%',
           zIndex: 49,
-          backgroundColor: '#ebe3d9',
+          backgroundColor: "var(--bg-alt)",
           padding: '0.75rem 1.5rem',
           textAlign: 'center',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#e3dbd0';
+          e.currentTarget.style.opacity = '0.8';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = '#ebe3d9';
+          e.currentTarget.style.opacity = '1';
         }}
       >
         <p style={{
           fontSize: '13px',
-          color: '#6b5d50',
+          color: "var(--text2)",
           margin: '0',
           fontWeight: '400',
         }}>
@@ -406,7 +610,7 @@ export default function LandingPage() {
           <h1
             style={{
               fontSize: 'clamp(2rem, 8vw, 3.5rem)',
-              fontFamily: 'Georgia, serif',
+              fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
               fontWeight: '400',
               lineHeight: '1.2',
               marginBottom: '1.5rem',
@@ -415,7 +619,7 @@ export default function LandingPage() {
             }}
           >
             Documente generate cu{' '}
-            <span style={{ color: '#c4893a', fontStyle: 'italic' }}>inteligență artificială</span>
+            <span style={{ color: "var(--accent)", fontWeight: 700, fontStyle: 'normal' }}>inteligență artificială</span>
             {' '}în domeniul proiectării
           </h1>
 
@@ -423,7 +627,7 @@ export default function LandingPage() {
           <p
             style={{
               fontSize: '1.125rem',
-              color: '#6b5d50',
+              color: "var(--text2)",
               lineHeight: '1.6',
               marginBottom: '2.5rem',
               fontWeight: '400',
@@ -444,8 +648,8 @@ export default function LandingPage() {
               onClick={handleGetStarted}
               style={{
                 fontSize: '1rem',
-                backgroundColor: '#c4893a',
-                color: '#ffffff',
+                backgroundColor: "var(--accent)",
+                color: 'var(--btn-primary-text)',
                 border: 'none',
                 borderRadius: '0.375rem',
                 padding: '0.75rem 1.75rem',
@@ -454,11 +658,11 @@ export default function LandingPage() {
                 fontWeight: '500',
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#b07a2f';
+                e.target.style.backgroundColor = "var(--accent-hover)";
                 e.target.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#c4893a';
+                e.target.style.backgroundColor = "var(--accent)";
                 e.target.style.transform = 'translateY(0)';
               }}
             >
@@ -472,8 +676,9 @@ export default function LandingPage() {
               }}
               style={{
                 fontSize: '1rem',
-                color: '#1a1613',
-                border: '1px solid #d4c9bc',
+                color: 'var(--btn-secondary-text)',
+                backgroundColor: 'var(--btn-secondary-bg)',
+                border: '2px solid var(--btn-secondary-border)',
                 borderRadius: '0.375rem',
                 padding: '0.75rem 1.75rem',
                 cursor: 'pointer',
@@ -482,10 +687,10 @@ export default function LandingPage() {
                 display: 'inline-block',
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.02)';
+                e.target.style.opacity = '0.8';
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
+                e.target.style.opacity = '1';
               }}
             >
               Afla mai mult
@@ -496,7 +701,7 @@ export default function LandingPage() {
           <p
             style={{
               fontSize: '0.875rem',
-              color: '#6b5d50',
+              color: "var(--text2)",
               display: 'flex',
               justifyContent: 'center',
               gap: '1.5rem',
@@ -510,8 +715,8 @@ export default function LandingPage() {
           {/* Chat Bar */}
           <div ref={menuRef} style={{ marginTop: '40px', maxWidth: '600px', margin: '40px auto 0', width: '100%', position: 'relative' }}>
             <div style={{
-              backgroundColor: '#ffffff',
-              border: '1px solid #ddd4c8',
+              backgroundColor: 'var(--chat-bg)',
+              border: '1px solid var(--chat-border)',
               borderRadius: '24px',
               padding: '14px 18px 14px 22px',
               display: 'flex',
@@ -538,18 +743,20 @@ export default function LandingPage() {
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.opacity = '1';
+                e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'var(--surface)';
               }}
               onClick={() => setMenuOpen(!menuOpen)}
               title="Adaugă"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </button>
 
               {/* Input */}
               <input
                 type="text"
                 placeholder="Întreabă orice despre urbanism, legislație, PUZ, CU..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     alert('Creează un cont gratuit pentru a folosi Chat AI');
@@ -562,10 +769,10 @@ export default function LandingPage() {
                   outline: 'none',
                   fontSize: '14px',
                   fontFamily: '"DM Sans", system-ui, sans-serif',
-                  color: '#1a1613',
+                  color: "var(--text)",
                   backgroundColor: 'transparent',
                   '::placeholder': {
-                    color: '#9a938a',
+                    color: "var(--text3)",
                   }
                 }}
               />
@@ -573,7 +780,7 @@ export default function LandingPage() {
               {/* UrbAI Chat Text */}
               <span style={{
                 fontSize: '11px',
-                color: '#9a938a',
+                color: "var(--text3)",
                 marginRight: '8px',
                 whiteSpace: 'nowrap',
               }}>
@@ -581,31 +788,36 @@ export default function LandingPage() {
               </span>
 
               {/* Microphone Button */}
-              <button style={{
-                width: '28px',
-                height: '28px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 0,
-                flexShrink: 0,
-                transition: 'opacity 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '0.6';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '1';
-              }}
-              onClick={() => {
-                alert('Funcția de dictare va fi disponibilă în curând');
-              }}
-              title="Dictare"
+              <button
+                className={isListening ? 'mic-listening' : ''}
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  backgroundColor: isListening ? 'var(--accent)' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
+                  flexShrink: 0,
+                  transition: 'background-color 0.2s ease',
+                  borderRadius: '4px',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isListening) {
+                    e.currentTarget.style.opacity = '0.6';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isListening) {
+                    e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'var(--surface)';
+                  }
+                }}
+                onClick={() => startListening()}
+                title={isListening ? 'Ascultând...' : 'Dictare voice-to-text'}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isListening ? 'var(--btn-primary-text)' : "var(--text)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
               </button>
 
               {/* Send Button */}
@@ -618,7 +830,7 @@ export default function LandingPage() {
                   width: '32px',
                   height: '32px',
                   borderRadius: '50%',
-                  backgroundColor: '#1a1613',
+                  backgroundColor: 'var(--chat-send-bg)',
                   border: 'none',
                   display: 'flex',
                   alignItems: 'center',
@@ -628,16 +840,16 @@ export default function LandingPage() {
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#2a2623';
+                  e.currentTarget.style.opacity = '0.8';
                   e.currentTarget.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#1a1613';
+                  e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'var(--surface)';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
                 {/* Arrow Up SVG */}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--btn-primary-text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="19" x2="12" y2="5"></line>
                   <polyline points="5 12 12 5 19 12"></polyline>
                 </svg>
@@ -651,8 +863,8 @@ export default function LandingPage() {
                 bottom: '100%',
                 left: 0,
                 marginBottom: '8px',
-                background: '#ffffff',
-                border: '1px solid #e8e0d6',
+                background: 'var(--surface)',
+                border: '1px solid var(--navbar-border)',
                 borderRadius: '10px',
                 boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
                 padding: '4px',
@@ -671,10 +883,10 @@ export default function LandingPage() {
                   fontFamily: '"DM Sans", system-ui, sans-serif',
                   fontSize: '13px',
                   fontWeight: '400',
-                  color: '#1a1613',
+                  color: "var(--text)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f5f0e8';
+                  e.currentTarget.style.opacity = '0.8';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
@@ -684,7 +896,7 @@ export default function LandingPage() {
                   alert('Creează un cont gratuit pentru acces');
                 }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5c5466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                   Search Web
                 </div>
 
@@ -700,10 +912,10 @@ export default function LandingPage() {
                   fontFamily: '"DM Sans", system-ui, sans-serif',
                   fontSize: '13px',
                   fontWeight: '400',
-                  color: '#1a1613',
+                  color: "var(--text)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f5f0e8';
+                  e.currentTarget.style.opacity = '0.8';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
@@ -713,7 +925,7 @@ export default function LandingPage() {
                   alert('Creează un cont gratuit pentru acces');
                 }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5c5466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
                   Research
                 </div>
 
@@ -729,10 +941,10 @@ export default function LandingPage() {
                   fontFamily: '"DM Sans", system-ui, sans-serif',
                   fontSize: '13px',
                   fontWeight: '400',
-                  color: '#1a1613',
+                  color: "var(--text)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f5f0e8';
+                  e.currentTarget.style.opacity = '0.8';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
@@ -742,7 +954,7 @@ export default function LandingPage() {
                   alert('Creează un cont gratuit pentru acces');
                 }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5c5466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                   Add a Photo
                 </div>
               </div>
@@ -751,7 +963,7 @@ export default function LandingPage() {
             {/* Chat Description */}
             <p style={{
               fontSize: '12px',
-              color: '#9a938a',
+              color: "var(--text3)",
               marginTop: '10px',
               textAlign: 'center',
             }}>
@@ -769,9 +981,9 @@ export default function LandingPage() {
           paddingBottom: '3rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
-          backgroundColor: '#ffffff',
-          borderTop: '1px solid #d4c9bc',
-          borderBottom: '1px solid #d4c9bc',
+          backgroundColor: 'var(--surface)',
+          borderTop: '1px solid var(--border)',
+          borderBottom: '1px solid var(--border)',
         }}
       >
         <div style={{
@@ -790,7 +1002,7 @@ export default function LandingPage() {
               <div style={{
                 fontSize: '2.75rem',
                 fontWeight: '700',
-                color: '#c4893a',
+                color: "var(--accent)",
                 marginBottom: '0.5rem',
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
               }}>
@@ -801,7 +1013,7 @@ export default function LandingPage() {
                 fontWeight: '600',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                color: '#6b5d50',
+                color: "var(--text2)",
               }}>
                 Documente Generate
               </div>
@@ -812,7 +1024,7 @@ export default function LandingPage() {
               <div style={{
                 fontSize: '2.75rem',
                 fontWeight: '700',
-                color: '#c4893a',
+                color: "var(--accent)",
                 marginBottom: '0.5rem',
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
               }}>
@@ -823,7 +1035,7 @@ export default function LandingPage() {
                 fontWeight: '600',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                color: '#6b5d50',
+                color: "var(--text2)",
               }}>
                 Ore Economisitte
               </div>
@@ -834,7 +1046,7 @@ export default function LandingPage() {
               <div style={{
                 fontSize: '2.75rem',
                 fontWeight: '700',
-                color: '#c4893a',
+                color: "var(--accent)",
                 marginBottom: '0.5rem',
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
               }}>
@@ -845,7 +1057,7 @@ export default function LandingPage() {
                 fontWeight: '600',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                color: '#6b5d50',
+                color: "var(--text2)",
               }}>
                 Rată de Satisfacție
               </div>
@@ -856,11 +1068,11 @@ export default function LandingPage() {
           <div style={{
             textAlign: 'center',
             paddingTop: '1.5rem',
-            borderTop: '1px solid #e8ddd0',
+            borderTop: '1px solid var(--border)',
           }}>
             <p style={{
               fontSize: '0.9375rem',
-              color: '#6b5d50',
+              color: "var(--text2)",
               fontStyle: 'italic',
               lineHeight: '1.6',
               maxWidth: '600px',
@@ -880,7 +1092,7 @@ export default function LandingPage() {
           paddingBottom: '4rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
-          backgroundColor: '#ffffff',
+          backgroundColor: 'var(--surface)',
         }}
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -889,14 +1101,14 @@ export default function LandingPage() {
             <h2
               style={{
                 fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
-                fontFamily: 'Georgia, serif',
+                fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
                 fontWeight: '400',
                 marginBottom: '1rem',
               }}
             >
               Funcționalități puternice
             </h2>
-            <p style={{ color: '#6b5d50', fontSize: '1.0625rem' }}>
+            <p style={{ color: "var(--text2)", fontSize: '1.0625rem' }}>
               Totul ce ai nevoie pentru a crea documente urbanistice profesionale
             </p>
           </div>
@@ -910,26 +1122,26 @@ export default function LandingPage() {
             {/* Feature 1 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Generare Documente Complexe
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Economisește ore întregi de muncă. Memorii tehnice, PUZ-uri, PUD-uri și Certificate de Urbanism — redactate automat cu limbaj tehnico-juridic conform Legii 350/2001. Rezultatul: documente profesionale, gata de semnat.
               </p>
             </div>
@@ -937,26 +1149,26 @@ export default function LandingPage() {
             {/* Feature 2 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Export Multi-Format
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Un click, orice format. Documentele tale exportate instant în DOCX, PDF, XLS sau PPT — cu antet personalizat, logo firmă, cuprins automat și paginare. Așa cum le-ai face manual, doar că în 10 secunde.
               </p>
             </div>
@@ -964,26 +1176,26 @@ export default function LandingPage() {
             {/* Feature 3 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Chat AI Multi-Model
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Consultantul tău urbanistic, disponibil 24/7. Pune orice întrebare despre legislație, zonare sau reglementări — primești răspuns instant cu sursă exactă. Alege între Claude, GPT, DeepSeek, Gemini sau LLaMA.
               </p>
             </div>
@@ -991,26 +1203,26 @@ export default function LandingPage() {
             {/* Feature 4 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Extragere Automată OCR
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Nu mai transcrie manual din CF-uri. Uploadează orice document — extras carte funciară, plan cadastral, avize, PUG-uri scanate — și AI-ul extrage automat toate datele relevante cu precizie ridicată.
               </p>
             </div>
@@ -1018,26 +1230,26 @@ export default function LandingPage() {
             {/* Feature 5 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Generare Imagini & Randări
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Impresionează clienții din prima prezentare. Randări arhitecturale, schițe conceptuale și vizualizări fotorealiste generate cu AI — perfecte pentru documentații, studii de fezabilitate și pitch-uri.
               </p>
             </div>
@@ -1045,26 +1257,26 @@ export default function LandingPage() {
             {/* Feature 6 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Validare Automată
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Niciun document nu pleacă cu erori. Fiecare fișier trece prin verificare automată: completitudine secțiuni, coerență POT/CUT/Rh, referințe legislative valide. Primești un scor de calitate și lista exactă de corecturi.
               </p>
             </div>
@@ -1072,26 +1284,26 @@ export default function LandingPage() {
             {/* Feature 7 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/><line x1="7" y1="18" x2="16" y2="18"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/><line x1="7" y1="18" x2="16" y2="18"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Management Proiecte
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Planifică și urmărește fiecare etapă a proiectului urbanistic cu Gantt charts interactive. De la cerere CU până la aprobare consiliu local.
               </p>
             </div>
@@ -1099,26 +1311,26 @@ export default function LandingPage() {
             {/* Feature 8 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Soluții Dedicate
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Soluții personalizate pentru birouri de arhitectură, dezvoltatori imobiliari și autorități locale. Configurare per nevoie specifică.
               </p>
             </div>
@@ -1126,26 +1338,26 @@ export default function LandingPage() {
             {/* Feature 9 */}
             <div style={{
               padding: '16px',
-              border: '1px solid #d4c9bc',
+              border: '1px solid var(--border)',
               borderRadius: '0.5rem',
-              backgroundColor: '#f5f0e8',
+              backgroundColor: 'var(--surface)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#f5f0e8';
+              e.currentTarget.style.opacity = '0.8';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
-              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: '#1a1613' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '6px' }}><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+              <h3 style={{ fontSize: '15px', fontWeight: '600', marginBottom: '0.5rem', fontFamily: "'DM Sans', sans-serif", color: "var(--text)" }}>
                 Arhivă Digitală Inteligentă
               </h3>
-              <p style={{ color: '#5c5466', fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
+              <p style={{ color: "var(--text2)", fontSize: '13px', lineHeight: '1.6', marginTop: '4px', fontFamily: "'DM Sans', sans-serif", fontWeight: '400' }}>
                 Toate documentele, avizele și corespondența organizate automat per proiect. Căutare instant în orice document cu AI.
               </p>
             </div>
@@ -1161,7 +1373,7 @@ export default function LandingPage() {
           paddingBottom: '2rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
-          backgroundColor: '#ebe3d9',
+          backgroundColor: "var(--bg-alt)",
         }}
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -1177,8 +1389,8 @@ export default function LandingPage() {
             >
               Prețuri simple, fără surprize
             </h2>
-            <p style={{ color: '#6b5d50', fontSize: '15px', marginBottom: '0px' }}>
-              Toate prețurile includ TVA 19%. Creditele se resetează lunar.
+            <p style={{ color: "var(--text2)", fontSize: '15px', marginBottom: '0px' }}>
+              Toate prețurile includ TVA 21%. Creditele se resetează lunar.
             </p>
 
             {/* Billing Period Toggle */}
@@ -1194,9 +1406,9 @@ export default function LandingPage() {
                   style={{
                     padding: '8px 20px',
                     borderRadius: '0.375rem',
-                    border: billingPeriod === period.value ? 'none' : '1px solid #d4c9bc',
-                    backgroundColor: billingPeriod === period.value ? '#c4893a' : '#ffffff',
-                    color: billingPeriod === period.value ? '#ffffff' : '#1a1613',
+                    border: billingPeriod === period.value ? 'none' : '1px solid var(--border)',
+                    backgroundColor: billingPeriod === period.value ? "var(--accent)" : 'var(--surface)',
+                    color: billingPeriod === period.value ? 'var(--btn-primary-text)' : "var(--text)",
                     cursor: 'pointer',
                     fontSize: '14px',
                     fontWeight: '500',
@@ -1205,12 +1417,12 @@ export default function LandingPage() {
                   }}
                   onMouseEnter={(e) => {
                     if (billingPeriod !== period.value) {
-                      e.target.style.borderColor = '#c4893a';
+                      e.target.style.borderColor = "var(--accent)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (billingPeriod !== period.value) {
-                      e.target.style.borderColor = '#d4c9bc';
+                      e.target.style.borderColor = 'var(--border)';
                     }
                   }}
                 >
@@ -1230,12 +1442,12 @@ export default function LandingPage() {
               const isSelected = selectedPlan === 'free';
               return (
                 <div style={{
-                  padding: '16px 18px',
-                  border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
+                  padding: '20px',
+                  border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
                   borderRadius: '0.5rem',
-                  backgroundColor: '#ffffff',
+                  backgroundColor: 'var(--surface)',
                   transition: 'all 0.25s ease',
-                  boxShadow: isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  boxShadow: isSelected ? '0 8px 30px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
                   display: 'flex',
                   flexDirection: 'column',
                   height: '100%',
@@ -1243,30 +1455,30 @@ export default function LandingPage() {
                 onMouseEnter={(e) => {
                   if (!isSelected) {
                     e.currentTarget.style.transform = 'scale(1.03)';
-                    e.currentTarget.style.border = '2px solid #c4893a';
-                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(196,137,58,0.15)';
+                    e.currentTarget.style.border = '2px solid var(--accent)';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isSelected) {
                     e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.border = '1px solid #d4c9bc';
+                    e.currentTarget.style.border = '1px solid var(--border)';
                     e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
                   }
                 }}
                 onClick={() => setSelectedPlan('free')}
                 >
-                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Free</h3>
-                  <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru a testa platforma</p>
+                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: "var(--text)", fontFamily: '"DM Sans", system-ui, sans-serif' }}>Free</h3>
+                  <p style={{ color: "var(--text2)", fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru a testa platforma</p>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '32px', fontWeight: '700', color: '#1a1613' }}>€0</span>
-                    <span style={{ color: '#6b5d50', fontSize: '13px' }}>/lună</span>
+                    <span style={{ fontSize: '32px', fontWeight: '700', color: "var(--text)" }}>€0</span>
+                    <span style={{ color: "var(--text2)", fontSize: '13px' }}>/lună</span>
                   </div>
-                  <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
+                  <hr style={{ border: 'none', borderTop: '1px solid var(--border)', marginBottom: '1rem' }} />
                   <div style={{ marginBottom: '1.5rem', flex: 1 }}>
                     {['20 credite (one-time)', '1-2 documente demo', 'Export cu watermark', 'Suport email'].map(feature => (
-                      <div key={feature} style={{ fontSize: '12.5px', color: '#1a1613', marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
+                      <div key={feature} style={{ fontSize: '12.5px', color: "var(--text)", marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+                        <span style={{ color: "var(--accent)", fontWeight: 'bold' }}>✓</span>
                         <span>{feature}</span>
                       </div>
                     ))}
@@ -1274,10 +1486,10 @@ export default function LandingPage() {
                   <button style={{
                     width: '100%',
                     padding: '10px 16px',
-                    border: '2px solid #1a1613',
+                    border: '2px solid var(--text)',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#ffffff',
-                    color: '#1a1613',
+                    backgroundColor: 'var(--surface)',
+                    color: "var(--text)",
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     fontSize: '13px',
@@ -1286,12 +1498,12 @@ export default function LandingPage() {
                     marginTop: 'auto',
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#1a1613';
-                    e.target.style.color = '#ffffff';
+                    e.target.style.backgroundColor = "var(--text)";
+                    e.target.style.color = 'var(--btn-primary-text)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.color = '#1a1613';
+                    e.target.style.backgroundColor = 'var(--surface)';
+                    e.target.style.color = "var(--text)";
                   }}
                   onClick={handleGetStarted}
                   >
@@ -1310,30 +1522,30 @@ export default function LandingPage() {
               const isSelected = selectedPlan === 'pro';
               return (
                 <div style={{
-                  padding: '2rem',
-                  border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
+                  padding: '20px',
+                  border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
                   borderRadius: '0.5rem',
-                  backgroundColor: '#ffffff',
+                  backgroundColor: 'var(--surface)',
                   position: 'relative',
                   transition: 'all 0.25s ease',
-                  boxShadow: isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  boxShadow: isSelected ? '0 8px 30px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
                   display: 'flex',
                   flexDirection: 'column',
                   height: '100%',
                 }}
                 onMouseEnter={(e) => {
                   if (!isSelected) {
-                    e.currentTarget.style.border = '2px solid #c4893a';
+                    e.currentTarget.style.border = '2px solid var(--accent)';
                   }
                   e.currentTarget.style.transform = 'scale(1.03)';
-                  e.currentTarget.style.boxShadow = '0 8px 30px rgba(196,137,58,0.15)';
+                  e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
                 }}
                 onMouseLeave={(e) => {
                   if (!isSelected) {
-                    e.currentTarget.style.border = '1px solid #d4c9bc';
+                    e.currentTarget.style.border = '1px solid var(--border)';
                   }
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)';
+                  e.currentTarget.style.boxShadow = isSelected ? '0 8px 30px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0, 0, 0, 0.04)';
                 }}
                 onClick={() => setSelectedPlan('pro')}
                 >
@@ -1341,8 +1553,8 @@ export default function LandingPage() {
                     position: 'absolute',
                     top: '-12px',
                     right: '1.5rem',
-                    backgroundColor: '#c4893a',
-                    color: '#ffffff',
+                    backgroundColor: "var(--accent)",
+                    color: 'var(--footer-text-main)',
                     padding: '0.35rem 0.85rem',
                     borderRadius: '9999px',
                     fontSize: '0.7rem',
@@ -1351,18 +1563,18 @@ export default function LandingPage() {
                   }}>
                     POPULAR
                   </div>
-                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Pro</h3>
-                  <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru proiectanți individuali</p>
+                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: "var(--text)", fontFamily: '"DM Sans", system-ui, sans-serif' }}>Pro</h3>
+                  <p style={{ color: "var(--text2)", fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru proiectanți individuali</p>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '32px', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                    <span style={{ color: '#6b5d50', fontSize: '13px' }}>/lună</span>
-                    {oldPrice && <span style={{ color: '#9a938a', fontSize: '0.875rem', marginLeft: '0.5rem', textDecoration: 'line-through' }}>€{oldPrice}</span>}
+                    <span style={{ fontSize: '32px', fontWeight: '700', color: "var(--text)" }}>€{price}</span>
+                    <span style={{ color: "var(--text2)", fontSize: '13px' }}>/lună</span>
+                    {oldPrice && <span style={{ color: "var(--text3)", fontSize: '0.875rem', marginLeft: '0.5rem', textDecoration: 'line-through' }}>€{oldPrice}</span>}
                   </div>
-                  <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
+                  <hr style={{ border: 'none', borderTop: '1px solid var(--border)', marginBottom: '1rem' }} />
                   <div style={{ marginBottom: '1.5rem', flex: 1 }}>
                     {['200 credite/lună', '~15-20 documente', 'RAG legislativ complet', 'Export DOCX profesional', 'Chat AI cu legislație', 'Suport prioritar'].map(feature => (
-                      <div key={feature} style={{ fontSize: '12.5px', color: '#1a1613', marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
+                      <div key={feature} style={{ fontSize: '12.5px', color: "var(--text)", marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+                        <span style={{ color: "var(--accent)", fontWeight: 'bold' }}>✓</span>
                         <span>{feature}</span>
                       </div>
                     ))}
@@ -1370,10 +1582,10 @@ export default function LandingPage() {
                   <button style={{
                     width: '100%',
                     padding: '10px 16px',
-                    border: '2px solid #1a1613',
+                    border: '2px solid var(--text)',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#ffffff',
-                    color: '#1a1613',
+                    backgroundColor: 'var(--surface)',
+                    color: "var(--text)",
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     fontSize: '13px',
@@ -1382,12 +1594,12 @@ export default function LandingPage() {
                     marginTop: 'auto',
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#1a1613';
-                    e.target.style.color = '#ffffff';
+                    e.target.style.backgroundColor = "var(--text)";
+                    e.target.style.color = 'var(--btn-primary-text)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.color = '#1a1613';
+                    e.target.style.backgroundColor = 'var(--surface)';
+                    e.target.style.color = "var(--text)";
                   }}
                   onClick={handleGetStarted}
                   >
@@ -1406,12 +1618,12 @@ export default function LandingPage() {
               const isSelected = selectedPlan === 'business';
               return (
                 <div style={{
-                  padding: '2rem',
-                  border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
+                  padding: '20px',
+                  border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
                   borderRadius: '0.5rem',
-                  backgroundColor: '#ffffff',
+                  backgroundColor: 'var(--surface)',
                   transition: 'all 0.25s ease',
-                  boxShadow: isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  boxShadow: isSelected ? '0 8px 30px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
                   position: 'relative',
                   display: 'flex',
                   flexDirection: 'column',
@@ -1420,14 +1632,14 @@ export default function LandingPage() {
                 onMouseEnter={(e) => {
                   if (!isSelected) {
                     e.currentTarget.style.transform = 'scale(1.03)';
-                    e.currentTarget.style.border = '2px solid #c4893a';
-                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(196,137,58,0.15)';
+                    e.currentTarget.style.border = '2px solid var(--accent)';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isSelected) {
                     e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.border = '1px solid #d4c9bc';
+                    e.currentTarget.style.border = '1px solid var(--border)';
                     e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
                   }
                 }}
@@ -1437,8 +1649,8 @@ export default function LandingPage() {
                     position: 'absolute',
                     top: '-12px',
                     right: '1.5rem',
-                    backgroundColor: '#c4893a',
-                    color: '#ffffff',
+                    backgroundColor: "var(--accent)",
+                    color: 'var(--footer-text-main)',
                     padding: '0.35rem 0.85rem',
                     borderRadius: '9999px',
                     fontSize: '0.7rem',
@@ -1447,18 +1659,18 @@ export default function LandingPage() {
                   }}>
                     BEST VALUE
                   </div>
-                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Business</h3>
-                  <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru birouri de proiectare</p>
+                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: "var(--text)", fontFamily: '"DM Sans", system-ui, sans-serif' }}>Business</h3>
+                  <p style={{ color: "var(--text2)", fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru birouri de proiectare</p>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '32px', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                    <span style={{ color: '#6b5d50', fontSize: '13px' }}>/lună</span>
-                    {oldPrice && <span style={{ color: '#9a938a', fontSize: '0.875rem', marginLeft: '0.5rem', textDecoration: 'line-through' }}>€{oldPrice}</span>}
+                    <span style={{ fontSize: '32px', fontWeight: '700', color: "var(--text)" }}>€{price}</span>
+                    <span style={{ color: "var(--text2)", fontSize: '13px' }}>/lună</span>
+                    {oldPrice && <span style={{ color: "var(--text3)", fontSize: '0.875rem', marginLeft: '0.5rem', textDecoration: 'line-through' }}>€{oldPrice}</span>}
                   </div>
-                  <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
+                  <hr style={{ border: 'none', borderTop: '1px solid var(--border)', marginBottom: '1rem' }} />
                   <div style={{ marginBottom: '1.5rem', flex: 1 }}>
                     {['400 credite/lună', '~30-40 documente', 'Tot ce e în Pro', '3 utilizatori incluși', 'Template DOCX personalizabil', 'Dashboard consum echipă'].map(feature => (
-                      <div key={feature} style={{ fontSize: '12.5px', color: '#1a1613', marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
+                      <div key={feature} style={{ fontSize: '12.5px', color: "var(--text)", marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+                        <span style={{ color: "var(--accent)", fontWeight: 'bold' }}>✓</span>
                         <span>{feature}</span>
                       </div>
                     ))}
@@ -1466,10 +1678,10 @@ export default function LandingPage() {
                   <button style={{
                     width: '100%',
                     padding: '10px 16px',
-                    border: '2px solid #1a1613',
+                    border: '2px solid var(--text)',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#ffffff',
-                    color: '#1a1613',
+                    backgroundColor: 'var(--surface)',
+                    color: "var(--text)",
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     fontSize: '13px',
@@ -1478,12 +1690,12 @@ export default function LandingPage() {
                     marginTop: 'auto',
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#1a1613';
-                    e.target.style.color = '#ffffff';
+                    e.target.style.backgroundColor = "var(--text)";
+                    e.target.style.color = 'var(--btn-primary-text)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.color = '#1a1613';
+                    e.target.style.backgroundColor = 'var(--surface)';
+                    e.target.style.color = "var(--text)";
                   }}
                   onClick={handleGetStarted}
                   >
@@ -1500,12 +1712,12 @@ export default function LandingPage() {
               const isSelected = selectedPlan === 'enterprise';
               return (
                 <div style={{
-                  padding: '16px 18px',
-                  border: isSelected ? '2px solid #c4893a' : '1px solid #d4c9bc',
+                  padding: '20px',
+                  border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
                   borderRadius: '0.5rem',
-                  backgroundColor: '#ffffff',
+                  backgroundColor: 'var(--surface)',
                   transition: 'all 0.25s ease',
-                  boxShadow: isSelected ? '0 8px 30px rgba(196,137,58,0.15)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                  boxShadow: isSelected ? '0 8px 30px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
                   display: 'flex',
                   flexDirection: 'column',
                   height: '100%',
@@ -1513,31 +1725,31 @@ export default function LandingPage() {
                 onMouseEnter={(e) => {
                   if (!isSelected) {
                     e.currentTarget.style.transform = 'scale(1.03)';
-                    e.currentTarget.style.border = '2px solid #c4893a';
-                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(196,137,58,0.15)';
+                    e.currentTarget.style.border = '2px solid var(--accent)';
+                    e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isSelected) {
                     e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.border = '1px solid #d4c9bc';
+                    e.currentTarget.style.border = '1px solid var(--border)';
                     e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
                   }
                 }}
                 onClick={() => setSelectedPlan('enterprise')}
                 >
-                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: '#1a1613', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Enterprise</h3>
-                  <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru echipe mari</p>
+                  <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '0.5rem', color: "var(--text)", fontFamily: '"DM Sans", system-ui, sans-serif' }}>Enterprise</h3>
+                  <p style={{ color: "var(--text2)", fontSize: '0.875rem', marginBottom: '1.5rem' }}>Pentru echipe mari</p>
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '32px', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                    <span style={{ color: '#6b5d50', fontSize: '13px' }}>/lună</span>
-                    <div style={{ fontSize: '0.875rem', color: '#6b5d50', marginTop: '0.25rem' }}>+ €15/membru extra</div>
+                    <span style={{ fontSize: '32px', fontWeight: '700', color: "var(--text)" }}>€{price}</span>
+                    <span style={{ color: "var(--text2)", fontSize: '13px' }}>/lună</span>
+                    <div style={{ fontSize: '0.875rem', color: "var(--text2)", marginTop: '0.25rem' }}>+ €15/membru extra</div>
                   </div>
-                  <hr style={{ border: 'none', borderTop: '1px solid #e0d9d0', marginBottom: '1rem' }} />
+                  <hr style={{ border: 'none', borderTop: '1px solid var(--border)', marginBottom: '1rem' }} />
                   <div style={{ marginBottom: '1.5rem', flex: 1 }}>
                     {['600 credite pool/lună', 'Utilizatori nelimitați', 'Tot ce e în Business', 'Pool credite partajat', 'Roluri: admin, manager, proiectant', 'Suport dedicat'].map(feature => (
-                      <div key={feature} style={{ fontSize: '12.5px', color: '#1a1613', marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
-                        <span style={{ color: '#c4893a', fontWeight: 'bold' }}>✓</span>
+                      <div key={feature} style={{ fontSize: '12.5px', color: "var(--text)", marginBottom: '6px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+                        <span style={{ color: "var(--accent)", fontWeight: 'bold' }}>✓</span>
                         <span>{feature}</span>
                       </div>
                     ))}
@@ -1545,10 +1757,10 @@ export default function LandingPage() {
                   <button style={{
                     width: '100%',
                     padding: '10px 16px',
-                    border: '2px solid #1a1613',
+                    border: '2px solid var(--text)',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#ffffff',
-                    color: '#1a1613',
+                    backgroundColor: 'var(--surface)',
+                    color: "var(--text)",
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     fontSize: '13px',
@@ -1557,12 +1769,12 @@ export default function LandingPage() {
                     marginTop: 'auto',
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#1a1613';
-                    e.target.style.color = '#ffffff';
+                    e.target.style.backgroundColor = "var(--text)";
+                    e.target.style.color = 'var(--btn-primary-text)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.color = '#1a1613';
+                    e.target.style.backgroundColor = 'var(--surface)';
+                    e.target.style.color = "var(--text)";
                   }}
                   onClick={handleGetStarted}
                   >
@@ -1575,7 +1787,7 @@ export default function LandingPage() {
 
           {/* Add-ons Section */}
           <div style={{ marginBottom: '1.5rem' }}>
-            <h3 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '600', color: '#1a1613', margin: '16px 0 8px', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Add-on-uri</h3>
+            <h3 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '600', color: "var(--text)", margin: '16px 0 8px', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Add-on-uri</h3>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
@@ -1587,9 +1799,9 @@ export default function LandingPage() {
                 return (
                   <div style={{
                     padding: '14px',
-                    border: '1px solid #d4c9bc',
+                    border: '1px solid var(--border)',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--surface)',
                     transition: 'all 0.3s ease',
                     textAlign: 'center',
                     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
@@ -1603,18 +1815,18 @@ export default function LandingPage() {
                     e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
                   }}
                   >
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="11"/><circle cx="8" cy="16" r="1" fill="#1a1613"/><circle cx="16" cy="16" r="1" fill="#1a1613"/></svg>
-                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1a1613', marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Agent Autonom AI</h4>
-                    <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1rem' }}>Dă-i o sarcină complexă — face totul singur: research, analiză, document complet</p>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="11"/><circle cx="8" cy="16" r="1" fill="var(--text)"/><circle cx="16" cy="16" r="1" fill="var(--text)"/></svg>
+                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: "var(--text)", marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Agent Autonom AI</h4>
+                    <p style={{ color: "var(--text2)", fontSize: '0.875rem', marginBottom: '1rem' }}>Dă-i o sarcină complexă — face totul singur: research, analiză, document complet</p>
                     <div style={{ marginBottom: '1rem' }}>
-                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                      <span style={{ color: '#6b5d50', fontSize: '0.875rem' }}>/lună</span>
+                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: "var(--text)" }}>€{price}</span>
+                      <span style={{ color: "var(--text2)", fontSize: '0.875rem' }}>/lună</span>
                     </div>
-                    <div style={{ fontSize: '0.875rem', color: '#1a1613', marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
-                      <span style={{ color: '#c4893a', fontWeight: 'bold', flexShrink: 0 }}>✓</span>
+                    <div style={{ fontSize: '0.875rem', color: "var(--text)", marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
+                      <span style={{ color: "var(--accent)", fontWeight: 'bold', flexShrink: 0 }}>✓</span>
                       <span>100 credite agent/lună</span>
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#c4893a', fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
+                    <div style={{ fontSize: '0.75rem', color: "var(--accent)", fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
                       Add-on la orice plan
                     </div>
                   </div>
@@ -1627,9 +1839,9 @@ export default function LandingPage() {
                 return (
                   <div style={{
                     padding: '14px',
-                    border: '1px solid #d4c9bc',
+                    border: '1px solid var(--border)',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--surface)',
                     transition: 'all 0.3s ease',
                     textAlign: 'center',
                     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
@@ -1643,18 +1855,18 @@ export default function LandingPage() {
                     e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
                   }}
                   >
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="#1a1613"/><path d="M21 15l-5-5L5 21"/></svg>
-                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1a1613', marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Imagini & Randări AI</h4>
-                    <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1rem' }}>Randări arhitecturale, schițe conceptuale, vizualizări fotorealiste pentru prezentări</p>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="var(--text)"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: "var(--text)", marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Imagini & Randări AI</h4>
+                    <p style={{ color: "var(--text2)", fontSize: '0.875rem', marginBottom: '1rem' }}>Randări arhitecturale, schițe conceptuale, vizualizări fotorealiste pentru prezentări</p>
                     <div style={{ marginBottom: '1rem' }}>
-                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                      <span style={{ color: '#6b5d50', fontSize: '0.875rem' }}>/lună</span>
+                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: "var(--text)" }}>€{price}</span>
+                      <span style={{ color: "var(--text2)", fontSize: '0.875rem' }}>/lună</span>
                     </div>
-                    <div style={{ fontSize: '0.875rem', color: '#1a1613', marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
-                      <span style={{ color: '#c4893a', fontWeight: 'bold', flexShrink: 0 }}>✓</span>
+                    <div style={{ fontSize: '0.875rem', color: "var(--text)", marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
+                      <span style={{ color: "var(--accent)", fontWeight: 'bold', flexShrink: 0 }}>✓</span>
                       <span>100 credite imagine/lună</span>
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#c4893a', fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
+                    <div style={{ fontSize: '0.75rem', color: "var(--accent)", fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
                       Add-on la orice plan
                     </div>
                   </div>
@@ -1668,9 +1880,9 @@ export default function LandingPage() {
                 return (
                   <div style={{
                     padding: '14px',
-                    border: '1px solid #d4c9bc',
+                    border: '1px solid var(--border)',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--surface)',
                     transition: 'all 0.3s ease',
                     textAlign: 'center',
                     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
@@ -1684,18 +1896,18 @@ export default function LandingPage() {
                     e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
                   }}
                   >
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/><line x1="7" y1="18" x2="16" y2="18"/></svg>
-                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1a1613', marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Project Management</h4>
-                    <p style={{ color: '#6b5d50', fontSize: '0.875rem', marginBottom: '1rem' }}>Gantt charts interactive, urmărire etape proiect, deadline-uri și notificări automate pentru echipa ta</p>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/><line x1="7" y1="18" x2="16" y2="18"/></svg>
+                    <h4 style={{ fontSize: '16px', fontWeight: '700', color: "var(--text)", marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Project Management</h4>
+                    <p style={{ color: "var(--text2)", fontSize: '0.875rem', marginBottom: '1rem' }}>Gantt charts interactive, urmărire etape proiect, deadline-uri și notificări automate pentru echipa ta</p>
                     <div style={{ marginBottom: '1rem' }}>
-                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1a1613' }}>€{price}</span>
-                      <span style={{ color: '#6b5d50', fontSize: '0.875rem' }}>/lună</span>
+                      <span style={{ fontSize: '1.5rem', fontWeight: '700', color: "var(--text)" }}>€{price}</span>
+                      <span style={{ color: "var(--text2)", fontSize: '0.875rem' }}>/lună</span>
                     </div>
-                    <div style={{ fontSize: '0.875rem', color: '#1a1613', marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
-                      <span style={{ color: '#c4893a', fontWeight: 'bold', flexShrink: 0 }}>✓</span>
+                    <div style={{ fontSize: '0.875rem', color: "var(--text)", marginBottom: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'flex-start' }}>
+                      <span style={{ color: "var(--accent)", fontWeight: 'bold', flexShrink: 0 }}>✓</span>
                       <span>100 credite/lună</span>
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#c4893a', fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
+                    <div style={{ fontSize: '0.75rem', color: "var(--accent)", fontWeight: '600', backgroundColor: 'rgba(196, 137, 58, 0.1)', padding: '0.35rem 0.75rem', borderRadius: '0.25rem', display: 'inline-block' }}>
                       Add-on la orice plan
                     </div>
                   </div>
@@ -1708,14 +1920,14 @@ export default function LandingPage() {
           <div style={{
             textAlign: 'center',
             padding: '1.5rem',
-            backgroundColor: '#ffffff',
+            backgroundColor: 'var(--surface)',
             borderRadius: '0.5rem',
-            border: '1px solid #d4c9bc',
+            border: '1px solid var(--border)',
             boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
           }}>
-            <p style={{ fontSize: '0.9375rem', color: '#1a1613', margin: 0 }}>
+            <p style={{ fontSize: '0.9375rem', color: "var(--text)", margin: 0 }}>
               <strong>Credite suplimentare:</strong>{' '}
-              <span style={{ color: '#c4893a', fontWeight: '600' }}>€10 = 50 credite</span> · Disponibile pe orice plan
+              <span style={{ color: "var(--accent)", fontWeight: '600' }}>€10 = 50 credite</span> · Disponibile pe orice plan
             </p>
           </div>
         </div>
@@ -1728,7 +1940,7 @@ export default function LandingPage() {
           paddingBottom: '4rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
-          backgroundColor: '#ebe3d9',
+          backgroundColor: "var(--bg-alt)",
         }}
       >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -1737,15 +1949,15 @@ export default function LandingPage() {
             <h2
               style={{
                 fontSize: '28px',
-                fontFamily: 'Georgia, serif',
+                fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
                 fontWeight: '400',
                 marginBottom: '0.5rem',
-                color: '#1a1613',
+                color: "var(--text)",
               }}
             >
               Ce spun utilizatorii noștri
             </h2>
-            <p style={{ fontSize: '14px', color: '#6b5d50', marginTop: '0.5rem' }}>
+            <p style={{ fontSize: '14px', color: "var(--text2)", marginTop: '0.5rem' }}>
               Profesioniști din urbanism care folosesc UrbAI zilnic
             </p>
           </div>
@@ -1761,8 +1973,8 @@ export default function LandingPage() {
             {/* Card 1 - C.B. */}
             <div
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e8e0d6',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--navbar-border)',
                 borderRadius: '12px',
                 padding: '24px',
                 transition: 'all 0.2s ease',
@@ -1770,11 +1982,11 @@ export default function LandingPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = '#c4893a';
+                e.currentTarget.style.borderColor = "var(--accent)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.borderColor = '#e8e0d6';
+                e.currentTarget.style.borderColor = 'var(--border)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
@@ -1783,8 +1995,8 @@ export default function LandingPage() {
                     width: '44px',
                     height: '44px',
                     borderRadius: '50%',
-                    backgroundColor: '#c4893a',
-                    color: '#ffffff',
+                    backgroundColor: "var(--accent)",
+                    color: 'var(--footer-text-main)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1795,16 +2007,16 @@ export default function LandingPage() {
                   CB
                 </div>
                 <div style={{ marginLeft: '12px' }}>
-                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>C.B.</p>
-                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Arhitect urbanist, Cluj-Napoca</p>
+                  <p style={{ margin: '0', fontWeight: '600', color: "var(--text)" }}>C.B.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: "var(--text3)" }}>Arhitect urbanist, Cluj-Napoca</p>
                 </div>
               </div>
-              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: "var(--accent)" }}>★★★★★</div>
               <p
                 style={{
                   fontSize: '14px',
                   lineHeight: '1.7',
-                  color: '#5c5466',
+                  color: "var(--text2)",
                   fontStyle: 'italic',
                   margin: '0',
                 }}
@@ -1816,8 +2028,8 @@ export default function LandingPage() {
             {/* Card 2 - A.B. */}
             <div
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e8e0d6',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--navbar-border)',
                 borderRadius: '12px',
                 padding: '24px',
                 transition: 'all 0.2s ease',
@@ -1825,11 +2037,11 @@ export default function LandingPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = '#c4893a';
+                e.currentTarget.style.borderColor = "var(--accent)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.borderColor = '#e8e0d6';
+                e.currentTarget.style.borderColor = 'var(--border)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
@@ -1838,8 +2050,8 @@ export default function LandingPage() {
                     width: '44px',
                     height: '44px',
                     borderRadius: '50%',
-                    backgroundColor: '#2563eb',
-                    color: '#ffffff',
+                    backgroundColor: "var(--accent)",
+                    color: 'var(--footer-text-main)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1850,16 +2062,16 @@ export default function LandingPage() {
                   AB
                 </div>
                 <div style={{ marginLeft: '12px' }}>
-                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>A.B.</p>
-                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Inginer proiectant, București</p>
+                  <p style={{ margin: '0', fontWeight: '600', color: "var(--text)" }}>A.B.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: "var(--text3)" }}>Inginer proiectant, București</p>
                 </div>
               </div>
-              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: "var(--accent)" }}>★★★★★</div>
               <p
                 style={{
                   fontSize: '14px',
                   lineHeight: '1.7',
-                  color: '#5c5466',
+                  color: "var(--text2)",
                   fontStyle: 'italic',
                   margin: '0',
                 }}
@@ -1871,8 +2083,8 @@ export default function LandingPage() {
             {/* Card 3 - C.D. */}
             <div
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e8e0d6',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--navbar-border)',
                 borderRadius: '12px',
                 padding: '24px',
                 transition: 'all 0.2s ease',
@@ -1880,11 +2092,11 @@ export default function LandingPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = '#c4893a';
+                e.currentTarget.style.borderColor = "var(--accent)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.borderColor = '#e8e0d6';
+                e.currentTarget.style.borderColor = 'var(--border)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
@@ -1894,7 +2106,7 @@ export default function LandingPage() {
                     height: '44px',
                     borderRadius: '50%',
                     backgroundColor: '#1f7a45',
-                    color: '#ffffff',
+                    color: 'var(--footer-text-main)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1905,16 +2117,16 @@ export default function LandingPage() {
                   CD
                 </div>
                 <div style={{ marginLeft: '12px' }}>
-                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>C.D.</p>
-                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Director birou arhitectură, Timișoara</p>
+                  <p style={{ margin: '0', fontWeight: '600', color: "var(--text)" }}>C.D.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: "var(--text3)" }}>Director birou arhitectură, Timișoara</p>
                 </div>
               </div>
-              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: "var(--accent)" }}>★★★★★</div>
               <p
                 style={{
                   fontSize: '14px',
                   lineHeight: '1.7',
-                  color: '#5c5466',
+                  color: "var(--text2)",
                   fontStyle: 'italic',
                   margin: '0',
                 }}
@@ -1926,8 +2138,8 @@ export default function LandingPage() {
             {/* Card 4 - D.D. */}
             <div
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e8e0d6',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--navbar-border)',
                 borderRadius: '12px',
                 padding: '24px',
                 transition: 'all 0.2s ease',
@@ -1935,11 +2147,11 @@ export default function LandingPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = '#c4893a';
+                e.currentTarget.style.borderColor = "var(--accent)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.borderColor = '#e8e0d6';
+                e.currentTarget.style.borderColor = 'var(--border)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
@@ -1949,7 +2161,7 @@ export default function LandingPage() {
                     height: '44px',
                     borderRadius: '50%',
                     backgroundColor: '#7c52c9',
-                    color: '#ffffff',
+                    color: 'var(--footer-text-main)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1960,16 +2172,16 @@ export default function LandingPage() {
                   DD
                 </div>
                 <div style={{ marginLeft: '12px' }}>
-                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>D.D.</p>
-                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Urbanist, Brașov</p>
+                  <p style={{ margin: '0', fontWeight: '600', color: "var(--text)" }}>D.D.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: "var(--text3)" }}>Urbanist, Brașov</p>
                 </div>
               </div>
-              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: "var(--accent)" }}>★★★★★</div>
               <p
                 style={{
                   fontSize: '14px',
                   lineHeight: '1.7',
-                  color: '#5c5466',
+                  color: "var(--text2)",
                   fontStyle: 'italic',
                   margin: '0',
                 }}
@@ -1981,8 +2193,8 @@ export default function LandingPage() {
             {/* Card 5 - A.V. */}
             <div
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e8e0d6',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--navbar-border)',
                 borderRadius: '12px',
                 padding: '24px',
                 transition: 'all 0.2s ease',
@@ -1990,11 +2202,11 @@ export default function LandingPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = '#c4893a';
+                e.currentTarget.style.borderColor = "var(--accent)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.borderColor = '#e8e0d6';
+                e.currentTarget.style.borderColor = 'var(--border)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
@@ -2004,7 +2216,7 @@ export default function LandingPage() {
                     height: '44px',
                     borderRadius: '50%',
                     backgroundColor: '#b83232',
-                    color: '#ffffff',
+                    color: 'var(--footer-text-main)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -2015,16 +2227,16 @@ export default function LandingPage() {
                   AV
                 </div>
                 <div style={{ marginLeft: '12px' }}>
-                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>A.V.</p>
-                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Arhitect, Iași</p>
+                  <p style={{ margin: '0', fontWeight: '600', color: "var(--text)" }}>A.V.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: "var(--text3)" }}>Arhitect, Iași</p>
                 </div>
               </div>
-              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★☆</div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: "var(--accent)" }}>★★★★☆</div>
               <p
                 style={{
                   fontSize: '14px',
                   lineHeight: '1.7',
-                  color: '#5c5466',
+                  color: "var(--text2)",
                   fontStyle: 'italic',
                   margin: '0',
                 }}
@@ -2036,8 +2248,8 @@ export default function LandingPage() {
             {/* Card 6 - A.C. */}
             <div
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e8e0d6',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--navbar-border)',
                 borderRadius: '12px',
                 padding: '24px',
                 transition: 'all 0.2s ease',
@@ -2045,11 +2257,11 @@ export default function LandingPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = '#c4893a';
+                e.currentTarget.style.borderColor = "var(--accent)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.borderColor = '#e8e0d6';
+                e.currentTarget.style.borderColor = 'var(--border)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
@@ -2058,8 +2270,8 @@ export default function LandingPage() {
                     width: '44px',
                     height: '44px',
                     borderRadius: '50%',
-                    backgroundColor: '#c4893a',
-                    color: '#ffffff',
+                    backgroundColor: "var(--accent)",
+                    color: 'var(--footer-text-main)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -2070,16 +2282,16 @@ export default function LandingPage() {
                   AC
                 </div>
                 <div style={{ marginLeft: '12px' }}>
-                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>A.C.</p>
-                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Inginer cadastru, Constanța</p>
+                  <p style={{ margin: '0', fontWeight: '600', color: "var(--text)" }}>A.C.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: "var(--text3)" }}>Inginer cadastru, Constanța</p>
                 </div>
               </div>
-              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: "var(--accent)" }}>★★★★★</div>
               <p
                 style={{
                   fontSize: '14px',
                   lineHeight: '1.7',
-                  color: '#5c5466',
+                  color: "var(--text2)",
                   fontStyle: 'italic',
                   margin: '0',
                 }}
@@ -2091,8 +2303,8 @@ export default function LandingPage() {
             {/* Card 7 - C.M. */}
             <div
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e8e0d6',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--navbar-border)',
                 borderRadius: '12px',
                 padding: '24px',
                 transition: 'all 0.2s ease',
@@ -2100,11 +2312,11 @@ export default function LandingPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = '#c4893a';
+                e.currentTarget.style.borderColor = "var(--accent)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.borderColor = '#e8e0d6';
+                e.currentTarget.style.borderColor = 'var(--border)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
@@ -2113,8 +2325,8 @@ export default function LandingPage() {
                     width: '44px',
                     height: '44px',
                     borderRadius: '50%',
-                    backgroundColor: '#1a1613',
-                    color: '#ffffff',
+                    backgroundColor: "var(--text)",
+                    color: 'var(--footer-text-main)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -2125,16 +2337,16 @@ export default function LandingPage() {
                   CM
                 </div>
                 <div style={{ marginLeft: '12px' }}>
-                  <p style={{ margin: '0', fontWeight: '600', color: '#1a1613' }}>C.M.</p>
-                  <p style={{ margin: '0', fontSize: '12px', color: '#9a938a' }}>Arhitect șef, Arad</p>
+                  <p style={{ margin: '0', fontWeight: '600', color: "var(--text)" }}>C.M.</p>
+                  <p style={{ margin: '0', fontSize: '12px', color: "var(--text3)" }}>Arhitect șef, Arad</p>
                 </div>
               </div>
-              <div style={{ marginBottom: '12px', fontSize: '16px', color: '#c4893a' }}>★★★★★</div>
+              <div style={{ marginBottom: '12px', fontSize: '16px', color: "var(--accent)" }}>★★★★★</div>
               <p
                 style={{
                   fontSize: '14px',
                   lineHeight: '1.7',
-                  color: '#5c5466',
+                  color: "var(--text2)",
                   fontStyle: 'italic',
                   margin: '0',
                 }}
@@ -2153,14 +2365,14 @@ export default function LandingPage() {
           paddingBottom: '4rem',
           paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
-          backgroundColor: '#ffffff',
+          backgroundColor: 'var(--surface)',
         }}
       >
         <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
           <h2
             style={{
               fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
-              fontFamily: 'Georgia, serif',
+              fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
               fontWeight: '400',
               marginBottom: '1.5rem',
             }}
@@ -2170,7 +2382,7 @@ export default function LandingPage() {
           <p
             style={{
               fontSize: '1.0625rem',
-              color: '#6b5d50',
+              color: "var(--text2)",
               marginBottom: '2rem',
             }}
           >
@@ -2180,8 +2392,8 @@ export default function LandingPage() {
             onClick={handleGetStarted}
             style={{
               fontSize: '1rem',
-              backgroundColor: '#c4893a',
-              color: '#ffffff',
+              backgroundColor: "var(--accent)",
+              color: 'var(--footer-text-main)',
               border: 'none',
               borderRadius: '0.375rem',
               padding: '0.75rem 1.75rem',
@@ -2190,11 +2402,11 @@ export default function LandingPage() {
               fontWeight: '500',
             }}
             onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#b07a2f';
+              e.target.style.backgroundColor = "var(--accent-hover)";
               e.target.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.target.style.backgroundColor = '#c4893a';
+              e.target.style.backgroundColor = "var(--accent)";
               e.target.style.transform = 'translateY(0)';
             }}
           >
@@ -2206,7 +2418,7 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer
         style={{
-          backgroundColor: '#1a1613',
+          backgroundColor: "var(--footer-bg)",
           paddingTop: '60px',
           paddingBottom: '40px',
           paddingLeft: '1.5rem',
@@ -2229,7 +2441,7 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: '13px',
                 fontWeight: '700',
-                color: '#ffffff',
+                color: 'var(--footer-text-main)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 margin: '0 0 16px 0',
@@ -2238,11 +2450,11 @@ export default function LandingPage() {
                 Produs
               </h3>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Funcționalități</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Prețuri</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Generare Documente</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Chat AI</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Extragere OCR</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Funcționalități</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Prețuri</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Generare Documente</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Chat AI</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Extragere OCR</a></li>
               </ul>
             </div>
 
@@ -2251,7 +2463,7 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: '13px',
                 fontWeight: '700',
-                color: '#ffffff',
+                color: 'var(--footer-text-main)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 margin: '0 0 16px 0',
@@ -2260,11 +2472,11 @@ export default function LandingPage() {
                 Resurse
               </h3>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Documentație</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Ghid Utilizare</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Legislație Urbanistică</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Blog</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Actualizări</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Documentație</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Ghid Utilizare</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Legislație Urbanistică</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Blog</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Actualizări</a></li>
               </ul>
             </div>
 
@@ -2273,7 +2485,7 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: '13px',
                 fontWeight: '700',
-                color: '#ffffff',
+                color: 'var(--footer-text-main)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 margin: '0 0 16px 0',
@@ -2282,10 +2494,10 @@ export default function LandingPage() {
                 Legal
               </h3>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <li><button onClick={() => navigate('/termeni-conditii')} style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Termeni și Condiții</button></li>
-                <li><button onClick={() => navigate('/politica-confidentialitate')} style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Politica de Confidențialitate</button></li>
-                <li><button onClick={() => navigate('/gdpr')} style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>GDPR</button></li>
-                <li><button onClick={() => navigate('/politica-cookies')} style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Politica Cookies</button></li>
+                <li><button onClick={() => navigate('/termeni-conditii')} style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Termeni și Condiții</button></li>
+                <li><button onClick={() => navigate('/politica-confidentialitate')} style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Politica de Confidențialitate</button></li>
+                <li><button onClick={() => navigate('/gdpr')} style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>GDPR</button></li>
+                <li><button onClick={() => navigate('/politica-cookies')} style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'inherit' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Politica Cookies</button></li>
               </ul>
             </div>
 
@@ -2294,7 +2506,7 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: '13px',
                 fontWeight: '700',
-                color: '#ffffff',
+                color: 'var(--footer-text-main)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
                 margin: '0 0 16px 0',
@@ -2303,16 +2515,17 @@ export default function LandingPage() {
                 Companie
               </h3>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Despre Noi</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Contact</a></li>
-                <li><a href="#" style={{ fontSize: '14px', color: '#9a938a', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9a938a'}>Cariere</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Despre Noi</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Contact</a></li>
+                <li><a href="#" style={{ fontSize: '14px', color: 'var(--footer-text)', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseEnter={(e) => e.target.style.color = 'var(--footer-text-main)'} onMouseLeave={(e) => e.target.style.color = 'var(--footer-text)'}>Cariere</a></li>
               </ul>
             </div>
           </div>
 
           {/* Separator */}
           <div style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            borderTop: '1px solid',
+            borderColor: 'var(--border)',
             margin: '40px 0 24px',
           }} />
 
@@ -2336,12 +2549,12 @@ export default function LandingPage() {
                 onClick={(e) => e.preventDefault()}
                 style={{
                   display: 'inline-flex',
-                  color: '#9a938a',
+                  color: 'var(--footer-text)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#9a938a'}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--footer-text-main)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--footer-text)'}
                 title="X (Twitter)"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -2355,12 +2568,12 @@ export default function LandingPage() {
                 onClick={(e) => e.preventDefault()}
                 style={{
                   display: 'inline-flex',
-                  color: '#9a938a',
+                  color: 'var(--footer-text)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#9a938a'}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--footer-text-main)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--footer-text)'}
                 title="Instagram"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -2374,12 +2587,12 @@ export default function LandingPage() {
                 onClick={(e) => e.preventDefault()}
                 style={{
                   display: 'inline-flex',
-                  color: '#9a938a',
+                  color: 'var(--footer-text)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#9a938a'}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--footer-text-main)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--footer-text)'}
                 title="Facebook"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -2393,16 +2606,54 @@ export default function LandingPage() {
                 onClick={(e) => e.preventDefault()}
                 style={{
                   display: 'inline-flex',
-                  color: '#9a938a',
+                  color: 'var(--footer-text)',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#9a938a'}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--footer-text-main)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--footer-text)'}
                 title="LinkedIn"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+              </a>
+
+              {/* TikTok */}
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  display: 'inline-flex',
+                  color: 'var(--footer-text)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--footer-text-main)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--footer-text)'}
+                title="TikTok"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.52V6.79a4.84 4.84 0 01-1-.1z" />
+                </svg>
+              </a>
+
+              {/* YouTube */}
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  display: 'inline-flex',
+                  color: 'var(--footer-text)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s ease',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--footer-text-main)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--footer-text)'}
+                title="YouTube"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.6 31.6 0 000 12a31.6 31.6 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.6 31.6 0 0024 12a31.6 31.6 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z" />
                 </svg>
               </a>
             </div>
@@ -2410,7 +2661,7 @@ export default function LandingPage() {
             {/* Copyright */}
             <p style={{
               fontSize: '13px',
-              color: '#9a938a',
+              color: 'var(--footer-text)',
               margin: 0,
               textAlign: 'right',
             }}>
@@ -2419,6 +2670,109 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* FLOATING THEME BUTTON */}
+      <div ref={themeMenuRef} style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 50 }}>
+        {/* Theme Selector Popup */}
+        {themeMenuOpen && (
+          <div style={{
+            position: 'absolute',
+            bottom: '100%',
+            right: 0,
+            marginBottom: '10px',
+            background: 'white',
+            border: '1px solid var(--border)',
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            padding: '12px',
+            minWidth: '200px',
+          }}>
+            <p style={{ fontSize: '12px', fontWeight: '600', margin: '0 0 8px 0', color: "var(--text)", fontFamily: '"DM Sans", system-ui, sans-serif' }}>
+              Alege tema
+            </p>
+            {[
+              { key: 'arctic', label: 'Arctic White', color: 'var(--btn-primary-text)', border: "var(--accent)" },
+              { key: 'midnight', label: 'Midnight Indigo', color: '#0f1219', border: '#a48bfa' },
+              { key: 'forest', label: 'Forest Stone', color: '#f4f1ec', border: '#1d6b52' },
+              { key: 'charcoal', label: 'Warm Charcoal', color: '#1c1917', border: '#d4a853' },
+            ].map(theme => (
+              <button
+                key={theme.key}
+                onClick={() => {
+                  applyTheme(theme.key);
+                  setThemeMenuOpen(false);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  color: "var(--text)",
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  transition: 'background 0.2s',
+                  width: '100%',
+                  justifyContent: 'flex-start',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "var(--bg-alt)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  background: theme.color,
+                  border: `2px solid ${theme.border}`,
+                  flexShrink: 0,
+                }} />
+                <span style={{ flex: 1, textAlign: 'left' }}>{theme.label}</span>
+                {currentTheme === theme.key && (
+                  <span style={{ fontSize: '16px', color: "var(--accent)" }}>✓</span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Theme Button */}
+        <button
+          onClick={() => setThemeMenuOpen(!themeMenuOpen)}
+          style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            background: "var(--text)",
+            border: '1px solid var(--border)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+            transition: 'transform 0.2s',
+            padding: 0,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="11" />
+            <path d="M3.6 9c.6-4.2 2.5-6 8.4-6 5.9 0 7.8 1.8 8.4 6M3.6 15c.6 4.2 2.5 6 8.4 6 5.9 0 7.8-1.8 8.4-6" />
+            <line x1="12" y1="12" x2="12.01" y2="12" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }

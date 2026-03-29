@@ -18,6 +18,7 @@ import WizardDocument from './pages/WizardDocument';
 import WizardMemoriu from './pages/WizardMemoriu';
 import WizardRLU from './pages/WizardRLU';
 import WizardAvizOportunitate from './pages/WizardAvizOportunitate';
+import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 
 // Legal Pages
@@ -252,6 +253,16 @@ export default function App() {
           element={
             <AuthGuard>
               <WizardAvizOportunitate />
+            </AuthGuard>
+          }
+        />
+
+        {/* Settings */}
+        <Route
+          path="/app/settings"
+          element={
+            <AuthGuard>
+              <Settings />
             </AuthGuard>
           }
         />

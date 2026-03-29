@@ -4,6 +4,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Theme Variables */
+:root, [data-theme="light"] {
+  --bg: #f5f0e8;
+  --surface: #ffffff;
+  --text: #1a1613;
+  --text2: #5c5466;
+  --text3: #9a938a;
+  --border: #ddd4c8;
+  --sidebar-bg: #ebe3d9;
+  --accent: #c4893a;
+  --hover: rgba(0,0,0,0.04);
+  --chat-font: 'DM Sans', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #1a1a2e;
+  --surface: #16213e;
+  --text: #e2e5ec;
+  --text2: #a0a4b8;
+  --text3: #6b7080;
+  --border: #2a2d3e;
+  --sidebar-bg: #0f0f23;
+  --accent: #c4893a;
+  --hover: rgba(255,255,255,0.06);
+  --chat-font: 'DM Sans', sans-serif;
+}
+
+/* Background Animation */
+.bg-animated {
+  background: linear-gradient(135deg, #f5f0e8 0%, #ebe3d9 50%, #f5f0e8 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 8s ease infinite;
+}
+
+[data-theme="dark"] .bg-animated {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f0f23 50%, #1a1a2e 100%);
+  background-size: 400% 400%;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -15,11 +60,12 @@ html {
 }
 
 body {
-  background-color: #f5f0e8;
-  color: #1a1613;
-  font-family: 'DM Sans', system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--chat-font), system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 h1, h2, h3, h4, h5, h6 {
