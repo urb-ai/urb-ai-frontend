@@ -485,7 +485,108 @@ export default function LandingPage() {
             gap: '12px',
             alignItems: 'center',
             justifyContent: 'flex-end',
+            position: 'relative',
           }}>
+            {/* Theme Button */}
+            <button
+              onClick={() => setThemeMenuOpen(!themeMenuOpen)}
+              style={{
+                width: '28px',
+                height: '28px',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'opacity 0.2s ease',
+                padding: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.7';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+              title="Schimbare temă"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="11" />
+                <path d="M3.6 9c.6-4.2 2.5-6 8.4-6 5.9 0 7.8 1.8 8.4 6M3.6 15c.6 4.2 2.5 6 8.4 6 5.9 0 7.8-1.8 8.4-6" />
+                <line x1="12" y1="12" x2="12.01" y2="12" />
+              </svg>
+            </button>
+
+            {/* Theme Dropdown */}
+            {themeMenuOpen && (
+              <div ref={themeMenuRef} style={{
+                position: 'absolute',
+                top: '100%',
+                right: 0,
+                marginTop: '8px',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                padding: '8px',
+                minWidth: '200px',
+                zIndex: 1000,
+              }}>
+                <p style={{ fontSize: '11px', fontWeight: '600', margin: '0 0 8px 0', color: "var(--text3)", fontFamily: '"DM Sans", system-ui, sans-serif', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Alege tema
+                </p>
+                {[
+                  { key: 'arctic', label: 'Arctic White', color: '#ffffff', border: "#2563eb" },
+                  { key: 'midnight', label: 'Midnight Indigo', color: '#0f1219', border: '#a78bfa' },
+                  { key: 'forest', label: 'Forest Stone', color: '#f4f1ec', border: '#16794e' },
+                  { key: 'charcoal', label: 'Warm Charcoal', color: '#1c1917', border: '#d4a853' },
+                ].map(theme => (
+                  <button
+                    key={theme.key}
+                    onClick={() => {
+                      applyTheme(theme.key);
+                      setThemeMenuOpen(false);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '6px 8px',
+                      borderRadius: '5px',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      color: "var(--text2)",
+                      fontFamily: '"DM Sans", system-ui, sans-serif',
+                      transition: 'background 0.2s',
+                      width: '100%',
+                      justifyContent: 'flex-start',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "var(--bg-alt)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                    }}
+                  >
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      background: theme.color,
+                      border: `1.5px solid ${theme.border}`,
+                      flexShrink: 0,
+                    }} />
+                    <span>{theme.label}</span>
+                    {currentTheme === theme.key && (
+                      <span style={{ marginLeft: 'auto', fontSize: '14px', color: "var(--accent)" }}>✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Language Button */}
             <button
               onClick={(e) => e.preventDefault()}
@@ -2670,109 +2771,6 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-
-      {/* FLOATING THEME BUTTON */}
-      <div ref={themeMenuRef} style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 50 }}>
-        {/* Theme Selector Popup */}
-        {themeMenuOpen && (
-          <div style={{
-            position: 'absolute',
-            bottom: '100%',
-            right: 0,
-            marginBottom: '10px',
-            background: 'white',
-            border: '1px solid var(--border)',
-            borderRadius: '12px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            padding: '12px',
-            minWidth: '200px',
-          }}>
-            <p style={{ fontSize: '12px', fontWeight: '600', margin: '0 0 8px 0', color: "var(--text)", fontFamily: '"DM Sans", system-ui, sans-serif' }}>
-              Alege tema
-            </p>
-            {[
-              { key: 'arctic', label: 'Arctic White', color: 'var(--btn-primary-text)', border: "var(--accent)" },
-              { key: 'midnight', label: 'Midnight Indigo', color: '#0f1219', border: '#a48bfa' },
-              { key: 'forest', label: 'Forest Stone', color: '#f4f1ec', border: '#1d6b52' },
-              { key: 'charcoal', label: 'Warm Charcoal', color: '#1c1917', border: '#d4a853' },
-            ].map(theme => (
-              <button
-                key={theme.key}
-                onClick={() => {
-                  applyTheme(theme.key);
-                  setThemeMenuOpen(false);
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '8px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  color: "var(--text)",
-                  fontFamily: '"DM Sans", system-ui, sans-serif',
-                  transition: 'background 0.2s',
-                  width: '100%',
-                  justifyContent: 'flex-start',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "var(--bg-alt)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                }}
-              >
-                <div style={{
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  background: theme.color,
-                  border: `2px solid ${theme.border}`,
-                  flexShrink: 0,
-                }} />
-                <span style={{ flex: 1, textAlign: 'left' }}>{theme.label}</span>
-                {currentTheme === theme.key && (
-                  <span style={{ fontSize: '16px', color: "var(--accent)" }}>✓</span>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Theme Button */}
-        <button
-          onClick={() => setThemeMenuOpen(!themeMenuOpen)}
-          style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: "var(--text)",
-            border: '1px solid var(--border)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
-            transition: 'transform 0.2s',
-            padding: 0,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)';
-          }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="11" />
-            <path d="M3.6 9c.6-4.2 2.5-6 8.4-6 5.9 0 7.8 1.8 8.4 6M3.6 15c.6 4.2 2.5 6 8.4 6 5.9 0 7.8-1.8 8.4-6" />
-            <line x1="12" y1="12" x2="12.01" y2="12" />
-          </svg>
-        </button>
-      </div>
     </div>
   );
 }
