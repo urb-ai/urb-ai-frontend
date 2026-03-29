@@ -28,18 +28,10 @@ export default function Settings() {
 
   // Load theme and appearance preferences on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'arctic';
     const savedFont = localStorage.getItem('chatFont') || 'default';
     const savedAnimation = localStorage.getItem('bgAnimation') || 'auto';
     const savedVoice = localStorage.getItem('voiceTone') || 'Calm';
-
-    // Apply theme
-    if (savedTheme === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-    } else {
-      document.documentElement.setAttribute('data-theme', savedTheme === 'Întunecat' ? 'dark' : 'light');
-    }
 
     // Apply font
     applyFontChange(savedFont);
@@ -66,16 +58,6 @@ export default function Settings() {
     setFormData(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const setTheme = (mode) => {
-    if (mode === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-    } else {
-      document.documentElement.setAttribute('data-theme', mode === 'Întunecat' ? 'dark' : 'light');
-    }
-    localStorage.setItem('theme', mode);
-    setFormData(prev => ({ ...prev, colorMode: mode }));
-  };
 
   const applyFontChange = (fontValue) => {
     const fontMap = {
@@ -586,34 +568,73 @@ export default function Settings() {
                   </div>
                 </div>
 
-                {/* Color Mode */}
+                {/* Color Mode - Theme Selection */}
                 <div>
-                  <p style={{ fontSize: '14px', fontWeight: '500', color: '#1a1613', margin: '0 0 12px 0', fontFamily: '"DM Sans", sans-serif' }}>
+                  <p style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text)', margin: '0 0 12px 0', fontFamily: '"DM Sans", sans-serif' }}>
                     Mod culoare
                   </p>
-                  <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                     {[
-                      { value: 'light', label: 'Luminos' },
-                      { value: 'Întunecat', label: 'Întunecat' },
-                      { value: 'system', label: 'Sistem' },
-                    ].map(mode => (
+                      { key: 'arctic', label: 'Arctic White', bgColor: '#ffffff', accentColor: '#2563eb', previewText: '#111827' },
+                      { key: 'midnight', label: 'Midnight Indigo', bgColor: '#0f1219', accentColor: '#a78bfa', previewText: '#f0eef5' },
+                      { key: 'forest', label: 'Forest Stone', bgColor: '#f4f1ec', accentColor: '#16794e', previewText: '#1a1f16' },
+                      { key: 'charcoal', label: 'Warm Charcoal', bgColor: '#1c1917', accentColor: '#d4a853', previewText: '#f5f0eb' },
+                    ].map(theme => (
                       <button
-                        key={mode.value}
-                        onClick={() => setTheme(mode.value)}
+                        key={theme.key}
+                        onClick={() => {
+                          const t = {
+                            arctic: { '--bg': '#ffffff', '--bg-alt': '#f5f6f8', '--text': '#111827', '--text-accent': '#2563eb', '--text2': '#4b5563', '--text3': '#9ca3af', '--accent': '#2563eb', '--border': '#d1d5db', '--border-hover': '#2563eb', '--btn-primary-bg': '#2563eb', '--btn-primary-text': '#ffffff', '--btn-secondary-bg': '#ffffff', '--btn-secondary-border': '#d1d5db', '--btn-secondary-text': '#111827', '--btn-signup-bg': '#111827', '--btn-signup-text': '#ffffff', '--chat-bg': '#f5f6f8', '--chat-border': '#d1d5db', '--chat-send-bg': '#2563eb', '--navbar-bg': '#ffffff', '--navbar-border': '#e5e7eb', '--stats-color': '#2563eb', '--checkmark-color': '#2563eb', '--footer-bg': '#111827', '--footer-text': '#9ca3af', '--footer-text-main': '#ffffff', '--surface': '#ffffff', '--sidebar-bg': '#f5f6f8' },
+                            midnight: { '--bg': '#0f1219', '--bg-alt': '#171c28', '--text': '#f0eef5', '--text-accent': '#a78bfa', '--text2': '#b0adc0', '--text3': '#706d80', '--accent': '#a78bfa', '--border': '#2a2d3e', '--border-hover': '#a78bfa', '--btn-primary-bg': '#a78bfa', '--btn-primary-text': '#0f1219', '--btn-secondary-bg': 'transparent', '--btn-secondary-border': '#a78bfa', '--btn-secondary-text': '#a78bfa', '--btn-signup-bg': '#a78bfa', '--btn-signup-text': '#0f1219', '--chat-bg': '#171c28', '--chat-border': '#2a2d3e', '--chat-send-bg': '#a78bfa', '--navbar-bg': '#0f1219', '--navbar-border': '#2a2d3e', '--stats-color': '#a78bfa', '--checkmark-color': '#a78bfa', '--footer-bg': '#080a10', '--footer-text': '#706d80', '--footer-text-main': '#b0adc0', '--surface': 'rgba(255,255,255,0.04)', '--sidebar-bg': '#171c28' },
+                            forest: { '--bg': '#f4f1ec', '--bg-alt': '#ebe7e0', '--text': '#1a1f16', '--text-accent': '#16794e', '--text2': '#555a4f', '--text3': '#8a8e84', '--accent': '#16794e', '--border': '#c9c4b8', '--border-hover': '#16794e', '--btn-primary-bg': '#16794e', '--btn-primary-text': '#ffffff', '--btn-secondary-bg': '#ffffff', '--btn-secondary-border': '#c9c4b8', '--btn-secondary-text': '#1a1f16', '--btn-signup-bg': '#1a1f16', '--btn-signup-text': '#ffffff', '--chat-bg': '#ffffff', '--chat-border': '#c9c4b8', '--chat-send-bg': '#16794e', '--navbar-bg': '#f4f1ec', '--navbar-border': '#d5d0c6', '--stats-color': '#16794e', '--checkmark-color': '#16794e', '--footer-bg': '#1a1f16', '--footer-text': '#8a8e84', '--footer-text-main': '#d5d0c6', '--surface': '#ffffff', '--sidebar-bg': '#ffffff' },
+                            charcoal: { '--bg': '#1c1917', '--bg-alt': '#262220', '--text': '#f5f0eb', '--text-accent': '#d4a853', '--text2': '#b8b0a5', '--text3': '#7a7268', '--accent': '#d4a853', '--border': '#3a3430', '--border-hover': '#d4a853', '--btn-primary-bg': '#d4a853', '--btn-primary-text': '#1c1917', '--btn-secondary-bg': 'transparent', '--btn-secondary-border': '#d4a853', '--btn-secondary-text': '#d4a853', '--btn-signup-bg': '#d4a853', '--btn-signup-text': '#1c1917', '--chat-bg': '#262220', '--chat-border': '#3a3430', '--chat-send-bg': '#d4a853', '--navbar-bg': '#1c1917', '--navbar-border': '#3a3430', '--stats-color': '#d4a853', '--checkmark-color': '#d4a853', '--footer-bg': '#0f0d0c', '--footer-text': '#7a7268', '--footer-text-main': '#b8b0a5', '--surface': 'rgba(255,255,255,0.04)', '--sidebar-bg': '#262220' },
+                          };
+                          Object.entries(t[theme.key]).forEach(([key, val]) => {
+                            document.documentElement.style.setProperty(key, val);
+                          });
+                          localStorage.setItem('theme', theme.key);
+                          setFormData(prev => ({ ...prev, colorMode: theme.key }));
+                        }}
                         style={{
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          border: formData.colorMode === mode.value ? '2px solid #1a1613' : '1px solid #ddd4c8',
-                          background: formData.colorMode === mode.value ? '#f5f0e8' : 'transparent',
-                          fontSize: '14px',
-                          fontWeight: formData.colorMode === mode.value ? '500' : '400',
-                          color: '#1a1613',
+                          padding: '0',
+                          borderRadius: '8px',
+                          border: formData.colorMode === theme.key ? '2px solid var(--accent)' : '1px solid var(--border)',
+                          background: 'transparent',
                           cursor: 'pointer',
-                          fontFamily: '"DM Sans", sans-serif',
                           transition: 'all 0.2s',
+                          overflow: 'hidden',
                         }}
                       >
-                        {mode.label}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+                          {/* Mini Preview */}
+                          <div
+                            style={{
+                              height: '60px',
+                              background: theme.bgColor,
+                              borderBottom: `4px solid ${theme.accentColor}`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              position: 'relative',
+                            }}
+                          >
+                            <span style={{ fontSize: '12px', color: theme.previewText, opacity: 0.6, fontWeight: '400' }}>Text</span>
+                          </div>
+                          {/* Label */}
+                          <div
+                            style={{
+                              padding: '10px',
+                              textAlign: 'center',
+                              fontSize: '13px',
+                              fontWeight: '500',
+                              color: 'var(--text)',
+                              fontFamily: '"DM Sans", sans-serif',
+                              background: 'var(--surface)',
+                            }}
+                          >
+                            {theme.label}
+                          </div>
+                        </div>
                       </button>
                     ))}
                   </div>

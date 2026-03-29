@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import ChatPanel from './ChatPanel';
@@ -11,6 +11,9 @@ export default function Layout({ children }) {
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1400);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [extensionsOpen, setExtensionsOpen] = useState(false);
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('arctic');
+  const themeMenuRef = useRef(null);
 
   // Listen to window resize
   if (typeof window !== 'undefined') {
@@ -31,6 +34,159 @@ export default function Layout({ children }) {
   // Chat panel is not shown - only centered chat bar on Dashboard
   const showChatPanel = false;
 
+  // Theme definitions
+  const themes = {
+    arctic: {
+      '--bg': '#ffffff',
+      '--bg-alt': '#f5f6f8',
+      '--text': '#111827',
+      '--text-accent': '#2563eb',
+      '--text2': '#4b5563',
+      '--text3': '#9ca3af',
+      '--accent': '#2563eb',
+      '--border': '#d1d5db',
+      '--border-hover': '#2563eb',
+      '--btn-primary-bg': '#2563eb',
+      '--btn-primary-text': '#ffffff',
+      '--btn-secondary-bg': '#ffffff',
+      '--btn-secondary-border': '#d1d5db',
+      '--btn-secondary-text': '#111827',
+      '--btn-signup-bg': '#111827',
+      '--btn-signup-text': '#ffffff',
+      '--chat-bg': '#f5f6f8',
+      '--chat-border': '#d1d5db',
+      '--chat-send-bg': '#2563eb',
+      '--navbar-bg': '#ffffff',
+      '--navbar-border': '#e5e7eb',
+      '--stats-color': '#2563eb',
+      '--checkmark-color': '#2563eb',
+      '--footer-bg': '#111827',
+      '--footer-text': '#9ca3af',
+      '--footer-text-main': '#ffffff',
+      '--surface': '#ffffff',
+      '--sidebar-bg': '#f5f6f8',
+    },
+    midnight: {
+      '--bg': '#0f1219',
+      '--bg-alt': '#171c28',
+      '--text': '#f0eef5',
+      '--text-accent': '#a78bfa',
+      '--text2': '#b0adc0',
+      '--text3': '#706d80',
+      '--accent': '#a78bfa',
+      '--border': '#2a2d3e',
+      '--border-hover': '#a78bfa',
+      '--btn-primary-bg': '#a78bfa',
+      '--btn-primary-text': '#0f1219',
+      '--btn-secondary-bg': 'transparent',
+      '--btn-secondary-border': '#a78bfa',
+      '--btn-secondary-text': '#a78bfa',
+      '--btn-signup-bg': '#a78bfa',
+      '--btn-signup-text': '#0f1219',
+      '--chat-bg': '#171c28',
+      '--chat-border': '#2a2d3e',
+      '--chat-send-bg': '#a78bfa',
+      '--navbar-bg': '#0f1219',
+      '--navbar-border': '#2a2d3e',
+      '--stats-color': '#a78bfa',
+      '--checkmark-color': '#a78bfa',
+      '--footer-bg': '#080a10',
+      '--footer-text': '#706d80',
+      '--footer-text-main': '#b0adc0',
+      '--surface': 'rgba(255,255,255,0.04)',
+      '--sidebar-bg': '#171c28',
+    },
+    forest: {
+      '--bg': '#f4f1ec',
+      '--bg-alt': '#ebe7e0',
+      '--text': '#1a1f16',
+      '--text-accent': '#16794e',
+      '--text2': '#555a4f',
+      '--text3': '#8a8e84',
+      '--accent': '#16794e',
+      '--border': '#c9c4b8',
+      '--border-hover': '#16794e',
+      '--btn-primary-bg': '#16794e',
+      '--btn-primary-text': '#ffffff',
+      '--btn-secondary-bg': '#ffffff',
+      '--btn-secondary-border': '#c9c4b8',
+      '--btn-secondary-text': '#1a1f16',
+      '--btn-signup-bg': '#1a1f16',
+      '--btn-signup-text': '#ffffff',
+      '--chat-bg': '#ffffff',
+      '--chat-border': '#c9c4b8',
+      '--chat-send-bg': '#16794e',
+      '--navbar-bg': '#f4f1ec',
+      '--navbar-border': '#d5d0c6',
+      '--stats-color': '#16794e',
+      '--checkmark-color': '#16794e',
+      '--footer-bg': '#1a1f16',
+      '--footer-text': '#8a8e84',
+      '--footer-text-main': '#d5d0c6',
+      '--surface': '#ffffff',
+      '--sidebar-bg': '#ffffff',
+    },
+    charcoal: {
+      '--bg': '#1c1917',
+      '--bg-alt': '#262220',
+      '--text': '#f5f0eb',
+      '--text-accent': '#d4a853',
+      '--text2': '#b8b0a5',
+      '--text3': '#7a7268',
+      '--accent': '#d4a853',
+      '--border': '#3a3430',
+      '--border-hover': '#d4a853',
+      '--btn-primary-bg': '#d4a853',
+      '--btn-primary-text': '#1c1917',
+      '--btn-secondary-bg': 'transparent',
+      '--btn-secondary-border': '#d4a853',
+      '--btn-secondary-text': '#d4a853',
+      '--btn-signup-bg': '#d4a853',
+      '--btn-signup-text': '#1c1917',
+      '--chat-bg': '#262220',
+      '--chat-border': '#3a3430',
+      '--chat-send-bg': '#d4a853',
+      '--navbar-bg': '#1c1917',
+      '--navbar-border': '#3a3430',
+      '--stats-color': '#d4a853',
+      '--checkmark-color': '#d4a853',
+      '--footer-bg': '#0f0d0c',
+      '--footer-text': '#7a7268',
+      '--footer-text-main': '#b8b0a5',
+      '--surface': 'rgba(255,255,255,0.04)',
+      '--sidebar-bg': '#262220',
+    },
+  };
+
+  const applyTheme = (theme) => {
+    const t = themes[theme];
+    Object.entries(t).forEach(([key, val]) => {
+      document.documentElement.style.setProperty(key, val);
+    });
+    localStorage.setItem('theme', theme);
+    setCurrentTheme(theme);
+  };
+
+  // Initialize theme on mount
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'arctic';
+    setCurrentTheme(savedTheme);
+    applyTheme(savedTheme);
+  }, []);
+
+  // Close theme menu on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (themeMenuRef.current && !themeMenuRef.current.contains(e.target)) {
+        setThemeMenuOpen(false);
+      }
+    };
+    if (themeMenuOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [themeMenuOpen]);
+
   const navItems = [
     { path: '/app', label: 'Dashboard' },
     { path: '/proiectanti', label: 'Proiectanți' },
@@ -49,8 +205,8 @@ export default function Layout({ children }) {
           position: 'fixed',
           left: 0,
           top: 0,
-          background: '#ebe3d9',
-          borderRight: '1px solid #ddd4c8',
+          background: 'var(--sidebar-bg)',
+          borderRight: '1px solid var(--border)',
           display: isMobile ? 'none' : 'flex',
           flexDirection: 'column',
           overflowY: 'auto',
@@ -993,14 +1149,117 @@ export default function Layout({ children }) {
           marginLeft: isMobile ? 0 : '260px',
           marginRight: '0px',
           minHeight: '100vh',
-          background: '#f5f0e8',
+          background: 'var(--bg)',
           padding: '24px 32px',
           flex: 1,
           overflowY: 'auto',
           boxSizing: 'border-box',
           transition: 'margin 0.3s',
+          position: 'relative',
         }}
       >
+        {/* Theme Toggle Button */}
+        <div style={{ position: 'fixed', top: '12px', right: '16px', zIndex: 40 }} ref={themeMenuRef}>
+          <button
+            onClick={() => setThemeMenuOpen(!themeMenuOpen)}
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--accent)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border)';
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="1"/>
+              <path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/>
+            </svg>
+          </button>
+
+          {/* Theme Dropdown */}
+          {themeMenuOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '100%',
+                right: '0',
+                marginTop: '8px',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                padding: '6px',
+                minWidth: '160px',
+                zIndex: 50,
+              }}
+            >
+              {[
+                { key: 'arctic', label: 'Arctic White', bgColor: '#ffffff', accentColor: '#2563eb' },
+                { key: 'midnight', label: 'Midnight Indigo', bgColor: '#0f1219', accentColor: '#a78bfa' },
+                { key: 'forest', label: 'Forest Stone', bgColor: '#f4f1ec', accentColor: '#16794e' },
+                { key: 'charcoal', label: 'Warm Charcoal', bgColor: '#1c1917', accentColor: '#d4a853' },
+              ].map((theme) => (
+                <button
+                  key={theme.key}
+                  onClick={() => {
+                    applyTheme(theme.key);
+                    setThemeMenuOpen(false);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    background: 'transparent',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    fontSize: '13px',
+                    fontWeight: '400',
+                    color: 'var(--text)',
+                    fontFamily: '"DM Sans", sans-serif',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--hover)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  {/* Theme Preview Circle */}
+                  <div
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      background: theme.bgColor,
+                      border: `3px solid ${theme.accentColor}`,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span style={{ flex: 1, textAlign: 'left' }}>{theme.label}</span>
+                  {currentTheme === theme.key && (
+                    <span style={{ color: 'var(--accent)', fontSize: '16px' }}>✓</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {children}
       </main>
 

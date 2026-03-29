@@ -18,7 +18,7 @@ export default function LandingPage() {
   const menuRef = useRef(null);
   const [isListening, setIsListening] = useState(false);
   const [chatInput, setChatInput] = useState('');
-  const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('landingTheme') || 'arctic');
+  const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme') || 'arctic');
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const themeMenuRef = useRef(null);
   const [currentLanguage, setCurrentLanguage] = useState(localStorage.getItem('language') || 'ro');
@@ -150,7 +150,7 @@ export default function LandingPage() {
     Object.entries(t).forEach(([key, val]) => {
       document.documentElement.style.setProperty(key, val);
     });
-    localStorage.setItem('landingTheme', theme);
+    localStorage.setItem('theme', theme);
     setCurrentTheme(theme);
   };
 
@@ -164,7 +164,7 @@ export default function LandingPage() {
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('landingTheme') || 'arctic';
+    const savedTheme = localStorage.getItem('theme') || 'arctic';
     applyTheme(savedTheme);
   }, []);
 
