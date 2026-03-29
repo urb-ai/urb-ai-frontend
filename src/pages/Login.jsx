@@ -11,32 +11,85 @@ export default function Login() {
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState('');
 
+  // Reset loading state on mount (in case it's stuck from previous session)
   useEffect(() => {
-    if (user) {
-      navigate('/app', { replace: true });
-    }
-  }, [user, navigate]);
+    console.log('[Init] Login page mounted');
+    console.log('[Init] Current user:', user?.email || 'No user');
+    console.log('[Init] Current loading state:', loading);
 
-  const handleGoogleLogin = async () => {
+    // Reset loading state
+    setLoading(false);
+    console.log('[Init] Loading reset to false');
+
+    // Safety timeout: if loading is still true after 10 seconds, force reset it
+    const timeout = setTimeout(() => {
+      setLoading(prevLoading => {
+        if (prevLoading) {
+          console.warn('[Safety] Loading was stuck at true for 10s, forcing reset');
+          return false;
+        }
+        return prevLoading;
+      });
+    }, 10000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const handleLogout = async () => {
+    console.log('[Logout] Logout clicked');
+    try {
+      setLoading(true);
+      const supabase = getSupabase();
+      console.log('[Logout] Signing out...');
+      await supabase.auth.signOut();
+      console.log('[Logout] Signed out successfully');
+      setOtpSent(false);
+      setEmail('');
+      setError('');
+      setLoading(false);
+    } catch (err) {
+      console.error('[Logout] Error:', err);
+      setError('Eroare la deconectare');
+      setLoading(false);
+    }
+  };
+
+  const handleOAuthLogin = async (provider) => {
+    console.log(`[OAuth] Clicked: ${provider}`);
     try {
       setLoading(true);
       setError('');
+      console.log(`[OAuth] Starting OAuth flow for: ${provider}`);
       const supabase = getSupabase();
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
+      console.log('[OAuth] Supabase client obtained');
+
+      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider,
         options: {
           redirectTo: window.location.origin + '/app',
         },
       });
+
+      if (oauthError) {
+        console.error(`[OAuth] Error for ${provider}:`, oauthError);
+        setError(oauthError.message || `Eroare la conectare cu ${provider}`);
+        setLoading(false);
+      } else {
+        console.log(`[OAuth] OAuth initiated for ${provider}`, data);
+      }
     } catch (err) {
-      setError(err.message || 'Eroare la conectare cu Google');
+      console.error(`[OAuth] Exception for ${provider}:`, err);
+      setError(err.message || `Eroare la conectare cu ${provider}`);
       setLoading(false);
     }
   };
 
   const handleEmailSignIn = async (e) => {
     e.preventDefault();
+    console.log('[Email] Email signin clicked, email:', email);
+
     if (!email.trim()) {
+      console.log('[Email] Email is empty');
       setError('Te rog introdu o adresă de email');
       return;
     }
@@ -44,19 +97,79 @@ export default function Login() {
     try {
       setLoading(true);
       setError('');
+      console.log('[Email] Starting OTP flow for:', email);
       const supabase = getSupabase();
-      await supabase.auth.signInWithOtp({
+      console.log('[Email] Supabase client obtained');
+
+      const { data, error: otpError } = await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: {
           emailRedirectTo: window.location.origin + '/app',
         },
       });
-      setOtpSent(true);
+
+      if (otpError) {
+        console.error('[Email] OTP error:', otpError);
+        setError(otpError.message || 'Eroare la trimiterea link-ului de autentificare');
+        setLoading(false);
+      } else {
+        console.log('[Email] OTP sent successfully', data);
+        setOtpSent(true);
+        setLoading(false);
+      }
     } catch (err) {
+      console.error('[Email] Exception:', err);
       setError(err.message || 'Eroare la trimiterea link-ului de autentificare');
       setLoading(false);
     }
   };
+
+  // Social button component
+  const SocialButton = ({ provider, icon, label, bgColor, textColor, hoverColor }) => (
+    <button
+      onClick={() => {
+        console.log(`[SocialButton] ${provider} button clicked`);
+        handleOAuthLogin(provider);
+      }}
+      disabled={loading}
+      style={{
+        width: '100%',
+        backgroundColor: bgColor,
+        border: bgColor === '#ffffff' ? '1px solid #ddd4c8' : 'none',
+        borderRadius: '8px',
+        padding: '12px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '12px',
+        fontSize: '14px',
+        fontWeight: '500',
+        color: textColor,
+        cursor: loading ? 'not-allowed' : 'pointer',
+        opacity: loading ? 0.6 : 1,
+        transition: 'all 0.2s ease',
+        marginBottom: '10px',
+        fontFamily: '"DM Sans", system-ui, sans-serif',
+      }}
+      onMouseEnter={(e) => {
+        if (!loading) {
+          e.target.style.backgroundColor = hoverColor;
+          if (bgColor === '#ffffff') {
+            e.target.style.borderColor = '#c4893a';
+          }
+        }
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.backgroundColor = bgColor;
+        if (bgColor === '#ffffff') {
+          e.target.style.borderColor = '#ddd4c8';
+        }
+      }}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
 
   return (
     <div
@@ -66,60 +179,86 @@ export default function Login() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '1rem',
+        padding: '16px',
         fontFamily: '"DM Sans", system-ui, sans-serif',
+        position: 'relative',
       }}
     >
+      {/* DEBUG PANEL - Remove this after testing */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '10px',
+          right: '10px',
+          background: 'rgba(0,0,0,0.8)',
+          color: '#0f0',
+          padding: '10px',
+          borderRadius: '5px',
+          fontSize: '11px',
+          fontFamily: 'monospace',
+          zIndex: 999,
+          maxWidth: '250px',
+        }}
+      >
+        <div>Loading: {loading.toString()}</div>
+        <div>User: {user?.email || 'none'}</div>
+        <div>OTP Sent: {otpSent.toString()}</div>
+        <div>Email: {email || '(empty)'}</div>
+        {error && <div style={{ color: '#f44' }}>Error: {error}</div>}
+      </div>
+
       <div
         style={{
           width: '100%',
           maxWidth: '420px',
           backgroundColor: '#ffffff',
+          borderRadius: '12px',
           padding: '40px',
-          borderRadius: '0.5rem',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
         }}
       >
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h1
             style={{
-              fontSize: '28px',
-              fontFamily: 'Georgia, serif',
-              fontWeight: '400',
-              letterSpacing: '-0.5px',
-              margin: '0',
+              fontSize: '24px',
+              fontFamily: '"Instrument Serif", serif',
+              fontWeight: '500',
+              margin: '0 0 8px 0',
               color: '#1a1613',
             }}
           >
-            Urb<span style={{ color: '#c4893a', fontStyle: 'italic', fontWeight: '500' }}>AI</span>
+            UrbAI
           </h1>
+          <p
+            style={{
+              fontSize: '14px',
+              color: '#9a938a',
+              margin: '0',
+              fontWeight: '400',
+            }}
+          >
+            Conectează-te la contul tău
+          </p>
         </div>
 
-        {/* Title */}
-        <h2
-          style={{
-            fontSize: '24px',
-            fontWeight: '600',
-            textAlign: 'center',
-            margin: '0 0 12px 0',
-            color: '#1a1613',
-          }}
-        >
-          Sign in or sign up
-        </h2>
-
-        {/* Subtitle */}
-        <p
-          style={{
-            fontSize: '14px',
-            color: '#6b5d50',
-            textAlign: 'center',
-            margin: '0 0 28px 0',
-          }}
-        >
-          Începe să generezi documente cu UrbAI
-        </p>
+        {/* Error Message */}
+        {error && (
+          <div
+            style={{
+              backgroundColor: '#ffebee',
+              border: '1px solid #ef5350',
+              color: '#c62828',
+              padding: '12px 14px',
+              borderRadius: '6px',
+              marginBottom: '20px',
+              fontSize: '13px',
+              fontWeight: '500',
+            }}
+          >
+            {error}
+          </div>
+        )}
 
         {/* Success Message */}
         {otpSent && (
@@ -129,146 +268,204 @@ export default function Login() {
               border: '1px solid #4caf50',
               color: '#2e7d32',
               padding: '12px 14px',
-              borderRadius: '0.375rem',
+              borderRadius: '6px',
               marginBottom: '20px',
-              fontSize: '14px',
+              fontSize: '13px',
+              fontWeight: '500',
               textAlign: 'center',
             }}
           >
-            ✓ Verifică-ți emailul — ți-am trimis un link de autentificare
+            ✓ Verifică-ți emailul!
           </div>
         )}
 
-        {/* Error Message */}
-        {error && (
-          <div
-            style={{
-              backgroundColor: '#ffebee',
-              border: '1px solid #f44336',
-              color: '#c62828',
-              padding: '12px 14px',
-              borderRadius: '0.375rem',
-              marginBottom: '20px',
-              fontSize: '14px',
-            }}
-          >
-            <strong>Eroare:</strong> {error}
-          </div>
-        )}
+        {user && !otpSent ? (
+          // Already logged in view
+          <div>
+            <div
+              style={{
+                backgroundColor: '#f0f8f0',
+                border: '1px solid #81c784',
+                color: '#2e7d32',
+                padding: '14px',
+                borderRadius: '6px',
+                marginBottom: '20px',
+                textAlign: 'center',
+              }}
+            >
+              <p style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: '500' }}>
+                ✓ Ești conectat ca
+              </p>
+              <p style={{ margin: '0', fontSize: '14px', fontWeight: '600', color: '#1a1613' }}>
+                {user.email}
+              </p>
+            </div>
 
-        {!otpSent ? (
-          <>
-            {/* Google Button */}
             <button
-              onClick={handleGoogleLogin}
+              onClick={() => {
+                console.log('[Dashboard] Navigate to /app clicked');
+                navigate('/app');
+              }}
+              disabled={loading}
+              style={{
+                width: '100%',
+                backgroundColor: '#1a1613',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
+                marginBottom: '10px',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) e.target.style.backgroundColor = '#2a2623';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#1a1613';
+              }}
+            >
+              Mergi la Dashboard
+            </button>
+
+            <p style={{ fontSize: '12px', color: '#9a938a', textAlign: 'center', margin: '16px 0 16px 0' }}>
+              Sau
+            </p>
+
+            <button
+              onClick={handleLogout}
               disabled={loading}
               style={{
                 width: '100%',
                 backgroundColor: '#ffffff',
-                border: '1px solid #e0e0e0',
-                borderRadius: '0.375rem',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '12px',
-                fontSize: '15px',
-                fontWeight: '500',
-                color: '#1a1613',
+                color: '#c62828',
+                border: '1px solid #ef5350',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                fontWeight: '600',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1,
                 transition: 'all 0.2s ease',
-                marginBottom: '16px',
                 fontFamily: 'inherit',
               }}
               onMouseEnter={(e) => {
                 if (!loading) {
-                  e.target.style.backgroundColor = '#fafafa';
-                  e.target.style.borderColor = '#bbb';
+                  e.target.style.backgroundColor = '#ffebee';
+                  e.target.style.borderColor = '#c62828';
                 }
               }}
               onMouseLeave={(e) => {
                 e.target.style.backgroundColor = '#ffffff';
-                e.target.style.borderColor = '#e0e0e0';
+                e.target.style.borderColor = '#ef5350';
               }}
             >
-              {loading ? (
-                <>
-                  <svg
-                    style={{
-                      animation: 'spin 0.8s linear infinite',
-                    }}
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="12" cy="12" r="10" stroke="#1a1613" strokeWidth="2" opacity="0.2" />
-                    <path
-                      d="M12 2 A10 10 0 0 1 22 12"
-                      stroke="#1a1613"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span>Se conectează...</span>
-                </>
-              ) : (
-                <>
-                  {/* Google SVG Icon */}
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      fill="#4285F4"
-                    />
-                    <path
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      fill="#34A853"
-                    />
-                    <path
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      fill="#FBBC05"
-                    />
-                    <path
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      fill="#EA4335"
-                    />
-                  </svg>
-                  <span>Continuă cu Google</span>
-                </>
-              )}
+              Deconectează-te
             </button>
+          </div>
+        ) : !otpSent ? (
+          <>
+            {/* Social Login Buttons */}
+            <div style={{ marginBottom: '20px' }}>
+              <SocialButton
+                provider="google"
+                icon={
+                  <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                }
+                label="Continuă cu Google"
+                bgColor="#ffffff"
+                textColor="#1a1613"
+                hoverColor="#f9f6f2"
+              />
+
+              <SocialButton
+                provider="linkedin_oidc"
+                icon={
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                }
+                label="Continuă cu LinkedIn"
+                bgColor="#0A66C2"
+                textColor="white"
+                hoverColor="#004182"
+              />
+
+              <SocialButton
+                provider="facebook"
+                icon={
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                }
+                label="Continuă cu Facebook"
+                bgColor="#1877F2"
+                textColor="white"
+                hoverColor="#0d5bbd"
+              />
+
+              <SocialButton
+                provider="apple"
+                icon={
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                  </svg>
+                }
+                label="Continuă cu Apple"
+                bgColor="#000000"
+                textColor="white"
+                hoverColor="#333333"
+              />
+            </div>
 
             {/* Separator */}
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                margin: '24px 0',
+                fontSize: '12px',
+                color: '#9a938a',
+                textAlign: 'center',
+                margin: '20px 0',
+                fontWeight: '400',
               }}
             >
-              <div style={{ flex: 1, height: '1px', backgroundColor: '#e0e0e0' }} />
-              <span style={{ fontSize: '13px', color: '#9b8b7e', fontWeight: '400' }}>sau</span>
-              <div style={{ flex: 1, height: '1px', backgroundColor: '#e0e0e0' }} />
+              ───── sau ─────
             </div>
 
             {/* Email Form */}
             <form onSubmit={handleEmailSignIn}>
+              <label
+                style={{
+                  fontSize: '10px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  color: '#5c5466',
+                  fontWeight: '600',
+                  display: 'block',
+                  marginBottom: '8px',
+                }}
+              >
+                Email
+              </label>
               <input
                 type="email"
-                placeholder="Adresa ta de email"
+                placeholder="email@exemplu.ro"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
                 style={{
                   width: '100%',
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '0.375rem',
-                  padding: '12px',
+                  padding: '12px 14px',
+                  border: '1px solid #ddd4c8',
+                  borderRadius: '8px',
                   fontSize: '14px',
-                  marginBottom: '16px',
+                  marginBottom: '10px',
                   fontFamily: 'inherit',
                   boxSizing: 'border-box',
                   transition: 'border-color 0.2s ease',
@@ -278,26 +475,27 @@ export default function Login() {
                   e.target.style.borderColor = '#c4893a';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = '#e0e0e0';
+                  e.target.style.borderColor = '#ddd4c8';
                 }}
               />
 
-              {/* Continue Button */}
+              {/* Email Button */}
               <button
                 type="submit"
                 disabled={loading || !email.trim()}
                 style={{
                   width: '100%',
-                  backgroundColor: loading || !email.trim() ? '#9b9b9b' : '#1a1613',
+                  backgroundColor: loading || !email.trim() ? '#ccc' : '#1a1613',
                   color: '#ffffff',
                   border: 'none',
-                  borderRadius: '0.375rem',
-                  padding: '14px',
-                  fontSize: '15px',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '14px',
                   fontWeight: '600',
                   cursor: loading || !email.trim() ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s ease',
                   fontFamily: 'inherit',
+                  marginBottom: '6px',
                 }}
                 onMouseEnter={(e) => {
                   if (!loading && email.trim()) {
@@ -305,16 +503,29 @@ export default function Login() {
                   }
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = email.trim() ? '#1a1613' : '#9b9b9b';
+                  e.target.style.backgroundColor = email.trim() ? '#1a1613' : '#ccc';
                 }}
               >
-                {loading ? 'Se procesează...' : 'Continuă'}
+                {loading ? '⏳ Se procesează...' : 'Continuă cu email →'}
               </button>
+
+              {/* Help Text */}
+              <p
+                style={{
+                  fontSize: '11px',
+                  color: '#9a938a',
+                  margin: '0',
+                  textAlign: 'center',
+                  fontWeight: '400',
+                }}
+              >
+                Vei primi un link de autentificare pe email
+              </p>
             </form>
           </>
         ) : (
           <div style={{ textAlign: 'center' }}>
-            <p style={{ fontSize: '14px', color: '#6b5d50', margin: '0' }}>
+            <p style={{ fontSize: '14px', color: '#9a938a', margin: '0 0 16px 0' }}>
               Deschide link-ul din email pentru a finaliza autentificarea.
             </p>
             <button
@@ -324,7 +535,6 @@ export default function Login() {
                 setError('');
               }}
               style={{
-                marginTop: '16px',
                 fontSize: '14px',
                 color: '#c4893a',
                 background: 'none',
@@ -332,6 +542,7 @@ export default function Login() {
                 cursor: 'pointer',
                 textDecoration: 'underline',
                 fontFamily: 'inherit',
+                fontWeight: '500',
               }}
             >
               Încearcă cu alt email
@@ -339,45 +550,70 @@ export default function Login() {
           </div>
         )}
 
-        {/* Footer Text */}
+        {/* Footer */}
         <p
           style={{
-            fontSize: '12px',
-            color: '#9b8b7e',
+            fontSize: '13px',
+            color: '#9a938a',
             textAlign: 'center',
             margin: '24px 0 0 0',
-            lineHeight: '1.5',
+            fontWeight: '400',
           }}
         >
-          Prin continuare, accepți{' '}
+          Nu ai cont?{' '}
           <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
-            style={{ color: '#9b8b7e', textDecoration: 'underline', cursor: 'pointer' }}
+            href="/signup"
+            style={{
+              color: '#c4893a',
+              textDecoration: 'none',
+              fontWeight: '500',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.textDecoration = 'underline';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.textDecoration = 'none';
+            }}
+          >
+            Creează unul gratuit
+          </a>
+        </p>
+
+        <p
+          style={{
+            fontSize: '10px',
+            color: '#b0a898',
+            textAlign: 'center',
+            margin: '12px 0 0 0',
+            lineHeight: '1.5',
+            fontWeight: '400',
+          }}
+        >
+          Prin conectare accepți{' '}
+          <a
+            href="/termeni-conditii"
+            style={{
+              color: '#b0a898',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+            }}
           >
             Termenii
           </a>
           {' '}și{' '}
           <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
-            style={{ color: '#9b8b7e', textDecoration: 'underline', cursor: 'pointer' }}
+            href="/politica-confidentialitate"
+            style={{
+              color: '#b0a898',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+            }}
           >
             Politica de Confidențialitate
           </a>
         </p>
       </div>
-
-      <style>{`
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
     </div>
   );
 }

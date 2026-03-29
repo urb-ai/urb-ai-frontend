@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProjectStore } from '../stores/projectStore';
 import Layout from '../components/Layout';
+import DocumentUploadZone from '../components/DocumentUploadZone';
 
 export default function ProiectNou() {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ export default function ProiectNou() {
     selectedBeneficiar,
     setSelectedProiectant,
     setSelectedBeneficiar,
+    addProiectant,
+    addBeneficiar,
     addProiect,
     setWorkflowStep,
   } = useProjectStore();
@@ -31,14 +34,78 @@ export default function ProiectNou() {
     rh: '',
   });
 
+  // Modal states for adding new proiectant/beneficiar
+  const [showProiectantModal, setShowProiectantModal] = useState(false);
+  const [showBeneficiariModal, setShowBeneficiariModal] = useState(false);
+
+  const [newProiectantData, setNewProiectantData] = useState({
+    nume: '',
+    cui: '',
+    adresa: '',
+  });
+
+  const [newBeneficiariData, setNewBeneficiariData] = useState({
+    nume: '',
+    adresa: '',
+    tipBeneficiar: 'persoana',
+  });
+
   const handleSelectProiectant = (proiectant) => {
     setSelectedProiectant(proiectant);
-    setStep(2);
+    setTimeout(() => {
+      setStep(2);
+    }, 500);
   };
 
   const handleSelectBeneficiar = (beneficiar) => {
     setSelectedBeneficiar(beneficiar);
-    setStep(3);
+    setTimeout(() => {
+      setStep(3);
+    }, 500);
+  };
+
+  const handleAddProiectant = () => {
+    if (!newProiectantData.nume.trim()) {
+      alert('Completează denumirea proiectantului');
+      return;
+    }
+
+    const proiectant = {
+      id: Date.now(),
+      ...newProiectantData,
+      createdAt: new Date(),
+    };
+
+    addProiectant(proiectant);
+    setNewProiectantData({ nume: '', cui: '', adresa: '' });
+    setShowProiectantModal(false);
+
+    // Auto-select and advance
+    setTimeout(() => {
+      handleSelectProiectant(proiectant);
+    }, 300);
+  };
+
+  const handleAddBeneficiar = () => {
+    if (!newBeneficiariData.nume.trim()) {
+      alert('Completează numele beneficiarului');
+      return;
+    }
+
+    const beneficiar = {
+      id: Date.now(),
+      ...newBeneficiariData,
+      createdAt: new Date(),
+    };
+
+    addBeneficiar(beneficiar);
+    setNewBeneficiariData({ nume: '', adresa: '', tipBeneficiar: 'persoana' });
+    setShowBeneficiariModal(false);
+
+    // Auto-select and advance
+    setTimeout(() => {
+      handleSelectBeneficiar(beneficiar);
+    }, 300);
   };
 
   const handleProjectChange = (e) => {
@@ -46,22 +113,20 @@ export default function ProiectNou() {
     setProjectData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCreateProject = () => {
+  const handleContinueToDocumentType = () => {
     if (!selectedProiectant || !selectedBeneficiar || !projectData.titlu) {
       alert('Completează toate câmpurile obligatorii');
       return;
     }
 
-    const newProject = {
-      proiectantId: selectedProiectant.id,
-      beneficiarId: selectedBeneficiar.id,
-      ...projectData,
-      createdAt: new Date(),
-    };
+    // Generate temporary project ID for this workflow
+    const tempProjectId = Date.now().toString();
 
-    addProiect(newProject);
+    // Save project data temporarily
     setWorkflowStep('tipDocument');
-    navigate(`/proiect/${Date.now()}/document`);
+
+    // Navigate to document type selection
+    navigate(`/app/proiect/${tempProjectId}/tip-document`);
   };
 
   return (
@@ -103,39 +168,44 @@ export default function ProiectNou() {
               Alege firma de proiectare care va genera documentele
             </p>
 
-            {proiectanti.length === 0 ? (
-              <div className="card text-center py-12">
-                <p className="text-warm-text-secondary mb-4">
-                  Niciun proiectant disponibil
-                </p>
-                <button
-                  className="btn-accent"
-                  onClick={() => navigate('/proiectanti')}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 220px))',
+              gap: '16px',
+            }}>
+              {/* Existing Proiectanti */}
+              {proiectanti.map((proiectant) => (
+                <div
+                  key={proiectant.id}
+                  className="card cursor-pointer hover:border-urbai-gold transition-all"
+                  style={{ padding: '16px', maxWidth: '220px' }}
+                  onClick={() => handleSelectProiectant(proiectant)}
                 >
-                  Mergi la Proiectanți
-                </button>
+                  <h3 className="text-lg font-serif text-warm-text mb-2">
+                    {proiectant.nume}
+                  </h3>
+                  <p className="text-sm text-warm-text-secondary">
+                    CUI: {proiectant.cui || '-'}
+                  </p>
+                  <p className="text-sm text-warm-text-secondary">
+                    {proiectant.adresa || 'N/A'}
+                  </p>
+                </div>
+              ))}
+
+              {/* Add New Proiectant Card */}
+              <div
+                className="card cursor-pointer border-2 border-dashed border-warm-border hover:border-urbai-gold transition-all flex items-center justify-center"
+                style={{ padding: '16px', maxWidth: '220px', minHeight: '220px' }}
+                onClick={() => setShowProiectantModal(true)}
+              >
+                <div className="text-center">
+                  <div className="text-4xl text-urbai-gold mb-3">+</div>
+                  <p className="text-warm-text font-semibold">Adaugă Proiectant Nou</p>
+                  <p className="text-xs text-warm-text-secondary mt-1">Clic pentru a adăuga</p>
+                </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {proiectanti.map((proiectant) => (
-                  <div
-                    key={proiectant.id}
-                    className="card cursor-pointer hover:border-urbai-gold"
-                    onClick={() => handleSelectProiectant(proiectant)}
-                  >
-                    <h3 className="text-lg font-serif text-warm-text mb-2">
-                      {proiectant.nume}
-                    </h3>
-                    <p className="text-sm text-warm-text-secondary">
-                      CUI: {proiectant.cui}
-                    </p>
-                    <p className="text-sm text-warm-text-secondary">
-                      {proiectant.adresa}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+            </div>
           </div>
         )}
 
@@ -149,39 +219,44 @@ export default function ProiectNou() {
               Alege persoana/firma care comandă documentele
             </p>
 
-            {beneficiari.length === 0 ? (
-              <div className="card text-center py-12">
-                <p className="text-warm-text-secondary mb-4">
-                  Niciun beneficiar disponibil
-                </p>
-                <button
-                  className="btn-accent"
-                  onClick={() => navigate('/beneficiari')}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 220px))',
+              gap: '16px',
+            }}>
+              {/* Existing Beneficiari */}
+              {beneficiari.map((beneficiar) => (
+                <div
+                  key={beneficiar.id}
+                  className="card cursor-pointer hover:border-urbai-gold transition-all"
+                  style={{ padding: '16px', maxWidth: '220px' }}
+                  onClick={() => handleSelectBeneficiar(beneficiar)}
                 >
-                  Mergi la Beneficiari
-                </button>
+                  <h3 className="text-lg font-serif text-warm-text mb-2">
+                    {beneficiar.nume}
+                  </h3>
+                  <p className="text-sm text-warm-text-secondary">
+                    Tip: {beneficiar.tipBeneficiar === 'persoana' ? 'Persoană' : 'Firmă'}
+                  </p>
+                  <p className="text-sm text-warm-text-secondary">
+                    {beneficiar.adresa || 'N/A'}
+                  </p>
+                </div>
+              ))}
+
+              {/* Add New Beneficiar Card */}
+              <div
+                className="card cursor-pointer border-2 border-dashed border-warm-border hover:border-urbai-gold transition-all flex items-center justify-center"
+                style={{ padding: '16px', maxWidth: '220px', minHeight: '220px' }}
+                onClick={() => setShowBeneficiariModal(true)}
+              >
+                <div className="text-center">
+                  <div className="text-4xl text-urbai-gold mb-3">+</div>
+                  <p className="text-warm-text font-semibold">Adaugă Beneficiar Nou</p>
+                  <p className="text-xs text-warm-text-secondary mt-1">Clic pentru a adăuga</p>
+                </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {beneficiari.map((beneficiar) => (
-                  <div
-                    key={beneficiar.id}
-                    className="card cursor-pointer hover:border-urbai-gold"
-                    onClick={() => handleSelectBeneficiar(beneficiar)}
-                  >
-                    <h3 className="text-lg font-serif text-warm-text mb-2">
-                      {beneficiar.nume}
-                    </h3>
-                    <p className="text-sm text-warm-text-secondary">
-                      Tip: {beneficiar.tipBeneficiar === 'persoana' ? 'Persoană' : 'Firmă'}
-                    </p>
-                    <p className="text-sm text-warm-text-secondary">
-                      {beneficiar.adresa}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+            </div>
 
             <button
               className="btn-secondary mt-8"
@@ -195,6 +270,24 @@ export default function ProiectNou() {
         {/* Step 3: Project Details */}
         {step === 3 && (
           <div>
+            {/* Selected Info Banner */}
+            <div
+              style={{
+                background: 'rgba(196, 137, 58, 0.08)',
+                border: '1px solid rgba(196, 137, 58, 0.2)',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                marginBottom: '16px',
+              }}
+            >
+              <p style={{ fontSize: '12px', color: '#9a938a', marginBottom: '4px' }}>
+                SELECȚII CURENTE
+              </p>
+              <p style={{ fontSize: '14px', color: '#1a1613', fontWeight: '500' }}>
+                Proiectant: <span style={{ color: '#c4893a' }}>{selectedProiectant?.nume}</span> | Beneficiar: <span style={{ color: '#c4893a' }}>{selectedBeneficiar?.nume}</span>
+              </p>
+            </div>
+
             <h1 className="text-3xl font-serif text-warm-text mb-2 font-light">
               Detalii Proiect
             </h1>
@@ -346,9 +439,124 @@ export default function ProiectNou() {
                 </button>
                 <button
                   className="btn-primary"
-                  onClick={handleCreateProject}
+                  onClick={handleContinueToDocumentType}
                 >
                   Continuă cu Tip Document →
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Add New Proiectant */}
+        {showProiectantModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 max-w-md w-full">
+              <h2 className="text-2xl font-serif text-warm-text mb-6 font-light">Adaugă Proiectant Nou</h2>
+
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-warm-text mb-2">Denumire Firmă *</label>
+                <input
+                  type="text"
+                  value={newProiectantData.nume}
+                  onChange={(e) => setNewProiectantData({ ...newProiectantData, nume: e.target.value })}
+                  placeholder="ex: SC ABC Proiectare SRL"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-warm-text mb-2">CUI</label>
+                <input
+                  type="text"
+                  value={newProiectantData.cui}
+                  onChange={(e) => setNewProiectantData({ ...newProiectantData, cui: e.target.value })}
+                  placeholder="ex: 12345678"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-warm-text mb-2">Adresă</label>
+                <input
+                  type="text"
+                  value={newProiectantData.adresa}
+                  onChange={(e) => setNewProiectantData({ ...newProiectantData, adresa: e.target.value })}
+                  placeholder="ex: Strada Principale, nr. 10"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  className="btn-secondary flex-1"
+                  onClick={() => setShowProiectantModal(false)}
+                >
+                  Anulează
+                </button>
+                <button
+                  className="btn-primary flex-1"
+                  onClick={handleAddProiectant}
+                >
+                  Salvează
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Add New Beneficiar */}
+        {showBeneficiariModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 max-w-md w-full">
+              <h2 className="text-2xl font-serif text-warm-text mb-6 font-light">Adaugă Beneficiar Nou</h2>
+
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-warm-text mb-2">Tip Beneficiar</label>
+                <select
+                  value={newBeneficiariData.tipBeneficiar}
+                  onChange={(e) => setNewBeneficiariData({ ...newBeneficiariData, tipBeneficiar: e.target.value })}
+                  className="w-full"
+                >
+                  <option value="persoana">Persoană Fizică</option>
+                  <option value="firma">Persoană Juridică</option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-warm-text mb-2">Nume *</label>
+                <input
+                  type="text"
+                  value={newBeneficiariData.nume}
+                  onChange={(e) => setNewBeneficiariData({ ...newBeneficiariData, nume: e.target.value })}
+                  placeholder="ex: Ion Popescu"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-warm-text mb-2">Adresă</label>
+                <input
+                  type="text"
+                  value={newBeneficiariData.adresa}
+                  onChange={(e) => setNewBeneficiariData({ ...newBeneficiariData, adresa: e.target.value })}
+                  placeholder="ex: Strada Principale, nr. 10"
+                  className="w-full"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  className="btn-secondary flex-1"
+                  onClick={() => setShowBeneficiariModal(false)}
+                >
+                  Anulează
+                </button>
+                <button
+                  className="btn-primary flex-1"
+                  onClick={handleAddBeneficiar}
+                >
+                  Salvează
                 </button>
               </div>
             </div>

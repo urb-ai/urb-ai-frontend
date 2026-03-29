@@ -14,32 +14,59 @@ export default function AuthGuard({ children }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-warm-bg">
-        <div className="text-center">
-          <div className="inline-block mb-4">
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          backgroundColor: '#f5f0e8',
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '16px' }}>
             <svg
-              className="animate-spin h-8 w-8 text-urbai-gold"
+              style={{
+                animation: 'spin 1s linear infinite',
+                width: '32px',
+                height: '32px',
+                color: '#c4893a',
+              }}
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
             >
               <circle
-                className="opacity-25"
                 cx="12"
                 cy="12"
                 r="10"
                 stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
+                strokeWidth="2"
+                opacity="0.25"
+              />
               <path
-                className="opacity-75"
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
+              />
             </svg>
           </div>
-          <p className="text-warm-text-secondary">Se încarcă...</p>
+          <p
+            style={{
+              color: '#9a938a',
+              fontSize: '14px',
+              margin: 0,
+              fontFamily: '"DM Sans", sans-serif',
+            }}
+          >
+            Se încarcă...
+          </p>
         </div>
+        <style>{`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }

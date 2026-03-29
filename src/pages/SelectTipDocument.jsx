@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDocumentStore } from '../stores/documentStore';
 import Layout from '../components/Layout';
 
@@ -30,25 +30,113 @@ const DOCUMENT_TYPES = [
   },
 ];
 
+const PUZ_DOCUMENT_TYPES = [
+  {
+    id: 'ao',
+    title: 'Aviz de Oportunitate',
+    code: 'AO',
+    description: 'Documentația necesară pentru obținerea avizului de oportunitate PUZ de la autoritatea locală',
+    credits: '~40 credite',
+    icon: 'CheckDocument',
+  },
+  {
+    id: 'memoriu-puz',
+    title: 'Memoriu Tehnic PUZ',
+    code: 'MEMORIU-PUZ',
+    description: 'Memoriul tehnic complet cu toate secțiunile: situație existentă, propuneri, reglementări urbanistice',
+    credits: '~80 credite',
+    icon: 'TextDocument',
+  },
+  {
+    id: 'rlu',
+    title: 'Regulament Local de Urbanism',
+    code: 'RLU',
+    description: 'Regulamentul aferent PUZ-ului cu prescripții urbanistice, zone funcționale, indici și indicatori',
+    credits: '~60 credite',
+    icon: 'ParagraphDocument',
+  },
+];
+
+const DocumentIcon = ({ type }) => {
+  const strokeStyle = {
+    stroke: '#000',
+    strokeWidth: 1.5,
+    fill: 'none',
+  };
+
+  if (type === 'CheckDocument') {
+    return (
+      <svg width="28" height="28" viewBox="0 0 24 24" {...strokeStyle}>
+        <path d="M9 12l2 2 4-4M20 6H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
+      </svg>
+    );
+  }
+
+  if (type === 'TextDocument') {
+    return (
+      <svg width="28" height="28" viewBox="0 0 24 24" {...strokeStyle}>
+        <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+        <path d="M9 12h6M9 16h6M9 8h2" />
+      </svg>
+    );
+  }
+
+  if (type === 'ParagraphDocument') {
+    return (
+      <svg width="28" height="28" viewBox="0 0 24 24" {...strokeStyle}>
+        <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+        <path d="M8 10h8M8 14h8M8 18h4" />
+      </svg>
+    );
+  }
+
+  return null;
+};
+
 export default function SelectTipDocument() {
   const navigate = useNavigate();
-  const { setDocumentType } = useDocumentStore();
+  const { id } = useParams();
+  const { setDocumentType, setDocSubType } = useDocumentStore();
   const [selectedType, setSelectedType] = useState(null);
+  const [selectedSubType, setSelectedSubType] = useState(null);
   const [certificateFile, setCertificateFile] = useState(null);
   const [cadastralFile, setCadastralFile] = useState(null);
 
   const handleSelectType = (typeId) => {
-    setSelectedType(typeId);
-  };
-
-  const handleContinue = () => {
-    if (!selectedType) {
-      alert('Selectează un tip de document');
+    // For PUD and PUG (no sub-types), auto-navigate
+    if (typeId === 'pud' || typeId === 'pug') {
+      setDocumentType(typeId);
+      navigate(`/app/proiect/${id}/document/wizard`);
       return;
     }
 
-    setDocumentType(selectedType);
-    navigate(`/proiect/1/document/wizard`);
+    // For CU and AVIZ, also auto-navigate (no sub-types)
+    if (typeId === 'cu' || typeId === 'aviz') {
+      setDocumentType(typeId);
+      navigate(`/app/proiect/${id}/document/wizard`);
+      return;
+    }
+
+    // For PUZ, just select it (don't navigate yet)
+    setSelectedType(typeId);
+    setSelectedSubType(null);
+  };
+
+  const handleSelectSubType = (subTypeId) => {
+    setSelectedSubType(subTypeId);
+    setDocumentType('puz');
+    setDocSubType(subTypeId);
+    // Navigate after selecting PUZ sub-type
+    // For Memoriu PUZ, use the dedicated wizard
+    if (subTypeId === 'memoriu-puz') {
+      setTimeout(() => {
+        navigate(`/app/proiect/${id}/memoriu-puz`);
+      }, 300);
+    } else {
+      setTimeout(() => {
+        navigate(`/app/proiect/${id}/document/wizard`);
+      }, 300);
+    }
   };
 
   const handleFileChange = (e, fileType) => {
@@ -75,17 +163,43 @@ export default function SelectTipDocument() {
           </p>
         </div>
 
-        {/* Document Types Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        {/* Document Types Grid - Exact same as Proiecte.jsx */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          gap: '16px',
+          marginBottom: '48px',
+        }}>
           {DOCUMENT_TYPES.map((type) => (
             <div
               key={type.id}
-              className={`card cursor-pointer transition-all ${
-                selectedType === type.id
-                  ? 'border-urbai-gold bg-amber-50'
-                  : 'hover:border-urbai-gold'
-              }`}
+              style={{
+                background: 'white',
+                border: `2px solid ${selectedType === type.id ? '#c4893a' : '#e8e0d6'}`,
+                borderRadius: '10px',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                aspectRatio: '1 / 1.618',
+                display: 'flex',
+                flexDirection: 'column',
+                backgroundColor: selectedType === type.id ? 'rgba(196, 137, 58, 0.03)' : 'white',
+              }}
               onClick={() => handleSelectType(type.id)}
+              onMouseEnter={(e) => {
+                if (selectedType !== type.id) {
+                  e.currentTarget.style.borderColor = '#c4893a';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(196, 137, 58, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedType !== type.id) {
+                  e.currentTarget.style.borderColor = '#e8e0d6';
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
+              }}
             >
               <div className="flex items-start gap-4">
                 <div className="text-4xl">{type.icon}</div>
@@ -105,91 +219,84 @@ export default function SelectTipDocument() {
           ))}
         </div>
 
-        {/* File Upload Section */}
-        {selectedType && (
-          <div className="card mb-12">
-            <h2 className="text-xl font-serif text-warm-text mb-6 font-light">
-              Încarcă Documente Sursă
+        {/* PUZ Sub-type Selection - Shows on same page when PUZ is selected */}
+        {selectedType === 'puz' && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-serif text-warm-text mb-2 font-light">
+              Ce document PUZ vrei să generezi?
             </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              {/* Certificate File */}
-              <div>
-                <label className="block text-sm font-semibold text-warm-text mb-3">
-                  Certificat de Urbanism (CF)
-                </label>
-                <div className="border-2 border-dashed border-warm-border rounded-xl p-8 text-center hover:border-urbai-gold transition-colors cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*,.pdf"
-                    onChange={(e) => handleFileChange(e, 'certificate')}
-                    className="hidden"
-                    id="certificateInput"
-                  />
-                  <label htmlFor="certificateInput" className="cursor-pointer">
-                    <div className="text-3xl mb-3">📄</div>
-                    <p className="text-warm-text font-medium">
-                      {certificateFile
-                        ? certificateFile.name
-                        : 'Click sau drag CF'}
-                    </p>
-                    <p className="text-xs text-warm-text-secondary mt-2">
-                      PDF sau imagine (JPG, PNG)
-                    </p>
-                  </label>
-                </div>
-              </div>
-
-              {/* Cadastral File */}
-              <div>
-                <label className="block text-sm font-semibold text-warm-text mb-3">
-                  Plan Cadastral
-                </label>
-                <div className="border-2 border-dashed border-warm-border rounded-xl p-8 text-center hover:border-urbai-gold transition-colors cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*,.pdf"
-                    onChange={(e) => handleFileChange(e, 'cadastral')}
-                    className="hidden"
-                    id="cadastralInput"
-                  />
-                  <label htmlFor="cadastralInput" className="cursor-pointer">
-                    <div className="text-3xl mb-3">📐</div>
-                    <p className="text-warm-text font-medium">
-                      {cadastralFile
-                        ? cadastralFile.name
-                        : 'Click sau drag Plan Cadastral'}
-                    </p>
-                    <p className="text-xs text-warm-text-secondary mt-2">
-                      PDF sau imagine (JPG, PNG)
-                    </p>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-sm text-warm-text-secondary mb-6">
-              AI va extrage automat date din documentele încărcate (adrese, suprafețe, etc.)
+            <p className="text-warm-text-secondary mb-8">
+              Fiecare document are o structură și secțiuni diferite
             </p>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+              gap: '16px',
+            }}>
+              {PUZ_DOCUMENT_TYPES.map((docType) => (
+                <div
+                  key={docType.id}
+                  style={{
+                    background: 'white',
+                    border: `2px solid ${selectedSubType === docType.id ? '#c4893a' : '#e8e0d6'}`,
+                    borderRadius: '10px',
+                    padding: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    aspectRatio: '1 / 1.618',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    backgroundColor: selectedSubType === docType.id ? 'rgba(196, 137, 58, 0.03)' : 'white',
+                  }}
+                  onClick={() => handleSelectSubType(docType.id)}
+                  onMouseEnter={(e) => {
+                    if (selectedSubType !== docType.id) {
+                      e.currentTarget.style.borderColor = '#c4893a';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(196, 137, 58, 0.1)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedSubType !== docType.id) {
+                      e.currentTarget.style.borderColor = '#e8e0d6';
+                      e.currentTarget.style.boxShadow = 'none';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }
+                  }}
+                >
+                  <div className="mb-2">
+                    <DocumentIcon type={docType.icon} />
+                  </div>
+                  <h3 className="text-sm font-serif text-warm-text mb-1 font-semibold">
+                    {docType.title}
+                  </h3>
+                  <p className="text-xs font-mono text-warm-text-secondary mb-2">
+                    {docType.code}
+                  </p>
+                  <p className="text-xs text-warm-text-secondary flex-1">
+                    {docType.description}
+                  </p>
+                  <div className="text-xs bg-amber-50 text-urbai-gold px-2 py-1 rounded mt-2 inline-block">
+                    {docType.credits}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex gap-3 justify-between">
-          <button
-            className="btn-secondary"
-            onClick={() => navigate('/proiect/nou')}
-          >
-            ← Înapoi
-          </button>
-          <button
-            className="btn-primary"
-            onClick={handleContinue}
-            disabled={!selectedType}
-          >
-            Continuă →
-          </button>
-        </div>
+        {/* Înapoi Button - Only show when PUZ is selected but no sub-type yet */}
+        {selectedType === 'puz' && !selectedSubType && (
+          <div className="flex gap-3">
+            <button
+              className="btn-secondary"
+              onClick={() => setSelectedType(null)}
+            >
+              ← Înapoi
+            </button>
+          </div>
+        )}
       </div>
     </Layout>
   );

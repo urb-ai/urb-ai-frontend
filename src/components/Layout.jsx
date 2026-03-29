@@ -26,10 +26,8 @@ export default function Layout({ children }) {
   const isMobile = windowWidth < 768;
   const isTablet = windowWidth < 1200;
 
-  // Show chat panel only on wizard/document routes
-  const isWizardRoute = location.pathname.startsWith('/proiect/') &&
-    (location.pathname.includes('/tip-document') || location.pathname.includes('/document'));
-  const showChatPanel = !isTablet && isWizardRoute;
+  // Chat panel is not shown - only centered chat bar on Dashboard
+  const showChatPanel = false;
 
   const navItems = [
     { path: '/app', label: 'Dashboard' },
@@ -420,7 +418,7 @@ export default function Layout({ children }) {
       <main
         style={{
           marginLeft: isMobile ? 0 : '260px',
-          marginRight: showChatPanel ? 'calc(28vw)' : '0px',
+          marginRight: '0px',
           minHeight: '100vh',
           background: '#f5f0e8',
           padding: '24px 32px',

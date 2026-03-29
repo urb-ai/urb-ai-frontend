@@ -12,7 +12,12 @@ import Beneficiari from './pages/Beneficiari';
 import Proiecte from './pages/Proiecte';
 import ProiectNou from './pages/ProiectNou';
 import SelectTipDocument from './pages/SelectTipDocument';
+import SelectDocumentType from './pages/SelectDocumentType';
+import SelectUrbanismType from './pages/SelectUrbanismType';
 import WizardDocument from './pages/WizardDocument';
+import WizardMemoriu from './pages/WizardMemoriu';
+import WizardRLU from './pages/WizardRLU';
+import WizardAvizOportunitate from './pages/WizardAvizOportunitate';
 import NotFound from './pages/NotFound';
 
 // Legal Pages
@@ -60,6 +65,14 @@ export default function App() {
             </AuthGuard>
           }
         />
+        <Route
+          path="/app/proiectanti"
+          element={
+            <AuthGuard>
+              <Proiectanti />
+            </AuthGuard>
+          }
+        />
 
         {/* Beneficiari Management */}
         <Route
@@ -67,6 +80,32 @@ export default function App() {
           element={
             <AuthGuard>
               <Beneficiari />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/app/beneficiari"
+          element={
+            <AuthGuard>
+              <Beneficiari />
+            </AuthGuard>
+          }
+        />
+
+        {/* Projects Management */}
+        <Route
+          path="/proiecte"
+          element={
+            <AuthGuard>
+              <Proiecte />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/app/proiecte"
+          element={
+            <AuthGuard>
+              <Proiecte />
             </AuthGuard>
           }
         />
@@ -80,13 +119,51 @@ export default function App() {
             </AuthGuard>
           }
         />
+        <Route
+          path="/app/proiect/nou"
+          element={
+            <AuthGuard>
+              <ProiectNou />
+            </AuthGuard>
+          }
+        />
 
-        {/* Document Type Selection */}
+        {/* Document Type Selection - for new projects */}
+        <Route
+          path="/app/proiect/nou/tip-document"
+          element={
+            <AuthGuard>
+              <SelectTipDocument />
+            </AuthGuard>
+          }
+        />
+
+        {/* Document Type Selection - for new projects (wizard) */}
         <Route
           path="/proiect/:id/tip-document"
           element={
             <AuthGuard>
               <SelectTipDocument />
+            </AuthGuard>
+          }
+        />
+
+        {/* Document Type Selection - for existing projects */}
+        <Route
+          path="/app/proiect/:id/tip-document"
+          element={
+            <AuthGuard>
+              <SelectDocumentType />
+            </AuthGuard>
+          }
+        />
+
+        {/* Urbanism Type Selection - for existing projects */}
+        <Route
+          path="/app/proiect/:id/urbanism-type"
+          element={
+            <AuthGuard>
+              <SelectUrbanismType />
             </AuthGuard>
           }
         />
@@ -101,6 +178,14 @@ export default function App() {
           }
         />
         <Route
+          path="/app/proiect/:id/document"
+          element={
+            <AuthGuard>
+              <WizardDocument />
+            </AuthGuard>
+          }
+        />
+        <Route
           path="/proiect/:id/document/wizard"
           element={
             <AuthGuard>
@@ -108,13 +193,65 @@ export default function App() {
             </AuthGuard>
           }
         />
-
-        {/* Projects Management */}
         <Route
-          path="/proiecte"
+          path="/app/proiect/:id/document/wizard"
           element={
             <AuthGuard>
-              <Proiecte />
+              <WizardDocument />
+            </AuthGuard>
+          }
+        />
+
+        {/* Memoriu Tehnic PUZ Wizard */}
+        <Route
+          path="/app/proiect/nou/memoriu-puz"
+          element={
+            <AuthGuard>
+              <WizardMemoriu />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/app/proiect/:id/memoriu-puz"
+          element={
+            <AuthGuard>
+              <WizardMemoriu />
+            </AuthGuard>
+          }
+        />
+
+        {/* Regulament Local de Urbanism Wizard */}
+        <Route
+          path="/app/proiect/nou/rlu"
+          element={
+            <AuthGuard>
+              <WizardRLU />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/app/proiect/:id/rlu"
+          element={
+            <AuthGuard>
+              <WizardRLU />
+            </AuthGuard>
+          }
+        />
+
+        {/* Aviz de Oportunitate Wizard */}
+        <Route
+          path="/app/proiect/nou/aviz-oportunitate"
+          element={
+            <AuthGuard>
+              <WizardAvizOportunitate />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/app/proiect/:id/aviz-oportunitate"
+          element={
+            <AuthGuard>
+              <WizardAvizOportunitate />
             </AuthGuard>
           }
         />

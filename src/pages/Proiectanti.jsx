@@ -1,9 +1,20 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProjectStore } from '../stores/projectStore';
 import { useWizardStore } from '../stores/wizardStore';
 import Layout from '../components/Layout';
 
+// Icon SVG constant
+const UPLOAD_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="#9a938a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+    <polyline points="17 8 12 3 7 8" />
+    <line x1="12" y1="3" x2="12" y2="15" />
+  </svg>
+);
+
 export default function Proiectanti() {
+  const navigate = useNavigate();
   const { proiectanti, addProiectant, updateProiectant, deleteProiectant } = useProjectStore();
   const { setSelectedProiectant } = useWizardStore();
   const [showModal, setShowModal] = useState(false);
@@ -11,7 +22,10 @@ export default function Proiectanti() {
   const [selectedProiectantId, setSelectedProiectantId] = useState(null);
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
+  const [documentFirma, setDocumentFirma] = useState(null);
+  const [documentStatus, setDocumentStatus] = useState(null); // null, 'analyzing', 'success'
   const fileInputRef = useRef(null);
+  const documentInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     nume: '',
@@ -59,6 +73,8 @@ export default function Proiectanti() {
       });
       setLogoPreview(null);
     }
+    setDocumentFirma(null);
+    setDocumentStatus(null);
     setShowModal(true);
   };
 
@@ -76,6 +92,41 @@ export default function Proiectanti() {
         setFormData((prev) => ({ ...prev, logo: file }));
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDocumentUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setDocumentFirma({
+        name: file.name,
+        size: (file.size / (1024 * 1024)).toFixed(1),
+      });
+      setDocumentStatus('analyzing');
+      setTimeout(() => {
+        setDocumentStatus('success');
+      }, 2000);
+    }
+  };
+
+  const handleDocumentDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDocumentDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      setDocumentFirma({
+        name: file.name,
+        size: (file.size / (1024 * 1024)).toFixed(1),
+      });
+      setDocumentStatus('analyzing');
+      setTimeout(() => {
+        setDocumentStatus('success');
+      }, 2000);
     }
   };
 
@@ -105,16 +156,14 @@ export default function Proiectanti() {
 
   // Handle card selection
   const handleSelectProiectant = (proiectantId) => {
-    if (selectedProiectantId === proiectantId) {
-      // Deselect if already selected
-      setSelectedProiectantId(null);
-      setSelectedProiectant(null);
-    } else {
-      // Select this contractor
-      const selected = proiectanti.find((p) => p.id === proiectantId);
-      setSelectedProiectantId(proiectantId);
-      setSelectedProiectant(selected);
-    }
+    const selected = proiectanti.find((p) => p.id === proiectantId);
+    setSelectedProiectantId(proiectantId);
+    setSelectedProiectant(selected);
+
+    // Auto-navigate after 500ms delay
+    setTimeout(() => {
+      navigate('/app/beneficiari');
+    }, 500);
   };
 
   return (
@@ -129,47 +178,8 @@ export default function Proiectanti() {
             minHeight: 'calc(100vh - 150px)',
           }}
         >
-          {/* Add New Contractor Card */}
-          <div
-            onClick={() => handleOpenModal()}
-            style={{
-              border: '2px dashed #c8d4e0',
-              borderRadius: '10px',
-              background: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              aspectRatio: '1 / 1.618',
-              transition: 'all 0.2s',
-              padding: '20px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#c4893a';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#c8d4e0';
-            }}
-          >
-            <div style={{ fontSize: '28px', color: '#9ab0c8', marginBottom: '12px' }}>+</div>
-            <div
-              style={{
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                color: '#9ab0c8',
-                fontWeight: '600',
-                textAlign: 'center',
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              Adaugă Proiectant Nou
-            </div>
-          </div>
-
-          {/* Contractor Cards */}
-          {proiectanti.map((proiectant) => {
+          {/* Contractor Cards - sortați descrescător (cel mai nou primeiro) */}
+          {[...proiectanti].reverse().map((proiectant) => {
             const isSelected = selectedProiectantId === proiectant.id;
             return (
               <div
@@ -404,6 +414,45 @@ export default function Proiectanti() {
               </div>
             );
           })}
+
+          {/* Add New Contractor Card - MEREU ULTIMUL */}
+          <div
+            onClick={() => handleOpenModal()}
+            style={{
+              border: '2px dashed #c8d4e0',
+              borderRadius: '10px',
+              background: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              aspectRatio: '1 / 1.618',
+              transition: 'all 0.2s',
+              padding: '20px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#c4893a';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#c8d4e0';
+            }}
+          >
+            <div style={{ fontSize: '28px', color: '#9ab0c8', marginBottom: '12px' }}>+</div>
+            <div
+              style={{
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '2px',
+                color: '#9ab0c8',
+                fontWeight: '600',
+                textAlign: 'center',
+                fontFamily: '"DM Sans", sans-serif',
+              }}
+            >
+              Adaugă Proiectant Nou
+            </div>
+          </div>
         </div>
 
         {/* Show empty state if no contractors */}
@@ -717,43 +766,53 @@ export default function Proiectanti() {
                   Logo Firmă
                 </div>
 
+                {/* Logo Upload Zone - Identică cu Document */}
                 <div
                   onClick={() => fileInputRef.current?.click()}
                   style={{
                     border: '2px dashed #ddd4c8',
                     borderRadius: '8px',
-                    padding: '24px',
-                    textAlign: 'center',
+                    padding: '12px',
+                    height: '80px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
-                    background: '#faf7f2',
+                    background: '#ffffff',
+                    marginBottom: '20px',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = '#c4893a';
-                    e.currentTarget.style.background = 'rgba(196,137,58,0.04)';
+                    e.currentTarget.style.background = 'rgba(196,137,58,0.02)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = '#ddd4c8';
-                    e.currentTarget.style.background = '#faf7f2';
+                    e.currentTarget.style.background = '#ffffff';
                   }}
                 >
                   {logoPreview ? (
-                    <div>
-                      <img src={logoPreview} alt="Logo preview" style={{ maxWidth: '100%', maxHeight: '120px', marginBottom: '12px' }} />
-                      <p style={{ fontSize: '12px', color: '#7a6e63', margin: 0, fontFamily: '"DM Sans", sans-serif' }}>
-                        Click pentru a schimba logo
+                    <div style={{ textAlign: 'center', width: '100%' }}>
+                      <img src={logoPreview} alt="Logo preview" style={{ maxHeight: '60px', marginBottom: '4px' }} />
+                      <p style={{ fontSize: '10px', color: '#9a938a', margin: 0, fontFamily: '"DM Sans", sans-serif' }}>
+                        ✓ Logo încărcat
                       </p>
                     </div>
                   ) : (
-                    <div>
-                      <div style={{ fontSize: '28px', marginBottom: '8px' }}>🏢</div>
-                      <p style={{ fontSize: '13px', color: '#1a1613', margin: '0 0 4px 0', fontWeight: '500', fontFamily: '"DM Sans", sans-serif' }}>
-                        Click pentru a încărca logo
-                      </p>
-                      <p style={{ fontSize: '12px', color: '#7a6e63', margin: 0, fontFamily: '"DM Sans", sans-serif' }}>
-                        PNG, JPG, SVG (max 2MB)
-                      </p>
-                    </div>
+                    <>
+                      <div style={{ width: '20px', height: '20px', flexShrink: 0 }}>
+                        {UPLOAD_ICON}
+                      </div>
+                      <div style={{ textAlign: 'left' }}>
+                        <p style={{ fontSize: '12px', fontWeight: '500', color: '#5c5466', margin: '0 0 2px 0', fontFamily: '"DM Sans", sans-serif' }}>
+                          Încarcă logo firmă
+                        </p>
+                        <p style={{ fontSize: '10px', color: '#9a938a', margin: 0, fontFamily: '"DM Sans", sans-serif' }}>
+                          PNG, JPG, SVG · max 2MB
+                        </p>
+                      </div>
+                    </>
                   )}
                 </div>
                 <input
@@ -763,6 +822,103 @@ export default function Proiectanti() {
                   onChange={handleFileChange}
                   style={{ display: 'none' }}
                 />
+              </div>
+
+              {/* SECȚIUNEA 3: DOCUMENT FIRMĂ */}
+              <div style={{ marginBottom: '28px' }}>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px',
+                    color: '#c4893a',
+                    borderBottom: '1px solid #e8e0d6',
+                    paddingBottom: '10px',
+                    marginBottom: '14px',
+                  }}
+                >
+                  Document Firmă
+                </div>
+
+                {/* Document Upload Zone */}
+                <div
+                  onClick={() => documentInputRef.current?.click()}
+                  onDragOver={handleDocumentDragOver}
+                  onDrop={handleDocumentDrop}
+                  style={{
+                    border: '2px dashed #ddd4c8',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    height: '80px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    background: '#ffffff',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#c4893a';
+                    e.currentTarget.style.background = 'rgba(196,137,58,0.02)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#ddd4c8';
+                    e.currentTarget.style.background = '#ffffff';
+                  }}
+                >
+                  {!documentFirma ? (
+                    <>
+                      <div style={{ width: '20px', height: '20px', flexShrink: 0 }}>
+                        {UPLOAD_ICON}
+                      </div>
+                      <div style={{ textAlign: 'left' }}>
+                        <p style={{ fontSize: '12px', fontWeight: '500', color: '#5c5466', margin: '0 0 2px 0', fontFamily: '"DM Sans", sans-serif' }}>
+                          Încarcă document pentru completare automată
+                        </p>
+                        <p style={{ fontSize: '10px', color: '#9a938a', margin: 0, fontFamily: '"DM Sans", sans-serif' }}>
+                          PDF, JPG, DOCX · Se extrag automat datele firmei
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ textAlign: 'center', width: '100%' }}>
+                      <p style={{ fontSize: '12px', fontWeight: '500', color: '#1a1613', margin: '0 0 4px 0', fontFamily: '"DM Sans", sans-serif' }}>
+                        {documentFirma.name} · {documentFirma.size} MB
+                      </p>
+                      <p
+                        style={{
+                          fontSize: '11px',
+                          color: documentStatus === 'success' ? '#1f7a45' : '#c4893a',
+                          margin: 0,
+                          fontWeight: 500,
+                          fontFamily: '"DM Sans", sans-serif',
+                          animation: documentStatus === 'analyzing'
+                            ? 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                            : 'none',
+                        }}
+                      >
+                        {documentStatus === 'analyzing' && '🔍 Se analizează...'}
+                        {documentStatus === 'success' && '✓ Document încărcat'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <input
+                  ref={documentInputRef}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  onChange={handleDocumentUpload}
+                  style={{ display: 'none' }}
+                />
+
+                <style>{`
+                  @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                  }
+                `}</style>
               </div>
 
               {/* SECȚIUNEA 3: PERSONAL DE SPECIALITATE */}

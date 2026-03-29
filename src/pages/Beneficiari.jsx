@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProjectStore } from '../stores/projectStore';
 import { useWizardStore } from '../stores/wizardStore';
 import Layout from '../components/Layout';
 
 export default function Beneficiari() {
+  const navigate = useNavigate();
   const { beneficiari, addBeneficiar, updateBeneficiar, deleteBeneficiar } = useProjectStore();
   const { setBeneficiar } = useWizardStore();
   const [showModal, setShowModal] = useState(false);
@@ -86,16 +88,14 @@ export default function Beneficiari() {
 
   // Handle card selection
   const handleSelectBeneficiar = (beneficiariId) => {
-    if (selectedBeneficiariId === beneficiariId) {
-      // Deselect if already selected
-      setSelectedBeneficiariId(null);
-      setBeneficiar(null);
-    } else {
-      // Select this beneficiary
-      const selected = beneficiari.find((b) => b.id === beneficiariId);
-      setSelectedBeneficiariId(beneficiariId);
-      setBeneficiar(selected);
-    }
+    const selected = beneficiari.find((b) => b.id === beneficiariId);
+    setSelectedBeneficiariId(beneficiariId);
+    setBeneficiar(selected);
+
+    // Auto-navigate after 500ms delay
+    setTimeout(() => {
+      navigate('/app/proiecte');
+    }, 500);
   };
 
   return (
@@ -110,47 +110,8 @@ export default function Beneficiari() {
             minHeight: 'calc(100vh - 150px)',
           }}
         >
-          {/* Add New Beneficiary Card */}
-          <div
-            onClick={() => handleOpenModal()}
-            style={{
-              border: '2px dashed #c8d4e0',
-              borderRadius: '10px',
-              background: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              aspectRatio: '1 / 1.618',
-              transition: 'all 0.2s',
-              padding: '20px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#c4893a';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#c8d4e0';
-            }}
-          >
-            <div style={{ fontSize: '28px', color: '#9ab0c8', marginBottom: '12px' }}>+</div>
-            <div
-              style={{
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                color: '#9ab0c8',
-                fontWeight: '600',
-                textAlign: 'center',
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              Adaugă Beneficiar Nou
-            </div>
-          </div>
-
-          {/* Beneficiary Cards */}
-          {beneficiari.map((beneficiar) => {
+          {/* Beneficiary Cards - sortați descrescător (cel mai nou primeiro) */}
+          {[...beneficiari].reverse().map((beneficiar) => {
             const isSelected = selectedBeneficiariId === beneficiar.id;
             const displayName = beneficiar.tip === 'PJ' ? beneficiar.denumire : `${beneficiar.prenume} ${beneficiar.nume}`;
             const displayCUI = beneficiar.tip === 'PJ' ? beneficiar.cui : beneficiar.cnp;
@@ -390,6 +351,45 @@ export default function Beneficiari() {
               </div>
             );
           })}
+
+          {/* Add New Beneficiary Card - MEREU ULTIMUL */}
+          <div
+            onClick={() => handleOpenModal()}
+            style={{
+              border: '2px dashed #c8d4e0',
+              borderRadius: '10px',
+              background: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              aspectRatio: '1 / 1.618',
+              transition: 'all 0.2s',
+              padding: '20px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#c4893a';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#c8d4e0';
+            }}
+          >
+            <div style={{ fontSize: '28px', color: '#9ab0c8', marginBottom: '12px' }}>+</div>
+            <div
+              style={{
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '2px',
+                color: '#9ab0c8',
+                fontWeight: '600',
+                textAlign: 'center',
+                fontFamily: '"DM Sans", sans-serif',
+              }}
+            >
+              Adaugă Beneficiar Nou
+            </div>
+          </div>
         </div>
 
         {/* Show empty state if no beneficiaries */}

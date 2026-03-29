@@ -1,34 +1,15 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { apiGet } from '../api/client';
 import Layout from '../components/Layout';
 
-const ACTION_CHIPS = [
-  { id: 1, label: 'Generează document', icon: '📄', path: '/proiect/nou' },
-  { id: 2, label: 'Caută legislație', icon: '⚖️', path: '/search' },
-  { id: 3, label: 'Management proiect', icon: '📋', path: '/proiecte' },
-  { id: 4, label: 'Checklist documente', icon: '✓', path: '/checklist' },
-  { id: 5, label: 'Chat AI', icon: '🤖', path: '/chat' },
-];
-
 export default function Dashboard() {
-  const navigate = useNavigate();
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
-  const [greeting, setGreeting] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    // Set dynamic greeting based on time of day
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) {
-      setGreeting('☀️ Bună dimineața');
-    } else if (hour >= 12 && hour < 18) {
-      setGreeting('🌤️ Bună ziua');
-    } else {
-      setGreeting('🌙 Bună seara');
-    }
-
     const checkHealth = async () => {
       try {
         await apiGet('/api/health');
@@ -79,6 +60,19 @@ export default function Dashboard() {
     );
   }
 
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+    // Handle send
+    setInputValue('');
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <Layout>
       <div
@@ -87,52 +81,42 @@ export default function Dashboard() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: 'calc(100vh - 48px)',
-          paddingTop: '48px',
-          paddingBottom: '48px',
+          minHeight: '100vh',
+          background: '#f5f0e8',
+          padding: '24px 32px',
         }}
       >
-        {/* Dynamic Greeting */}
-        <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+        {/* Minimal Logo/Branding - optional */}
+        <div style={{ marginBottom: '40px', textAlign: 'center' }}>
           <h1
             style={{
               fontFamily: '"DM Sans", sans-serif',
-              fontSize: '32px',
-              color: '#1a1613',
-              margin: '0 0 8px 0',
+              fontSize: '18px',
               fontWeight: '600',
-            }}
-          >
-            {greeting}
-          </h1>
-          <p
-            style={{
-              fontSize: '14px',
-              color: '#7a6e63',
+              color: '#1a1613',
               margin: 0,
-              fontFamily: '"DM Sans", sans-serif',
+              letterSpacing: '0.5px',
             }}
           >
-            {user?.email?.split('@')[0]}, ce vrei să faci azi?
-          </p>
+            UrbAI
+          </h1>
         </div>
 
-        {/* Chat Input Bar */}
+        {/* Centered Chat Bar */}
         <div
           style={{
             maxWidth: '680px',
             width: '100%',
             background: 'white',
             border: '1px solid #ddd4c8',
-            borderRadius: '16px',
-            padding: '16px 20px',
-            marginBottom: '20px',
+            borderRadius: '24px',
+            padding: '10px 14px 10px 18px',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            gap: '8px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
             transition: 'all 0.2s',
-            cursor: 'text',
+            position: 'relative',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = '#c4893a';
@@ -143,163 +127,167 @@ export default function Dashboard() {
             e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
           }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a938a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Descrie ce document ai nevoie sau ce operație vrei..."
-            style={{
-              flex: 1,
-              border: 'none',
-              background: 'transparent',
-              fontSize: '14px',
-              fontFamily: '"DM Sans", sans-serif',
-              color: '#1a1613',
-              outline: 'none',
-              padding: 0,
-            }}
-          />
+          {/* Plus Button with Dropdown */}
           <button
+            onClick={() => setShowDropdown(!showDropdown)}
             style={{
-              background: '#c4893a',
+              background: 'transparent',
               border: 'none',
-              borderRadius: '8px',
-              padding: '8px 16px',
-              color: 'white',
-              fontSize: '13px',
-              fontWeight: '500',
               cursor: 'pointer',
-              fontFamily: '"DM Sans", sans-serif',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#b07632';
-              e.currentTarget.style.transform = 'scale(1.02)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#c4893a';
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-          >
-            Trimite
-          </button>
-        </div>
-
-        {/* Credit Usage Bar */}
-        <div
-          style={{
-            maxWidth: '680px',
-            width: '100%',
-            marginBottom: '32px',
-            textAlign: 'center',
-          }}
-        >
-          <div
-            style={{
+              padding: '4px',
               display: 'flex',
-              justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: '8px',
+              justifyContent: 'center',
+              flexShrink: 0,
             }}
           >
-            <p
-              style={{
-                fontSize: '12px',
-                color: '#9a938a',
-                margin: 0,
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              Credite disponibile
-            </p>
-            <p
-              style={{
-                fontSize: '12px',
-                fontWeight: '600',
-                color: '#1a1613',
-                margin: 0,
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              850 / 1000
-            </p>
-          </div>
-          <div
-            style={{
-              width: '100%',
-              height: '6px',
-              background: '#e8e0d6',
-              borderRadius: '4px',
-              overflow: 'hidden',
-            }}
-          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2.5">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+
+          {/* Dropdown Menu */}
+          {showDropdown && (
             <div
               style={{
-                height: '100%',
-                width: '85%',
-                background: 'linear-gradient(to right, #c4893a, #d9a855)',
-                borderRadius: '4px',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Action Chips */}
-        <div
-          style={{
-            maxWidth: '680px',
-            width: '100%',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-            gap: '12px',
-          }}
-        >
-          {ACTION_CHIPS.map((chip) => (
-            <button
-              key={chip.id}
-              onClick={() => navigate(chip.path)}
-              style={{
+                position: 'absolute',
+                left: '14px',
+                bottom: '100%',
+                marginBottom: '8px',
                 background: 'white',
                 border: '1px solid #ddd4c8',
                 borderRadius: '12px',
-                padding: '16px 12px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#c4893a';
-                e.currentTarget.style.background = '#faf8f5';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(196,137,58,0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#ddd4c8';
-                e.currentTarget.style.background = 'white';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                minWidth: '180px',
+                zIndex: 1000,
               }}
             >
-              <span style={{ fontSize: '24px' }}>{chip.icon}</span>
-              <span
-                style={{
-                  fontSize: '12px',
-                  fontWeight: '500',
-                  color: '#1a1613',
-                  textAlign: 'center',
-                  lineHeight: '1.3',
-                }}
-              >
-                {chip.label}
-              </span>
-            </button>
-          ))}
+              {[
+                { label: 'Search Web', emoji: '🔍' },
+                { label: 'Research', emoji: '📚' },
+                { label: 'Add a Photo', emoji: '📷' },
+              ].map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => setShowDropdown(false)}
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '10px 14px',
+                    border: 'none',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    color: '#1a1613',
+                    fontFamily: '"DM Sans", sans-serif',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#f5f0e8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'transparent';
+                  }}
+                >
+                  <span>{item.emoji}</span>
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Input Field */}
+          <input
+            type="text"
+            placeholder="Întreabă orice despre urbanism, legislație, PUZ, CU..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            style={{
+              flex: 1,
+              border: 'none',
+              outline: 'none',
+              fontSize: '13px',
+              fontFamily: '"DM Sans", sans-serif',
+              color: '#1a1613',
+              backgroundColor: 'transparent',
+              minWidth: 0,
+            }}
+          />
+
+          {/* Microphone Button */}
+          <button
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              marginRight: '6px',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2">
+              <path d="M12 1a3 3 0 0 0-3 3v12a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+          </button>
+
+          {/* Send Button */}
+          <button
+            onClick={handleSendMessage}
+            disabled={!inputValue.trim()}
+            style={{
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              background: !inputValue.trim() ? '#ddd4c8' : '#1a1613',
+              border: 'none',
+              color: 'white',
+              cursor: !inputValue.trim() ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (inputValue.trim()) {
+                e.target.style.background = '#2a2623';
+                e.target.style.transform = 'scale(1.05)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = '#1a1613';
+              e.target.style.transform = 'scale(1)';
+            }}
+          >
+            →
+          </button>
+        </div>
+
+        {/* UrbAI Chat label */}
+        <div style={{ marginTop: '12px', textAlign: 'center' }}>
+          <p
+            style={{
+              fontSize: '11px',
+              color: '#9a938a',
+              margin: 0,
+              fontFamily: '"DM Sans", sans-serif',
+              letterSpacing: '0.5px',
+            }}
+          >
+            UrbAI Chat
+          </p>
         </div>
       </div>
     </Layout>

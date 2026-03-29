@@ -48,16 +48,36 @@ export default function WizardDocument() {
     sectionContent[currentSection] || ''
   );
 
-  if (!documentType || !currentProject) {
+  // Only show error if documentType is not set
+  if (!documentType) {
     return (
       <Layout>
         <div className="text-center py-12">
           <p className="text-warm-text-secondary">
-            Date lipsă. Mergi înapoi și completează formularul.
+            Niciun tip de document selectat. Mergi înapoi și alege un tip.
           </p>
           <button
             className="btn-primary mt-4"
-            onClick={() => navigate('/proiect/nou')}
+            onClick={() => navigate('/app/proiect/nou/tip-document')}
+          >
+            Înapoi
+          </button>
+        </div>
+      </Layout>
+    );
+  }
+
+  // If no sections available for this document type
+  if (sections.length === 0) {
+    return (
+      <Layout>
+        <div className="text-center py-12">
+          <p className="text-warm-text-secondary">
+            Tip de document invalid sau nu sunt secțiuni disponibile.
+          </p>
+          <button
+            className="btn-primary mt-4"
+            onClick={() => navigate('/app/proiect/nou/tip-document')}
           >
             Înapoi
           </button>

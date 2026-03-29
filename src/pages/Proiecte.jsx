@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProjectStore } from '../stores/projectStore';
 import { useWizardStore } from '../stores/wizardStore';
 import Layout from '../components/Layout';
 
 export default function Proiecte() {
+  const navigate = useNavigate();
   const { proiecte, addProiect, updateProiect, deleteProiect, proiectanti, beneficiari } = useProjectStore();
   const { setSelectedProiect } = useWizardStore();
   const [showModal, setShowModal] = useState(false);
@@ -17,6 +19,7 @@ export default function Proiecte() {
     data: '',
     proiectantId: '',
     beneficiariId: '',
+    tipDocumentatie: '',
     amplasament: '',
     cadastral: '',
     suprafata: '',
@@ -47,6 +50,7 @@ export default function Proiecte() {
         data: '',
         proiectantId: '',
         beneficiariId: '',
+        tipDocumentatie: '',
         amplasament: '',
         cadastral: '',
         suprafata: '',
@@ -74,8 +78,8 @@ export default function Proiecte() {
   };
 
   const handleSave = () => {
-    if (!formData.titlu.trim() || !formData.amplasament.trim()) {
-      alert('Completează titlul și amplasamentul proiectului');
+    if (!formData.titlu.trim() || !formData.amplasament.trim() || !formData.tipDocumentatie) {
+      alert('Completează titlul, tipul de documentație și amplasamentul proiectului');
       return;
     }
 
@@ -122,14 +126,14 @@ export default function Proiecte() {
 
   // Handle card selection
   const handleSelectProiect = (proiectId) => {
-    if (selectedProiectId === proiectId) {
-      setSelectedProiectId(null);
-      setSelectedProiect(null);
-    } else {
-      const selected = proiecte.find((p) => p.id === proiectId);
-      setSelectedProiectId(proiectId);
-      setSelectedProiect(selected);
-    }
+    const selected = proiecte.find((p) => p.id === proiectId);
+    setSelectedProiectId(proiectId);
+    setSelectedProiect(selected);
+
+    // Auto-navigate to document type selection
+    setTimeout(() => {
+      navigate(`/app/proiect/${proiectId}/tip-document`);
+    }, 500);
   };
 
   return (
@@ -144,47 +148,8 @@ export default function Proiecte() {
             minHeight: 'calc(100vh - 150px)',
           }}
         >
-          {/* Add New Project Card */}
-          <div
-            onClick={() => handleOpenModal()}
-            style={{
-              border: '2px dashed #c8d4e0',
-              borderRadius: '10px',
-              background: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              aspectRatio: '1 / 1.618',
-              transition: 'all 0.2s',
-              padding: '20px',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#c4893a';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#c8d4e0';
-            }}
-          >
-            <div style={{ fontSize: '28px', color: '#9ab0c8', marginBottom: '12px' }}>+</div>
-            <div
-              style={{
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                color: '#9ab0c8',
-                fontWeight: '600',
-                textAlign: 'center',
-                fontFamily: '"DM Sans", sans-serif',
-              }}
-            >
-              Adaugă Proiect Nou
-            </div>
-          </div>
-
-          {/* Project Cards */}
-          {proiecte.map((proiect) => {
+          {/* Project Cards - sortați descrescător (cel mai nou primeiro) */}
+          {[...proiecte].reverse().map((proiect) => {
             const isSelected = selectedProiectId === proiect.id;
             const statusColor = getStatusColor(proiect.status);
 
@@ -453,6 +418,45 @@ export default function Proiecte() {
               </div>
             );
           })}
+
+          {/* Add New Project Card - MEREU ULTIMUL */}
+          <div
+            onClick={() => handleOpenModal()}
+            style={{
+              border: '2px dashed #c8d4e0',
+              borderRadius: '10px',
+              background: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              aspectRatio: '1 / 1.618',
+              transition: 'all 0.2s',
+              padding: '20px',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#c4893a';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#c8d4e0';
+            }}
+          >
+            <div style={{ fontSize: '28px', color: '#9ab0c8', marginBottom: '12px' }}>+</div>
+            <div
+              style={{
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '2px',
+                color: '#9ab0c8',
+                fontWeight: '600',
+                textAlign: 'center',
+                fontFamily: '"DM Sans", sans-serif',
+              }}
+            >
+              Adaugă Proiect Nou
+            </div>
+          </div>
         </div>
 
         {/* Show empty state if no projects */}
@@ -776,6 +780,151 @@ export default function Proiecte() {
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+
+            {/* SECȚIUNEA 1: TIP DOCUMENTAȚIE */}
+            <div style={{ marginBottom: '28px' }}>
+              <div
+                style={{
+                  fontSize: '10px',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  letterSpacing: '2px',
+                  color: '#c4893a',
+                  borderBottom: '1px solid #e8e0d6',
+                  paddingBottom: '10px',
+                  marginBottom: '14px',
+                }}
+              >
+                Tip Documentație
+              </div>
+
+              {/* 3 Document Type Cards */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '10px',
+                  marginBottom: '14px',
+                }}
+              >
+                {/* Card 1: PUD */}
+                <div
+                  onClick={() => setFormData({ ...formData, tipDocumentatie: 'PUD' })}
+                  style={{
+                    background: 'white',
+                    border: formData.tipDocumentatie === 'PUD' ? '2px solid #c4893a' : '1.5px solid #e8e0d6',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    backgroundColor: formData.tipDocumentatie === 'PUD' ? 'rgba(196,137,58,0.04)' : 'white',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (formData.tipDocumentatie !== 'PUD') {
+                      e.target.style.borderColor = '#c4893a';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (formData.tipDocumentatie !== 'PUD') {
+                      e.target.style.borderColor = '#e8e0d6';
+                    }
+                  }}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" style={{ marginBottom: '6px' }} xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="2" width="14" height="20" rx="1" fill="none" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="6" x2="16" y2="6" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="10" x2="16" y2="10" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="14" x2="16" y2="14" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="18" x2="14" y2="18" stroke="#1a1613" strokeWidth="1.5" />
+                  </svg>
+                  <div style={{ fontSize: '11px', fontWeight: '600', color: '#1a1613', marginBottom: '4px' }}>
+                    PUD
+                  </div>
+                  <div style={{ fontSize: '9px', color: '#7a6e63', lineHeight: '1.3' }}>
+                    Plan Urbanistic de Detaliu
+                  </div>
+                </div>
+
+                {/* Card 2: PUZ */}
+                <div
+                  onClick={() => setFormData({ ...formData, tipDocumentatie: 'PUZ' })}
+                  style={{
+                    background: 'white',
+                    border: formData.tipDocumentatie === 'PUZ' ? '2px solid #c4893a' : '1.5px solid #e8e0d6',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    backgroundColor: formData.tipDocumentatie === 'PUZ' ? 'rgba(196,137,58,0.04)' : 'white',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (formData.tipDocumentatie !== 'PUZ') {
+                      e.target.style.borderColor = '#c4893a';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (formData.tipDocumentatie !== 'PUZ') {
+                      e.target.style.borderColor = '#e8e0d6';
+                    }
+                  }}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" style={{ marginBottom: '6px' }} xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="2" width="14" height="20" rx="1" fill="none" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="6" x2="16" y2="6" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="10" x2="16" y2="10" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="14" x2="16" y2="14" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="18" x2="14" y2="18" stroke="#1a1613" strokeWidth="1.5" />
+                  </svg>
+                  <div style={{ fontSize: '11px', fontWeight: '600', color: '#1a1613', marginBottom: '4px' }}>
+                    PUZ
+                  </div>
+                  <div style={{ fontSize: '9px', color: '#7a6e63', lineHeight: '1.3' }}>
+                    Plan Urbanistic Zonal
+                  </div>
+                </div>
+
+                {/* Card 3: PUG */}
+                <div
+                  onClick={() => setFormData({ ...formData, tipDocumentatie: 'PUG' })}
+                  style={{
+                    background: 'white',
+                    border: formData.tipDocumentatie === 'PUG' ? '2px solid #c4893a' : '1.5px solid #e8e0d6',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    backgroundColor: formData.tipDocumentatie === 'PUG' ? 'rgba(196,137,58,0.04)' : 'white',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (formData.tipDocumentatie !== 'PUG') {
+                      e.target.style.borderColor = '#c4893a';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (formData.tipDocumentatie !== 'PUG') {
+                      e.target.style.borderColor = '#e8e0d6';
+                    }
+                  }}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" style={{ marginBottom: '6px' }} xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="2" width="14" height="20" rx="1" fill="none" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="6" x2="16" y2="6" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="10" x2="16" y2="10" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="14" x2="16" y2="14" stroke="#1a1613" strokeWidth="1.5" />
+                    <line x1="8" y1="18" x2="14" y2="18" stroke="#1a1613" strokeWidth="1.5" />
+                  </svg>
+                  <div style={{ fontSize: '11px', fontWeight: '600', color: '#1a1613', marginBottom: '4px' }}>
+                    PUG
+                  </div>
+                  <div style={{ fontSize: '9px', color: '#7a6e63', lineHeight: '1.3' }}>
+                    Plan Urbanistic General
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1475,6 +1624,7 @@ export default function Proiecte() {
                   }}
                 />
               </div>
+
             </div>
 
             {/* FOOTER */}

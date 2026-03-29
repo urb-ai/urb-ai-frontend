@@ -3,6 +3,7 @@ import { create } from 'zustand';
 export const useDocumentStore = create((set, get) => ({
   // Document type
   documentType: null, // 'cu', 'aviz', 'puz', 'pud'
+  docSubType: null, // For PUZ: 'ao', 'memoriu-puz', 'rlu'
 
   // Uploaded files
   certificateFile: null,
@@ -23,6 +24,7 @@ export const useDocumentStore = create((set, get) => ({
 
   // Actions
   setDocumentType: (type) => set({ documentType: type }),
+  setDocSubType: (subType) => set({ docSubType: subType }),
   setCertificateFile: (file) => set({ certificateFile: file }),
   setCadastralFile: (file) => set({ cadastralFile: file }),
 
@@ -46,6 +48,7 @@ export const useDocumentStore = create((set, get) => ({
 
   resetDocument: () => set({
     documentType: null,
+    docSubType: null,
     certificateFile: null,
     cadastralFile: null,
     extractedData: {},

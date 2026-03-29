@@ -4,6 +4,7 @@ const useWizardStore = create((set) => ({
   currentStep: 0,
   selectedProiectant: null,
   selectedBeneficiar: null,
+  selectedProiect: null,
   projectData: {},
   docType: null,
   uploadedFiles: {},
@@ -11,10 +12,11 @@ const useWizardStore = create((set) => ({
   setStep: (step) => set({ currentStep: step }),
   setSelectedProiectant: (p) => set({ selectedProiectant: p }),
   setBeneficiar: (b) => set({ selectedBeneficiar: b }),
+  setSelectedProiect: (p) => set({ selectedProiect: p }),
   setProjectData: (data) => set({ projectData: data }),
   setDocType: (type) => set({ docType: type }),
   setUploadedFiles: (files) => set({ uploadedFiles: files }),
-  reset: () => set({ currentStep: 0, selectedProiectant: null, selectedBeneficiar: null, projectData: {}, docType: null, uploadedFiles: {} }),
+  reset: () => set({ currentStep: 0, selectedProiectant: null, selectedBeneficiar: null, selectedProiect: null, projectData: {}, docType: null, uploadedFiles: {} }),
 }));
 
 export { useWizardStore };
