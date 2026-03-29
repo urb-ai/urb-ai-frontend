@@ -629,28 +629,31 @@ export default function LandingPage() {
                 style={{
                   width: '28px',
                   height: '28px',
+                  borderRadius: '50%',
+                  border: '1px solid var(--border)',
                   background: 'transparent',
-                  border: 'none',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  transition: 'opacity 0.2s ease',
                   padding: 0,
+                  transition: 'border-color 0.2s ease, color 0.2s ease',
+                  color: 'var(--text2)',
+                  fontSize: '9px',
+                  fontWeight: '600',
+                  letterSpacing: '0.5px',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = '0.7';
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.color = 'var(--accent)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = '1';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.color = 'var(--text2)';
                 }}
                 title="Schimbare limbă"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M2 12h20" />
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                </svg>
+                {currentLanguage === 'ro' ? 'RO' : 'EN'}
               </button>
 
               {/* Language Dropdown */}
@@ -678,6 +681,7 @@ export default function LandingPage() {
                       style={{
                         display: 'flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
                         gap: '8px',
                         padding: '8px 12px',
                         borderRadius: '6px',
@@ -689,7 +693,8 @@ export default function LandingPage() {
                         fontFamily: '"DM Sans", system-ui, sans-serif',
                         transition: 'background 0.2s',
                         width: '100%',
-                        justifyContent: 'flex-start',
+                        textAlign: 'center',
+                        position: 'relative',
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = "var(--bg-alt)";
@@ -699,9 +704,9 @@ export default function LandingPage() {
                       }}
                     >
                       <span>{lang.flag}</span>
-                      <span style={{ flex: 1 }}>{lang.label}</span>
+                      <span>{lang.label}</span>
                       {currentLanguage === lang.key && (
-                        <span style={{ fontSize: '14px', color: "var(--accent)" }}>✓</span>
+                        <span style={{ fontSize: '14px', color: "var(--accent)", marginLeft: 'auto' }}>✓</span>
                       )}
                     </button>
                   ))}
