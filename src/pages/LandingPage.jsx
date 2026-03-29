@@ -668,7 +668,7 @@ export default function LandingPage() {
                   borderRadius: '10px',
                   boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
                   padding: '4px',
-                  minWidth: '160px',
+                  minWidth: '130px',
                   zIndex: 1000,
                 }}>
                   {[
@@ -681,8 +681,8 @@ export default function LandingPage() {
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
+                        justifyContent: 'flex-start',
+                        gap: '4px',
                         padding: '8px 12px',
                         borderRadius: '6px',
                         border: 'none',
@@ -693,8 +693,6 @@ export default function LandingPage() {
                         fontFamily: '"DM Sans", system-ui, sans-serif',
                         transition: 'background 0.2s',
                         width: '100%',
-                        textAlign: 'center',
-                        position: 'relative',
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = "var(--bg-alt)";
@@ -706,7 +704,7 @@ export default function LandingPage() {
                       <span>{lang.flag}</span>
                       <span>{lang.label}</span>
                       {currentLanguage === lang.key && (
-                        <span style={{ fontSize: '14px', color: "var(--accent)", marginLeft: 'auto' }}>✓</span>
+                        <span style={{ fontSize: '14px', color: "var(--accent)", marginLeft: '2px' }}>✓</span>
                       )}
                     </button>
                   ))}
