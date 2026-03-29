@@ -12,6 +12,7 @@ export default function LandingPage() {
   const statsRef = useRef(null);
   const [billingPeriod, setBillingPeriod] = useState('monthly'); // 'monthly', 'quarterly', 'annual'
   const [selectedPlan, setSelectedPlan] = useState(null); // Track selected plan
+  const [selectedAddon, setSelectedAddon] = useState(null); // Track selected add-on
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const [isListening, setIsListening] = useState(false);
@@ -2000,24 +2001,33 @@ export default function LandingPage() {
               {/* Agent Autonom */}
               {(() => {
                 const price = 18;
+                const isSelected = selectedAddon === 'agent';
                 return (
                   <div style={{
                     padding: '14px',
-                    border: '1px solid var(--border)',
+                    border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
                     borderRadius: '0.5rem',
                     backgroundColor: 'var(--surface)',
-                    transition: 'all 0.3s ease',
+                    transition: 'all 0.25s ease',
                     textAlign: 'center',
-                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+                    boxShadow: isSelected ? '0 8px 30px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                    cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                    if (!isSelected) {
+                      e.currentTarget.style.transform = 'scale(1.03)';
+                      e.currentTarget.style.border = '2px solid var(--accent)';
+                      e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                    if (!isSelected) {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.border = '1px solid var(--border)';
+                      e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                    }
                   }}
+                  onClick={() => setSelectedAddon(selectedAddon === 'agent' ? null : 'agent')}
                   >
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="11"/><circle cx="8" cy="16" r="1" fill="var(--text)"/><circle cx="16" cy="16" r="1" fill="var(--text)"/></svg>
                     <h4 style={{ fontSize: '16px', fontWeight: '700', color: "var(--text)", marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Agent Autonom AI</h4>
@@ -2040,24 +2050,33 @@ export default function LandingPage() {
               {/* Generare Imagini */}
               {(() => {
                 const price = 18;
+                const isSelected = selectedAddon === 'imagini';
                 return (
                   <div style={{
                     padding: '14px',
-                    border: '1px solid var(--border)',
+                    border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
                     borderRadius: '0.5rem',
                     backgroundColor: 'var(--surface)',
-                    transition: 'all 0.3s ease',
+                    transition: 'all 0.25s ease',
                     textAlign: 'center',
-                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+                    boxShadow: isSelected ? '0 8px 30px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                    cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                    if (!isSelected) {
+                      e.currentTarget.style.transform = 'scale(1.03)';
+                      e.currentTarget.style.border = '2px solid var(--accent)';
+                      e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                    if (!isSelected) {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.border = '1px solid var(--border)';
+                      e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                    }
                   }}
+                  onClick={() => setSelectedAddon(selectedAddon === 'imagini' ? null : 'imagini')}
                   >
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="var(--text)"/><path d="M21 15l-5-5L5 21"/></svg>
                     <h4 style={{ fontSize: '16px', fontWeight: '700', color: "var(--text)", marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Imagini & Randări AI</h4>
@@ -2081,24 +2100,33 @@ export default function LandingPage() {
               {(() => {
                 const basePrices = { monthly: 18, quarterly: 15, annual: 13 };
                 const price = basePrices[billingPeriod];
+                const isSelected = selectedAddon === 'project';
                 return (
                   <div style={{
                     padding: '14px',
-                    border: '1px solid var(--border)',
+                    border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border)',
                     borderRadius: '0.5rem',
                     backgroundColor: 'var(--surface)',
-                    transition: 'all 0.3s ease',
+                    transition: 'all 0.25s ease',
                     textAlign: 'center',
-                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+                    boxShadow: isSelected ? '0 8px 30px rgba(0,0,0,0.1)' : '0 1px 2px rgba(0, 0, 0, 0.04)',
+                    cursor: 'pointer',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                    if (!isSelected) {
+                      e.currentTarget.style.transform = 'scale(1.03)';
+                      e.currentTarget.style.border = '2px solid var(--accent)';
+                      e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.1)';
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                    if (!isSelected) {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.border = '1px solid var(--border)';
+                      e.currentTarget.style.boxShadow = '0 1px 2px rgba(0, 0, 0, 0.04)';
+                    }
                   }}
+                  onClick={() => setSelectedAddon(selectedAddon === 'project' ? null : 'project')}
                   >
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="7" y1="14" x2="13" y2="14"/><line x1="7" y1="18" x2="16" y2="18"/></svg>
                     <h4 style={{ fontSize: '16px', fontWeight: '700', color: "var(--text)", marginBottom: '0.5rem', fontFamily: '"DM Sans", system-ui, sans-serif' }}>Project Management</h4>
