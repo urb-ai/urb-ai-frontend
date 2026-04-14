@@ -3,463 +3,321 @@ import { useNavigate } from 'react-router-dom';
 export default function TermeniConditii() {
   const navigate = useNavigate();
 
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div style={{ backgroundColor: '#f5f0e8', minHeight: '100vh', padding: '2rem 1rem' }}>
-      {/* Navbar */}
-      <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-        <button
-          onClick={() => navigate('/')}
-          style={{
-            fontSize: '28px',
-            fontFamily: 'Georgia, serif',
-            fontWeight: '400',
-            letterSpacing: '-0.5px',
-            border: 'none',
-            background: 'none',
-            cursor: 'pointer',
-            color: '#1a1613',
-          }}
-        >
-          Urb<span style={{ color: '#c4893a', fontStyle: 'italic', fontWeight: '500' }}>AI</span>
-        </button>
-      </div>
-
-      {/* Content */}
-      <div
-        style={{
-          maxWidth: '780px',
-          margin: '0 auto',
-          backgroundColor: '#ffffff',
-          padding: '3rem 2rem',
-          borderRadius: '0.5rem',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
-        }}
-      >
-        <h1
-          style={{
-            fontFamily: 'Georgia, serif',
-            fontSize: '32px',
-            fontWeight: 'normal',
-            color: '#1a1613',
-            marginBottom: '1rem',
-            textAlign: 'center',
-          }}
-        >
-          Termeni și Condiții
-        </h1>
-
-        <p
-          style={{
-            fontSize: '13px',
-            color: '#6b5d50',
-            textAlign: 'center',
-            marginBottom: '2rem',
-          }}
-        >
-          Ultima actualizare: {new Date().toLocaleDateString('ro-RO')}
-        </p>
-
-        <div style={{ fontSize: '15px', lineHeight: '1.8', color: '#3a3a3a' }}>
-          {/* 1. Introducere */}
-          <h2
+    <div style={{
+      backgroundColor: '#ffffff',
+      minHeight: '100vh',
+      padding: window.innerWidth < 768 ? '40px 16px' : '64px 24px',
+    }}>
+      <div style={{
+        maxWidth: '720px',
+        margin: '0 auto',
+        fontFamily: '"DM Sans", system-ui, -apple-system, sans-serif',
+      }}>
+        {/* Header */}
+        <div style={{ marginBottom: '64px' }}>
+          <button
+            onClick={() => navigate('/')}
             style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
+              fontSize: '0.82rem',
+              color: '#999999',
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              padding: '0 0 24px 0',
+              fontFamily: 'inherit',
+              textDecoration: 'none',
             }}
+            onMouseEnter={(e) => e.target.style.color = '#111111'}
+            onMouseLeave={(e) => e.target.style.color = '#999999'}
           >
-            1. Introducere
-          </h2>
-          <p>
-            Bine ați venit la <strong>UrbAI S.R.L.</strong> (denumit în continuare „Compania", „noi", „nos"). Acești Termeni și
-            Condiții (denumiți în continuare „Termenii") reglementează utilizarea platformei noastre web, inclusiv toate
-            conținuturile, funcționalitățile și serviciile oferite prin aceasta (denumită în continuare „Serviciul").
-          </p>
-          <p>
-            <strong>Informații despre Companie:</strong>
-          </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>Denumire: URBAI S.R.L.</li>
-            <li>CUI: [CUI Placeholder]</li>
-            <li>Sediu social: [Adresa Placeholder]</li>
-            <li>Telefon: [Telefon Placeholder]</li>
-            <li>Email: contact@urbai.ro</li>
-          </ul>
-          <p>
-            Prin accesarea și utilizarea Serviciului, dvs. acceptați integral și necondiționat acești Termeni. Dacă nu sunteți
-            de acord cu oricare dintre acești Termeni, vă rugăm să nu utilizați Serviciul.
+            ← Înapoi
+          </button>
+
+          <p style={{
+            fontSize: '0.7rem',
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            color: '#999999',
+            margin: '0 0 8px 0',
+            fontFamily: 'inherit',
+          }}>
+            Document Legal
           </p>
 
-          {/* 2. Definiții */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            2. Definiții
-          </h2>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>
-              <strong>Utilizator:</strong> orice persoană fizică sau juridică care accesează Serviciul, indiferent dacă are un
-              cont activ
-            </li>
-            <li>
-              <strong>Cont:</strong> contul personal creat de Utilizator pentru a accesa funcționalitățile Serviciului
-            </li>
-            <li>
-              <strong>Credite:</strong> unități de măsură ale serviciilor care pot fi consumate pentru generarea documentelor
-            </li>
-            <li>
-              <strong>Document:</strong> material generat de AI conform cererii Utilizatorului
-            </li>
-            <li>
-              <strong>Plan:</strong> pachet de servicii cu anumite caracteristici și prețuri
-            </li>
-          </ul>
+          <h1 style={{
+            fontSize: '2rem',
+            fontWeight: '700',
+            color: '#111111',
+            margin: '0 0 8px 0',
+            fontFamily: 'inherit',
+          }}>
+            Termeni și Condiții
+          </h1>
 
-          {/* 3. Descrierea Serviciului */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            3. Descrierea Serviciului
-          </h2>
-          <p>
-            UrbAI este o platformă SaaS (Software as a Service) care utilizează Inteligența Artificială pentru a asista
-            utilizatorii în generarea de documente urbanistice și legale. Serviciul include:
-          </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>Generare automată de documente pe bază de informații furnizate de utilizator</li>
-            <li>Extracție de date din documente existente</li>
-            <li>Gestionare a proiectelor și históricului documentelor</li>
-            <li>Chat AI pentru întrebări și consultații</li>
-            <li>Export de documente în formate diverse (PDF, DOCX, XLSX)</li>
-          </ul>
-
-          {/* 4. Înregistrarea Contului */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            4. Înregistrarea Contului
-          </h2>
-          <p>
-            Pentru a utiliza anumite funcționalități ale Serviciului, este necesar să vă înregistrați și să creați un cont.
-            Prin crearea unui cont, vă angajați să furnizați informații exacte, complete și actuale. Sunteți responsabil de
-            menținerea confidențialității datelor de autentificare ale contului dvs. și de toate activitățile desfășurate sub
-            contul dvs.
-          </p>
-          <p>
-            Acceptați să nu utilizați contul unui alt utilizator și să notificați imediat Compania în caz de acces neautorizat
-            la contul dvs.
+          <p style={{
+            fontSize: '0.8rem',
+            color: '#999999',
+            margin: '0 0 24px 0',
+            fontFamily: 'inherit',
+            lineHeight: '1.6',
+          }}>
+            Versiunea 1.0 — 1 Aprilie 2026 · URBAN TDM S.R.L. · Conformă cu legislația UE
           </p>
 
-          {/* 5. Planuri și Prețuri */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            5. Planuri și Prețuri
-          </h2>
-          <p>
-            UrbAI oferă următoarele planuri (prețurile includ TVA 21%):
-          </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>
-              <strong>Plan Gratuit:</strong> Acces limitat la funcționalități (5 generări/lună, chat AI limitat), fără costuri
-            </li>
-            <li>
-              <strong>Plan Pro:</strong> 50€/lună - 50 generări/lună, chat AI nelimitat, suport prioritar
-            </li>
-            <li>
-              <strong>Plan Enterprise:</strong> 100€/lună + 15€/utilizator suplimentar - generări nelimitate, chat AI nelimitat,
-              suport 24/7
-            </li>
-            <li>
-              <strong>Chat AI Standalone:</strong> 25€/lună - chat AI nelimitat fără generare documente
-            </li>
-          </ul>
-          <p>
-            Prețurile pot fi modificate cu 30 de zile notificare în avans. Utilizatorii sunt informați prin email despre
-            modificările de prețuri.
-          </p>
+          <div style={{
+            borderBottom: '1px solid #e5e5e5',
+            marginBottom: '48px',
+          }} />
+        </div>
 
-          {/* 6. Sistemul de Credite */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            6. Sistemul de Credite
+        {/* Table of Contents */}
+        <div style={{ marginBottom: '48px' }}>
+          <h2 style={{
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            color: '#111111',
+            margin: '0 0 12px 0',
+            fontFamily: 'inherit',
+          }}>
+            Cuprins
           </h2>
-          <p>
-            Creditele sunt unități care pot fi utilizate pentru generarea documentelor. Fiecare plan include o anumită
-            cantitate de credite lunar:
-          </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>Creditele lunare expiră la sfârșitul lunii și nu pot fi transferate</li>
-            <li>Creditele suplimentare pot fi achiziționate la 10€/50 credite</li>
-            <li>Creditele suplimentare nu expiră și pot fi utilizate în orice moment</li>
-            <li>La anularea planului, creditele rămase sunt pierdute</li>
-          </ul>
+          <ol style={{
+            paddingLeft: '20px',
+            fontSize: '0.9rem',
+            lineHeight: '1.8',
+            color: '#444444',
+            margin: '0',
+          }}>
+            <li><button onClick={() => scrollToSection('s1')} style={{ background: 'none', border: 'none', color: '#111111', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}>Introducere</button></li>
+            <li><button onClick={() => scrollToSection('s2')} style={{ background: 'none', border: 'none', color: '#111111', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}>Definiții</button></li>
+            <li><button onClick={() => scrollToSection('s3')} style={{ background: 'none', border: 'none', color: '#111111', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}>Utilizare Serviciu</button></li>
+            <li><button onClick={() => scrollToSection('s4')} style={{ background: 'none', border: 'none', color: '#111111', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}>Drepturi Proprietate Intelectuală</button></li>
+            <li><button onClick={() => scrollToSection('s5')} style={{ background: 'none', border: 'none', color: '#111111', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}>Limitări de Răspundere</button></li>
+            <li><button onClick={() => scrollToSection('s6')} style={{ background: 'none', border: 'none', color: '#111111', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}>Conformitate Legală</button></li>
+            <li><button onClick={() => scrollToSection('s7')} style={{ background: 'none', border: 'none', color: '#111111', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}>Modificări ale Termenilor</button></li>
+            <li><button onClick={() => scrollToSection('s8')} style={{ background: 'none', border: 'none', color: '#111111', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}>Contact</button></li>
+          </ol>
+        </div>
 
-          {/* 7. Plăți și Facturare */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            7. Plăți și Facturare
-          </h2>
-          <p>
-            Plăți pentru abonamente și servicii suplimentare sunt procesate prin Stripe, platforma noastră parteneră de
-            plăți. Prin selectarea unui plan plătit, acceptați să autorizați încărcarea sumei corespunzătoare pe metoda de
-            plată selectată.
-          </p>
-          <p>
-            <strong>Condiții de plată:</strong>
-          </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>Abonamentele se încarcă la data renovării lunare</li>
-            <li>Facturi sunt generate automat și disponibile în contul utilizatorului</li>
-            <li>Refuzul plății poate duce la suspendarea contului</li>
-            <li>Nu oferim rambursări pentru fracțiuni de luni utilizate</li>
-            <li>Anularea abonamentului intră în vigoare la sfârșitul lunii curente</li>
-          </ul>
+        {/* Content */}
+        <div style={{ fontSize: '0.9rem', lineHeight: '1.8', color: '#444444', fontFamily: 'inherit' }}>
+          <div id="s1" style={{ marginTop: '40px' }}>
+            <h2 style={{
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              color: '#111111',
+              margin: '0 0 12px 0',
+              fontFamily: 'inherit',
+            }}>1. Introducere</h2>
+            <p style={{ margin: '0 0 12px 0' }}>
+              Bine ați venit la <strong style={{ color: '#111111', fontWeight: '600' }}>URBAN TDM S.R.L.</strong> (denumit în continuare „Compania", „noi", „nos"). Acești Termeni și Condiții reglementează utilizarea platformei noastre web, inclusiv toate conținuturile, funcționalitățile și serviciile oferite prin aceasta.
+            </p>
+            <p style={{ margin: '0 0 12px 0' }}>
+              <strong style={{ color: '#111111', fontWeight: '600' }}>Informații despre Companie:</strong>
+            </p>
+            <ul style={{ paddingLeft: '20px', margin: '0 0 12px 0' }}>
+              <li>Denumire: URBAN TDM S.R.L.</li>
+              <li>Email: contact@urbai.ro</li>
+              <li>Timp de răspuns: Maximum 30 de zile calendaristice</li>
+            </ul>
+            <p style={{ margin: '0 0 12px 0' }}>
+              Prin accesarea și utilizarea Serviciului, dvs. acceptați integral acești Termeni. Dacă nu sunteți de acord, vă rugăm să nu utilizați Serviciul.
+            </p>
+          </div>
 
-          {/* 8. Drepturi de Proprietate Intelectuală */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            8. Drepturi de Proprietate Intelectuală
-          </h2>
-          <p>
-            Platforma UrbAI și toate materialele acesteia (cod sursă, design, grafică, text, logo) sunt proprietatea
-            exclusivă a Companiei și sunt protejate de legile internaționale privind drepturile de autor.
-          </p>
-          <p>
-            <strong>Drepturile Utilizatorului asupra Documentelor:</strong> Documentele generate de dvs. vă aparțin în
-            totalitate. Puteți folosi, modifica și distribui documentele generate fără restricții, cu condiția respectării
-            legilor aplicabile.
-          </p>
-          <p>
-            <strong>Utilizarea Datelor:</strong> Nu utilizăm datele din documentele dvs. generate pentru a antrenarea modelelor
-            de AI. Datele sunt utilizate doar pentru furnizarea Serviciului și îmbunătățirea acestuia, conform Politicii de
-            Confidențialitate.
-          </p>
+          <div id="s2" style={{ marginTop: '40px' }}>
+            <h2 style={{
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              color: '#111111',
+              margin: '0 0 12px 0',
+              fontFamily: 'inherit',
+            }}>2. Definiții</h2>
+            <p style={{ margin: '0 0 12px 0' }}>
+              În acești Termeni, termenii care urmează au următoarele sensuri:
+            </p>
+            <ul style={{ paddingLeft: '20px', margin: '0 0 12px 0' }}>
+              <li><strong style={{ color: '#111111', fontWeight: '600' }}>Serviciu</strong> — platforma web UrbAI, inclusiv toate funcționalitățile, conținuturile și serviciile oferite</li>
+              <li><strong style={{ color: '#111111', fontWeight: '600' }}>Utilizator</strong> — orice persoană care accesează sau utilizează Serviciul</li>
+              <li><strong style={{ color: '#111111', fontWeight: '600' }}>Cont</strong> — înregistrarea unui Utilizator pe Serviciu</li>
+              <li><strong style={{ color: '#111111', fontWeight: '600' }}>Conținut</strong> — orice informații, texte, imagini, date sau alte materiale postate pe Serviciu</li>
+            </ul>
+          </div>
 
-          {/* 9. Limitări de Răspundere */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            9. Limitări de Răspundere
-          </h2>
-          <p>
-            <strong style={{ color: '#c4893a' }}>
-              IMPORTANT: Documentele generate de UrbAI sunt destinate doar informării și orientării. Ele nu constituie
-              sfaturi juridice oficiale. Orice document generat trebuie verificat și finalizat de către un specialist autorizat
-              (avocat, arhitect, ingineri) înainte de a fi utilizat în scopuri oficiale sau legale.
-            </strong>
-          </p>
-          <p>
-            Compania nu este responsabilă pentru:
-          </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>Exactitatea, completitudinea sau legalitatea documentelor generate</li>
-            <li>Orice consecințe adverse rezultate din utilizarea documentelor generate fără verificare profesională</li>
-            <li>Pierderi de date din cauza unor circumstanțe exterioare</li>
-            <li>Întreruperi de serviciu din cauze neimputabile Companiei</li>
-            <li>Pagube indirecte, incidentale sau consecutive, indiferent de cauză</li>
-          </ul>
-          <p>
-            Răspunderea totală a Companiei nu va depăși suma plătită de dvs. pentru Serviciu în ultimele 12 luni.
-          </p>
+          <div id="s3" style={{ marginTop: '40px' }}>
+            <h2 style={{
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              color: '#111111',
+              margin: '0 0 12px 0',
+              fontFamily: 'inherit',
+            }}>3. Utilizare Serviciu</h2>
+            <p style={{ margin: '0 0 12px 0' }}>
+              Vă acceptați să utilizați Serviciul numai în conformitate cu acești Termeni și cu legile aplicabile. Vos dori să nu:
+            </p>
+            <ul style={{ paddingLeft: '20px', margin: '0 0 12px 0' }}>
+              <li>Utilizați Serviciul în scop ilegal sau neautorizat</li>
+              <li>Încălcați orice drepturi de proprietate intelectuală ale altora</li>
+              <li>Transmiteți malware, virus sau cod dăunător</li>
+              <li>Hartuiți, amenințați sau atacați utilizatori</li>
+              <li>Spamați sau trimiteți conținut nesolicitat</li>
+              <li>Circumveniți măsurile de securitate ale Serviciului</li>
+            </ul>
+          </div>
 
-          {/* 10. Disponibilitatea Serviciului */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            10. Disponibilitatea Serviciului
-          </h2>
-          <p>
-            Compania se efortează să mențină Serviciul disponibil 24/7, dar nu garantează o disponibilitate de 100%. Pot
-            exista întreruperi pentru:
-          </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>Lucrări de întreținere programată (notificate cu 48 de ore în avans atunci când este posibil)</li>
-            <li>Actualizări de securitate</li>
-            <li>Probleme tehnice neașteptate</li>
-            <li>Situații de forță majoră</li>
-          </ul>
-          <p>
-            Compania nu va fi responsabilă pentru nicio pierdere de date sau servicii din cauza acestor întreruperi.
-          </p>
+          <div id="s4" style={{ marginTop: '40px' }}>
+            <h2 style={{
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              color: '#111111',
+              margin: '0 0 12px 0',
+              fontFamily: 'inherit',
+            }}>4. Drepturi Proprietate Intelectuală</h2>
+            <p style={{ margin: '0 0 12px 0' }}>
+              Serviciul și toate conținuturile sale sunt proprietatea URBAN TDM S.R.L. Aveți permisiunea să utilizați Serviciul doar pentru scopuri personale și necomerciale. Copierea, modificarea sau distribuirea Serviciului fără permisiune este interzisă.
+            </p>
+            <p style={{ margin: '0 0 12px 0' }}>
+              Voi rămâneți proprietarul conținutului pe care îl postați, dar acordați URBAN TDM S.R.L. o licență neexclusivă pentru a utiliza, afișa și distribui conținutul pe Serviciu.
+            </p>
+          </div>
 
-          {/* 11. Utilizare Acceptabilă */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            11. Utilizare Acceptabilă
-          </h2>
-          <p>
-            Nu este permis să utilizați Serviciul pentru:
-          </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-            <li>Activități ilegale sau care încalcă legile aplicabile</li>
-            <li>Hartuire, amenințare sau intimidare a altor utilizatori</li>
-            <li>Transmiterea de malware, viruși sau cod malefic</li>
-            <li>Tentative de a accesa sisteme neautorizat (hacking)</li>
-            <li>Generarea masivă de documente pentru revânzare sau distribuție neautorizată</li>
-            <li>Încălcarea drepturilor de autor sau de proprietate intelectuală ale altcuiva</li>
-            <li>Crearea de documente frauduloase sau care reproduc documente oficiale false</li>
-          </ul>
-          <p>
-            Încălcarea acestor condiții va rezulta în suspendarea sau terminarea contului dvs. fără rambursare.
-          </p>
+          <div id="s5" style={{ marginTop: '40px' }}>
+            <h2 style={{
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              color: '#111111',
+              margin: '0 0 12px 0',
+              fontFamily: 'inherit',
+            }}>5. Limitări de Răspundere</h2>
+            <p style={{ margin: '0 0 12px 0' }}>
+              URBAN TDM S.R.L. nu este responsabil pentru:
+            </p>
+            <ul style={{ paddingLeft: '20px', margin: '0 0 12px 0' }}>
+              <li>Orice daune indirecte, accidentale sau consecutive</li>
+              <li>Pierderea de date, profituri sau oportunități</li>
+              <li>Orice întreruperi ale Serviciului</li>
+              <li>Erorile sau impreciziunile conținutului</li>
+            </ul>
+            <p style={{ margin: '0 0 12px 0' }}>
+              Răspunderea noastră totală pentru orice revendicări este limitată la suma pe care ați plătit-o pentru Serviciu în ultimele 12 luni.
+            </p>
+          </div>
 
-          {/* 12. Modificarea Termenilor */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            12. Modificarea Termenilor
-          </h2>
-          <p>
-            Compania se rezervă dreptul de a modifica acești Termeni în orice moment. Modificările importante vor fi comunicate
-            cu 30 de zile notificare în avans. Continuarea utilizării Serviciului după comunicarea modificărilor constituie
-            acceptarea noilor termeni.
-          </p>
+          <div id="s6" style={{ marginTop: '40px' }}>
+            <h2 style={{
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              color: '#111111',
+              margin: '0 0 12px 0',
+              fontFamily: 'inherit',
+            }}>6. Conformitate Legală</h2>
+            <p style={{ margin: '0 0 12px 0' }}>
+              Acești Termeni sunt în conformitate cu:
+            </p>
+            <ul style={{ paddingLeft: '20px', margin: '0 0 12px 0' }}>
+              <li>Regulamentul (UE) 2016/679 (GDPR)</li>
+              <li>Legea nr. 190/2018 privind protecția datelor</li>
+              <li>Legislația locală aplicabilă din România</li>
+            </ul>
+          </div>
 
-          {/* 13. Terminarea Serviciului */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            13. Terminarea Serviciului
-          </h2>
-          <p>
-            Puteți anula abonamentul dvs. în orice moment prin setările contului. Compania se poate retrage din furnizarea
-            Serviciului cu 90 de zile notificare în avans.
-          </p>
-          <p>
-            La anulare, accesul la Serviciul dvs. va fi terminat la sfârșitul perioadei de facturare curente.
-          </p>
+          <div id="s7" style={{ marginTop: '40px' }}>
+            <h2 style={{
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              color: '#111111',
+              margin: '0 0 12px 0',
+              fontFamily: 'inherit',
+            }}>7. Modificări ale Termenilor</h2>
+            <p style={{ margin: '0 0 12px 0' }}>
+              URBAN TDM S.R.L. poate modifica acești Termeni oricând. Modificări semnificative vor fi comunicate prin email sau banner pe platformă. Continuarea utilizării Serviciului după modificări constituie acceptul noilor Termeni.
+            </p>
+          </div>
 
-          {/* 14. Legea Aplicabilă și Jurisdicție */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            14. Legea Aplicabilă și Jurisdicție
-          </h2>
-          <p>
-            Acești Termeni sunt reglementați de legile României. Orice dispută va fi rezolvată prin intermediul instanțelor
-            judecătorești competente din România, în conformitate cu procedura civilă aplicabilă.
-          </p>
+          <div id="s8" style={{ marginTop: '40px' }}>
+            <h2 style={{
+              fontSize: '1.1rem',
+              fontWeight: '700',
+              color: '#111111',
+              margin: '0 0 12px 0',
+              fontFamily: 'inherit',
+            }}>8. Contact</h2>
+            <p style={{ margin: '0' }}>
+              <strong style={{ color: '#111111', fontWeight: '600' }}>Operator:</strong> URBAN TDM S.R.L. · <strong style={{ color: '#111111', fontWeight: '600' }}>Email:</strong> contact@urbai.ro
+            </p>
+          </div>
+        </div>
 
-          {/* Contact */}
-          <h2
-            style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: '20px',
-              fontWeight: 'normal',
-              color: '#1a1613',
-              marginTop: '1.5rem',
-              marginBottom: '0.8rem',
-            }}
-          >
-            Contact
-          </h2>
-          <p>
-            Pentru întrebări sau plângeri referitoare la acești Termeni, vă rugăm să contactați:
+        {/* Footer */}
+        <div style={{
+          marginTop: '64px',
+          paddingTop: '24px',
+          borderTop: '1px solid #e5e5e5',
+          textAlign: 'center',
+          fontSize: '0.78rem',
+          color: '#999999',
+          fontFamily: 'inherit',
+        }}>
+          <p style={{ margin: '0 0 16px 0' }}>
+            © 2026 URBAN TDM S.R.L. · Toate drepturile rezervate
           </p>
-          <ul style={{ marginLeft: '1.5rem', marginTop: '0.5rem' }}>
-            <li>Email: contact@urbai.ro</li>
-            <li>Telefon: [Telefon Placeholder]</li>
-            <li>Adresa: [Adresa Placeholder]</li>
-          </ul>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => navigate('/politica-confidentialitate')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#111111',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0,
+                fontSize: 'inherit',
+                fontFamily: 'inherit',
+              }}
+            >
+              Confidențialitate
+            </button>
+            <span style={{ color: '#e5e5e5' }}>|</span>
+            <button
+              onClick={() => navigate('/gdpr')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#111111',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0,
+                fontSize: 'inherit',
+                fontFamily: 'inherit',
+              }}
+            >
+              GDPR
+            </button>
+            <span style={{ color: '#e5e5e5' }}>|</span>
+            <button
+              onClick={() => navigate('/cookies')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#111111',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0,
+                fontSize: 'inherit',
+                fontFamily: 'inherit',
+              }}
+            >
+              Cookies
+            </button>
+          </div>
         </div>
       </div>
     </div>

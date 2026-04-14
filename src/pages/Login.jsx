@@ -174,49 +174,34 @@ export default function Login() {
   return (
     <div
       style={{
-        backgroundColor: '#f5f0e8',
+        backgroundColor: '#ffffff',
         minHeight: '100vh',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '16px',
         fontFamily: '"DM Sans", system-ui, sans-serif',
         position: 'relative',
       }}
     >
-      {/* DEBUG PANEL - Remove this after testing */}
+      {/* COLOANA STÂNGA — FORMULAR LOGIN */}
       <div
+        className="login-left-column"
         style={{
-          position: 'fixed',
-          top: '10px',
-          right: '10px',
-          background: 'rgba(0,0,0,0.8)',
-          color: '#0f0',
-          padding: '10px',
-          borderRadius: '5px',
-          fontSize: '11px',
-          fontFamily: 'monospace',
-          zIndex: 999,
-          maxWidth: '250px',
-        }}
-      >
-        <div>Loading: {loading.toString()}</div>
-        <div>User: {user?.email || 'none'}</div>
-        <div>OTP Sent: {otpSent.toString()}</div>
-        <div>Email: {email || '(empty)'}</div>
-        {error && <div style={{ color: '#f44' }}>Error: {error}</div>}
-      </div>
-
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '420px',
+          flex: '0 0 50%',
           backgroundColor: '#ffffff',
-          borderRadius: '12px',
-          padding: '40px',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '40px 60px',
+          boxSizing: 'border-box',
+          borderRight: '1px solid #ddd4c8',
+          minHeight: '100vh',
         }}
       >
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '360px',
+          }}
+        >
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h1
@@ -613,7 +598,144 @@ export default function Login() {
             Politica de Confidențialitate
           </a>
         </p>
+        </div>
       </div>
+
+      {/* COLOANA DREAPTA — BRANDING (HERO SECTION) */}
+      <div
+        className="login-right-column"
+        style={{
+          flex: '0 0 50%',
+          backgroundColor: '#f5f0e8',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '60px',
+          boxSizing: 'border-box',
+          minHeight: '100vh',
+          borderLeft: '1px solid #ddd4c8',
+        }}
+      >
+        <div style={{ textAlign: 'center', maxWidth: '480px', width: '100%', display: 'flex', flexDirection: 'column', height: '100%' }}>
+          {/* Logo UrbAI */}
+          <div style={{ marginBottom: '48px' }}>
+            <h2
+              style={{
+                fontSize: '2.5rem',
+                fontFamily: '"Instrument Serif", serif',
+                fontWeight: '400',
+                margin: '0',
+                color: '#1a1613',
+                letterSpacing: '0px',
+              }}
+            >
+              Urb<span style={{ fontStyle: 'italic', color: '#c4893a' }}>AI</span>
+            </h2>
+          </div>
+
+          {/* Main Title (Instrument Serif) */}
+          <h1
+            style={{
+              fontSize: '1.8rem',
+              fontFamily: '"Instrument Serif", serif',
+              fontWeight: '400',
+              lineHeight: '1.4',
+              margin: '0 0 24px 0',
+              color: '#1a1613',
+              textAlign: 'center',
+            }}
+          >
+            Documente generate cu{' '}
+            <span style={{ color: '#c4893a', fontStyle: 'italic' }}>inteligență artificială</span>
+            {' '}în proiectare
+          </h1>
+
+          {/* Subtitle (DM Sans) */}
+          <p
+            style={{
+              fontSize: '0.95rem',
+              fontFamily: '"DM Sans", system-ui, sans-serif',
+              color: '#5c5466',
+              lineHeight: '1.7',
+              margin: '0 0 40px 0',
+              fontWeight: '400',
+              textAlign: 'center',
+            }}
+          >
+            Memorii tehnice, PUZ-uri, certificate de urbanism — în minute, nu în ore.
+          </p>
+
+          {/* Features List */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px', flex: '1' }}>
+            {[
+              'Generează memorii tehnice în minute',
+              'Legislație urbanistică actualizată automat',
+              'Export direct în format DOCX profesional'
+            ].map((feature, index) => (
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  color: '#5c5466',
+                  fontSize: '0.88rem',
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  fontWeight: '400',
+                  lineHeight: '1.5',
+                }}
+              >
+                <span
+                  style={{
+                    color: '#c4893a',
+                    fontWeight: '600',
+                    flexShrink: 0,
+                    fontSize: '1.1rem',
+                  }}
+                >
+                  ✓
+                </span>
+                <span>{feature}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Statistics Bar */}
+          <div
+            style={{
+              fontSize: '0.75rem',
+              color: '#9a938a',
+              textAlign: 'center',
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '8px',
+              flexWrap: 'wrap',
+              marginTop: 'auto',
+            }}
+          >
+            <span>500+ Documente generate</span>
+            <span>·</span>
+            <span>98% Satisfacție</span>
+            <span>·</span>
+            <span>10x Mai rapid</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Media Query CSS pentru responsive */}
+      <style>{`
+        @media (max-width: 768px) {
+          .login-right-column {
+            display: none !important;
+          }
+          .login-left-column {
+            flex: 0 0 100% !important;
+            border-right: none !important;
+            padding: 40px 20px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

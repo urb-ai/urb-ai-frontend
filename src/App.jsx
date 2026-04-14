@@ -26,6 +26,7 @@ import TermeniConditii from './pages/legal/TermeniConditii';
 import PoliticaConfidentialitate from './pages/legal/PoliticaConfidentialitate';
 import GDPR from './pages/legal/GDPR';
 import PoliticaCookies from './pages/legal/PoliticaCookies';
+import CookiePolicy from './pages/CookiePolicy';
 
 export default function App() {
   const { initAuth, cleanup } = useAuthStore();
@@ -272,6 +273,7 @@ export default function App() {
         <Route path="/politica-confidentialitate" element={<PoliticaConfidentialitate />} />
         <Route path="/gdpr" element={<GDPR />} />
         <Route path="/politica-cookies" element={<PoliticaCookies />} />
+        <Route path="/cookies" element={<CookiePolicy />} />
 
         {/* 404 and redirects */}
         <Route path="/404" element={<NotFound />} />

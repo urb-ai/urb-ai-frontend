@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-export default function PoliticaCookies() {
+export default function CookiePolicy() {
   const navigate = useNavigate();
 
   const scrollToSection = (id) => {
