@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import ChatPanel from './ChatPanel';
 
 export default function Layout({ children }) {
   const navigate = useNavigate();
@@ -30,9 +29,6 @@ export default function Layout({ children }) {
   const isActive = (path) => location.pathname === path;
   const isMobile = windowWidth < 768;
   const isTablet = windowWidth < 1200;
-
-  // Chat panel is not shown - only centered chat bar on Dashboard
-  const showChatPanel = false;
 
   // Theme definitions
   const themes = {
@@ -1262,9 +1258,6 @@ export default function Layout({ children }) {
 
         {children}
       </main>
-
-      {/* ===== COLOANA 3: CHAT PANEL (300px fixed) ===== */}
-      {showChatPanel && <ChatPanel />}
 
       {/* Floating Chat Button (Mobile/Tablet) */}
       {isTablet && (
