@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { apiStream } from '../api/client';
+import { supabase } from '../lib/supabase';
 
 const URBANISM_SYSTEM_PROMPT = `Tu ești un expert în urbanism din România cu cunoștințe aprofundate în:
 - Legislația urbanistică (Legea 350/2001, OUG 34/2023, Normativele de urbanism)
@@ -60,6 +61,17 @@ export default function ChatPanel() {
     setMessages((prev) => [...prev, aiMessage]);
 
     try {
+      // Get JWT token from Supabase session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        console.error('❌ Session error:', sessionError);
+        throw new Error('Sesiune expirat. Te rog logheaza-te din nou.');
+      }
+
+      const token = session.access_token;
+      console.log('🔐 Token received:', token ? '✓ Token exists' : '✗ No token');
+
       // Prepare messages for API
       const conversationMessages = messages
         .filter((m) => m.type !== 'ai' || m.text) // Skip initial greeting if needed
@@ -69,33 +81,80 @@ export default function ChatPanel() {
           content: m.text,
         }));
 
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
       console.log('📤 Sending to API:', {
-        endpoint: '/api/v1/generate',
+        url: `${API_URL}/api/v1/generate`,
         messagesCount: conversationMessages.length,
         model: 'claude-haiku-4-5-20251001',
+        hasToken: !!token,
       });
 
-      // Stream response from Claude
+      // Make request with Authorization header
+      const response = await fetch(`${API_URL}/api/v1/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          messages: conversationMessages,
+          system: URBANISM_SYSTEM_PROMPT,
+          max_tokens: 1024,
+          stream: true,
+        }),
+      });
+
+      console.log('📡 Response received:', {
+        status: response.status,
+        statusText: response.statusText,
+        contentType: response.headers.get('content-type'),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      // Handle streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
       let accumulatedText = '';
+      let totalChunks = 0;
 
-      await apiStream('/api/v1/generate', {
-        model: 'claude-haiku-4-5-20251001',
-        messages: conversationMessages,
-        system: URBANISM_SYSTEM_PROMPT,
-        max_tokens: 1024,
-        stream: true,
-      }, (data) => {
-        console.log('📥 Received chunk:', data);
-        if (data.type === 'delta' && data.delta?.type === 'text_delta') {
-          accumulatedText += data.delta.text;
-          // Update AI message with accumulated text
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === aiMessageId ? { ...m, text: accumulatedText } : m
-            )
-          );
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          console.log(`🏁 Stream completed. Total chunks: ${totalChunks}`);
+          break;
         }
-      });
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              totalChunks++;
+
+              if (data.type === 'delta' && data.delta?.type === 'text_delta') {
+                accumulatedText += data.delta.text;
+                // Update AI message with accumulated text
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === aiMessageId ? { ...m, text: accumulatedText } : m
+                  )
+                );
+              }
+            } catch (parseError) {
+              console.error('Failed to parse chunk:', line, parseError);
+            }
+          }
+        }
+      }
 
       console.log('✅ Chat response completed');
       setIsLoading(false);
@@ -103,8 +162,7 @@ export default function ChatPanel() {
       console.error('❌ Chat error:', error);
       console.error('Error details:', {
         message: error.message,
-        status: error.status,
-        data: error.data,
+        stack: error.stack,
       });
 
       // Show error message
