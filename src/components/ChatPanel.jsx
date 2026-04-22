@@ -188,6 +188,11 @@ export default function ChatPanel() {
     }
   };
 
+  const handleInputChange = (e) => {
+    console.log('Input changed:', e.target.value);
+    setInputValue(e.target.value);
+  };
+
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
@@ -405,9 +410,10 @@ export default function ChatPanel() {
             type="text"
             placeholder="Întreabă orice despre urbanism..."
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={handleInputChange}
             onKeyPress={handleKeyPress}
             disabled={isLoading}
+            autoComplete="off"
             style={{
               flex: 1,
               border: 'none',
@@ -445,7 +451,8 @@ export default function ChatPanel() {
           {/* Send Button */}
           <button
             onClick={handleSendMessage}
-            disabled={isLoading || !inputValue.trim()}
+            disabled={!inputValue.trim()}
+            type="button"
             style={{
               width: '30px',
               height: '30px',
@@ -460,6 +467,7 @@ export default function ChatPanel() {
               justifyContent: 'center',
               flexShrink: 0,
               transition: 'all 0.2s',
+              opacity: !inputValue.trim() ? 0.6 : 1,
             }}
             onMouseEnter={(e) => {
               if (inputValue.trim()) {
