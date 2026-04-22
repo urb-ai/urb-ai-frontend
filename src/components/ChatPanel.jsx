@@ -35,6 +35,8 @@ export default function ChatPanel() {
     if (!inputValue.trim()) return;
 
     const userText = inputValue.trim();
+    console.log('📝 Sending message:', userText);
+    console.log('🔗 API URL:', import.meta.env.VITE_API_URL);
 
     // Add user message
     const userMessage = {
@@ -67,6 +69,12 @@ export default function ChatPanel() {
           content: m.text,
         }));
 
+      console.log('📤 Sending to API:', {
+        endpoint: '/api/v1/generate',
+        messagesCount: conversationMessages.length,
+        model: 'claude-haiku-4-5-20251001',
+      });
+
       // Stream response from Claude
       let accumulatedText = '';
 
@@ -77,6 +85,7 @@ export default function ChatPanel() {
         max_tokens: 1024,
         stream: true,
       }, (data) => {
+        console.log('📥 Received chunk:', data);
         if (data.type === 'delta' && data.delta?.type === 'text_delta') {
           accumulatedText += data.delta.text;
           // Update AI message with accumulated text
@@ -88,9 +97,15 @@ export default function ChatPanel() {
         }
       });
 
+      console.log('✅ Chat response completed');
       setIsLoading(false);
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error('❌ Chat error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        status: error.status,
+        data: error.data,
+      });
 
       // Show error message
       const errorText = error.message || 'Eroare la conectarea cu AI. Te rog încearcă din nou.';

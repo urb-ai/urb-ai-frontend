@@ -98,9 +98,16 @@ export async function apiDelete(path) {
  * Stream helper for SSE responses
  */
 export async function apiStream(path, body, onData) {
+  console.log('🌊 apiStream called:', { path, bodyKeys: Object.keys(body) });
+
   const response = await apiCall(path, {
     method: 'POST',
     body: JSON.stringify(body),
+  });
+
+  console.log('📡 Stream response received:', {
+    status: response.status,
+    contentType: response.headers.get('content-type'),
   });
 
   if (!response.ok) {
@@ -109,12 +116,14 @@ export async function apiStream(path, body, onData) {
 
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
+  let totalChunks = 0;
 
   try {
     while (true) {
       const { done, value } = await reader.read();
 
       if (done) {
+        console.log(`🏁 Stream completed. Total chunks: ${totalChunks}`);
         break;
       }
 
@@ -123,8 +132,14 @@ export async function apiStream(path, body, onData) {
 
       for (const line of lines) {
         if (line.startsWith('data: ')) {
-          const data = JSON.parse(line.slice(6));
-          onData(data);
+          try {
+            const data = JSON.parse(line.slice(6));
+            totalChunks++;
+            console.log(`📦 Chunk ${totalChunks}:`, data.type);
+            onData(data);
+          } catch (e) {
+            console.error('Failed to parse chunk:', line, e);
+          }
         }
       }
     }
