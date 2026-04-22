@@ -25,6 +25,11 @@ export default function LandingPage() {
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const languageMenuRef = useRef(null);
   const [toastMessage, setToastMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [questionsCount, setQuestionsCount] = useState(0);
+  const [limitReached, setLimitReached] = useState(false);
+  const chatMessagesEndRef = useRef(null);
 
   const themes = {
     arctic: {
@@ -251,6 +256,20 @@ export default function LandingPage() {
     };
   }, [statsVisible]);
 
+  // Initialize public chat question count
+  useEffect(() => {
+    const savedCount = parseInt(localStorage.getItem('urb_ai_public_chat_questions_count') || '0', 10);
+    setQuestionsCount(savedCount);
+    setLimitReached(savedCount >= 20);
+  }, []);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (chatMessagesEndRef.current) {
+      chatMessagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages]);
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/app');
@@ -316,6 +335,76 @@ export default function LandingPage() {
     }
   }, [menuOpen]);
 
+  const handleSendPublicMessage = async () => {
+    if (!chatInput.trim() || chatLoading || limitReached) return;
+
+    const userMessage = {
+      id: Date.now(),
+      role: 'user',
+      content: chatInput,
+    };
+
+    setChatMessages((prev) => [...prev, userMessage]);
+    setChatInput('');
+    setChatLoading(true);
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+      const response = await fetch(`${API_URL}/api/v1/chat-public`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [
+            ...chatMessages.map((m) => ({
+              role: m.role,
+              content: m.content,
+            })),
+            userMessage,
+          ],
+          max_tokens: 1024,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Eroare la backend');
+      }
+
+      const data = await response.json();
+      const aiContent = data.content || 'Fără răspuns';
+
+      const aiMessage = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: aiContent,
+      };
+
+      setChatMessages((prev) => [...prev, aiMessage]);
+
+      // Update question count
+      const newCount = questionsCount + 1;
+      setQuestionsCount(newCount);
+      localStorage.setItem('urb_ai_public_chat_questions_count', newCount.toString());
+
+      if (newCount >= 20) {
+        setLimitReached(true);
+      }
+    } catch (error) {
+      console.error('Public chat error:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: `❌ ${error.message}`,
+      };
+      setChatMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
   return (
     <div style={{ backgroundColor: 'var(--bg)', color: 'var(--text)', fontFamily: '"DM Sans", system-ui, sans-serif', transition: 'background-color 0.3s, color 0.3s' }}>
       <style>{`
@@ -365,6 +454,15 @@ export default function LandingPage() {
           }
           10%, 90% {
             opacity: 1;
+          }
+        }
+
+        @keyframes textPulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
           }
         }
 
@@ -920,6 +1018,92 @@ export default function LandingPage() {
 
           {/* Chat Bar */}
           <div ref={menuRef} style={{ marginTop: '40px', maxWidth: '600px', margin: '40px auto 0', width: '100%', position: 'relative' }}>
+            {/* Chat Messages Display */}
+            {chatMessages.length > 0 && (
+              <div
+                style={{
+                  maxHeight: '400px',
+                  overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  padding: '16px',
+                  background: 'var(--bg-alt)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '12px',
+                  marginBottom: '16px',
+                }}
+              >
+                {chatMessages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    style={{
+                      display: 'flex',
+                      justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                    }}
+                  >
+                    <div
+                      style={{
+                        maxWidth: '80%',
+                        background: msg.role === 'assistant' ? 'var(--surface)' : 'var(--accent)',
+                        border: msg.role === 'assistant' ? '1px solid var(--border)' : 'none',
+                        borderRadius: '10px',
+                        padding: '10px 14px',
+                        fontSize: '13px',
+                        color: msg.role === 'assistant' ? 'var(--text)' : 'white',
+                        lineHeight: '1.6',
+                        fontFamily: '"DM Sans", system-ui, sans-serif',
+                        wordWrap: 'break-word',
+                      }}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+                {chatLoading && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'var(--surface)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '10px',
+                        padding: '10px 14px',
+                        fontSize: '13px',
+                        color: 'var(--text3)',
+                      }}
+                    >
+                      <span style={{ animation: 'textPulse 1s infinite' }}>●●●</span>
+                    </div>
+                  </div>
+                )}
+                <div ref={chatMessagesEndRef} />
+              </div>
+            )}
+
+            {/* Limit Reached Message */}
+            {limitReached && (
+              <div
+                style={{
+                  padding: '12px 16px',
+                  background: '#fee2e2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '8px',
+                  color: '#991b1b',
+                  fontSize: '13px',
+                  marginBottom: '16px',
+                  textAlign: 'center',
+                  fontWeight: '500',
+                }}
+              >
+                Ai atins limita de 20 întrebări. Creează un cont gratuit pentru mai mult.
+              </div>
+            )}
+
             <div style={{
               backgroundColor: 'var(--chat-bg)',
               border: '1px solid var(--chat-border)',
@@ -964,9 +1148,9 @@ export default function LandingPage() {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    alert('Creează un cont gratuit pentru a folosi Chat AI');
-                    setTimeout(() => navigate('/login'), 2000);
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendPublicMessage();
                   }
                 }}
                 style={{
@@ -1028,10 +1212,7 @@ export default function LandingPage() {
 
               {/* Send Button */}
               <button
-                onClick={() => {
-                  alert('Creează un cont gratuit pentru a folosi Chat AI');
-                  setTimeout(() => navigate('/login'), 2000);
-                }}
+                onClick={handleSendPublicMessage}
                 style={{
                   width: '32px',
                   height: '32px',
