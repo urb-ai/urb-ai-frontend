@@ -1,4 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
+import { apiStream } from '../api/client';
+
+const URBANISM_SYSTEM_PROMPT = `Tu ești un expert în urbanism din România cu cunoștințe aprofundate în:
+- Legislația urbanistică (Legea 350/2001, OUG 34/2023, Normativele de urbanism)
+- Documente urbanistice: PUZ (Plan de Urbanizare Zonal), PUD (Plan Urbanistic de Detaliu), CU (Certificat de Urbanism)
+- Calcule tehnice: POT (Procent de Ocupare a Terenului), CUT (Coeficient de Utilizare a Terenului), RH (Regim de Înălțime)
+- Beneficiari de documente: persoane fizice, PJ (societăți comerciale), administrații publice
+- Proceduri administrative și aprobări necesare
+- Norme de calitate, distanțe și restricții în construcții
+
+Răspunde întotdeauna în limba română. Citeaza legislația specificul când e relevant. Oferi soluții practice și conformă legii.`;
 
 export default function ChatPanel() {
   const [messages, setMessages] = useState([
@@ -20,30 +31,81 @@ export default function ChatPanel() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
+
+    const userText = inputValue.trim();
 
     // Add user message
     const userMessage = {
       id: messages.length + 1,
       type: 'user',
-      text: inputValue,
+      text: userText,
     };
 
     setMessages((prev) => [...prev, userMessage]);
     setInputValue('');
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiMessage = {
-        id: messages.length + 2,
-        type: 'ai',
-        text: 'Funcționalitate disponibilă în curând! ⏳',
-      };
-      setMessages((prev) => [...prev, aiMessage]);
+    // Create AI message placeholder
+    const aiMessageId = messages.length + 2;
+    const aiMessage = {
+      id: aiMessageId,
+      type: 'ai',
+      text: '',
+    };
+
+    setMessages((prev) => [...prev, aiMessage]);
+
+    try {
+      // Prepare messages for API
+      const conversationMessages = messages
+        .filter((m) => m.type !== 'ai' || m.text) // Skip initial greeting if needed
+        .concat(userMessage)
+        .map((m) => ({
+          role: m.type === 'user' ? 'user' : 'assistant',
+          content: m.text,
+        }));
+
+      // Stream response from Claude
+      let accumulatedText = '';
+
+      await apiStream('/api/v1/generate', {
+        model: 'claude-haiku-4-5-20251001',
+        messages: conversationMessages,
+        system: URBANISM_SYSTEM_PROMPT,
+        max_tokens: 1024,
+        stream: true,
+      }, (data) => {
+        if (data.type === 'delta' && data.delta?.type === 'text_delta') {
+          accumulatedText += data.delta.text;
+          // Update AI message with accumulated text
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === aiMessageId ? { ...m, text: accumulatedText } : m
+            )
+          );
+        }
+      });
+
       setIsLoading(false);
-    }, 800);
+    } catch (error) {
+      console.error('Chat error:', error);
+
+      // Show error message
+      const errorText = error.message || 'Eroare la conectarea cu AI. Te rog încearcă din nou.';
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === aiMessageId
+            ? {
+                ...m,
+                text: `❌ ${errorText}`,
+              }
+            : m
+        )
+      );
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e) => {
