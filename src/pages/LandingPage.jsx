@@ -28,8 +28,6 @@ export default function LandingPage() {
   const [toastMessage, setToastMessage] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
   const [chatLoading, setChatLoading] = useState(false);
-  const [questionsCount, setQuestionsCount] = useState(0);
-  const [limitReached, setLimitReached] = useState(false);
   const chatMessagesEndRef = useRef(null);
 
   const themes = {
@@ -257,13 +255,6 @@ export default function LandingPage() {
     };
   }, [statsVisible]);
 
-  // Initialize public chat question count
-  useEffect(() => {
-    const savedCount = parseInt(localStorage.getItem('urb_ai_public_chat_questions_count') || '0', 10);
-    setQuestionsCount(savedCount);
-    setLimitReached(savedCount >= 20);
-  }, []);
-
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     if (chatMessagesEndRef.current) {
@@ -337,7 +328,7 @@ export default function LandingPage() {
   }, [menuOpen]);
 
   const handleSendPublicMessage = async () => {
-    if (!chatInput.trim() || chatLoading || limitReached) return;
+    if (!chatInput.trim() || chatLoading) return;
 
     const userMessage = {
       id: Date.now(),
@@ -384,15 +375,6 @@ export default function LandingPage() {
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
-
-      // Update question count
-      const newCount = questionsCount + 1;
-      setQuestionsCount(newCount);
-      localStorage.setItem('urb_ai_public_chat_questions_count', newCount.toString());
-
-      if (newCount >= 20) {
-        setLimitReached(true);
-      }
     } catch (error) {
       console.error('Public chat error:', error);
       const errorMessage = {
@@ -1105,24 +1087,6 @@ export default function LandingPage() {
             )}
 
             {/* Limit Reached Message */}
-            {limitReached && (
-              <div
-                style={{
-                  padding: '12px 16px',
-                  background: '#fee2e2',
-                  border: '1px solid #fecaca',
-                  borderRadius: '8px',
-                  color: '#991b1b',
-                  fontSize: '13px',
-                  marginBottom: '16px',
-                  textAlign: 'center',
-                  fontWeight: '500',
-                }}
-              >
-                Ai atins limita de 20 întrebări. Creează un cont gratuit pentru mai mult.
-              </div>
-            )}
-
             <div style={{
               backgroundColor: 'var(--chat-bg)',
               border: '1px solid var(--chat-border)',
