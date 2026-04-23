@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import ReactMarkdown from 'react-markdown';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -1056,7 +1057,11 @@ export default function LandingPage() {
                         wordWrap: 'break-word',
                       }}
                     >
-                      {msg.content}
+                      {msg.role === 'assistant' ? (
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      ) : (
+                        msg.content
+                      )}
                     </div>
                   </div>
                 ))}
