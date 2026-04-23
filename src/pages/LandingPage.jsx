@@ -1050,10 +1050,10 @@ export default function LandingPage() {
                         border: msg.role === 'assistant' ? '1px solid var(--border)' : 'none',
                         borderRadius: '10px',
                         padding: '10px 14px',
-                        fontSize: '13px',
-                        color: msg.role === 'assistant' ? 'var(--text)' : 'white',
-                        lineHeight: '1.6',
-                        fontFamily: '"DM Sans", system-ui, sans-serif',
+                        fontSize: '1rem',
+                        color: msg.role === 'assistant' ? '#0d0d0d' : 'white',
+                        lineHeight: '1.75',
+                        fontFamily: "'Söhne', ui-sans-serif, system-ui, -apple-system, sans-serif",
                         wordWrap: 'break-word',
                       }}
                     >
