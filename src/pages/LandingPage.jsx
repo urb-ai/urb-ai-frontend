@@ -1058,7 +1058,21 @@ export default function LandingPage() {
                       }}
                     >
                       {msg.role === 'assistant' ? (
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        <div style={{ textAlign: 'left' }}>
+                          <ReactMarkdown
+                            components={{
+                              h1: ({children}) => <h2 style={{fontSize: '1.1rem', fontWeight: '700', marginBottom: '8px', marginTop: '12px', textAlign: 'left'}}>{children}</h2>,
+                              h2: ({children}) => <h3 style={{fontSize: '1rem', fontWeight: '700', marginBottom: '6px', marginTop: '10px', textAlign: 'left'}}>{children}</h3>,
+                              h3: ({children}) => <h4 style={{fontSize: '0.9rem', fontWeight: '600', marginBottom: '4px', marginTop: '8px', textAlign: 'left'}}>{children}</h4>,
+                              p: ({children}) => <p style={{marginBottom: '8px', lineHeight: '1.6', textAlign: 'left'}}>{children}</p>,
+                              ul: ({children}) => <ul style={{paddingLeft: '20px', marginBottom: '8px', textAlign: 'left'}}>{children}</ul>,
+                              li: ({children}) => <li style={{marginBottom: '4px', textAlign: 'left'}}>{children}</li>,
+                              strong: ({children}) => <strong style={{fontWeight: '700'}}>{children}</strong>,
+                            }}
+                          >
+                            {msg.content}
+                          </ReactMarkdown>
+                        </div>
                       ) : (
                         msg.content
                       )}
