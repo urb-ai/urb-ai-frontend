@@ -366,7 +366,7 @@ export default function LandingPage() {
       }
 
       const data = await response.json();
-      const aiContent = data.content || 'Fără răspuns';
+      const aiContent = data.content?.[0]?.text || data.content || 'Fără răspuns';
 
       const aiMessage = {
         id: Date.now() + 1,
