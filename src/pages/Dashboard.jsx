@@ -80,7 +80,7 @@ export default function Dashboard() {
           alignItems: 'center',
           justifyContent: 'center',
           minHeight: '100vh',
-          background: '#f5f5f0',
+          background: '#f9f9f9',
           padding: '60px 32px 80px',
           fontFamily: '"DM Sans", sans-serif',
         }}
