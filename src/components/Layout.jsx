@@ -84,6 +84,7 @@ export default function Layout({ children }) {
           left: 0,
           top: 0,
           background: '#f9f9f9',
+          borderRight: '1px solid #e8e8e8',
           display: isMobile ? 'none' : 'flex',
           flexDirection: 'column',
           overflowY: 'auto',
