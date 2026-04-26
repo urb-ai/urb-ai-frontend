@@ -191,7 +191,7 @@ export default function Layout({ children }) {
   ];
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f5f0e8', position: 'relative' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f9f9f9', position: 'relative' }}>
       {/* ===== COLOANA 1: SIDEBAR NAVIGARE (260px fixed) ===== */}
       <aside
         style={{
@@ -201,8 +201,7 @@ export default function Layout({ children }) {
           position: 'fixed',
           left: 0,
           top: 0,
-          background: 'var(--sidebar-bg)',
-          borderRight: '1px solid var(--border)',
+          background: '#f9f9f9',
           display: isMobile ? 'none' : 'flex',
           flexDirection: 'column',
           overflowY: 'auto',
