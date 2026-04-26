@@ -128,20 +128,18 @@ export default function Dashboard() {
               position: 'relative',
               display: 'flex',
               alignItems: 'flex-end',
-              background: 'white',
-              border: '1px solid #e5dfd6',
+              background: '#f9f9f9',
+              border: '1px solid #e0e0e0',
               borderRadius: '16px',
               padding: '14px 18px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
-              transition: 'border-color 0.2s, box-shadow 0.2s',
+              boxShadow: 'none',
+              transition: 'border-color 0.2s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#d4c9bc';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)';
+              e.currentTarget.style.borderColor = '#d0d0d0';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#e5dfd6';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+              e.currentTarget.style.borderColor = '#e0e0e0';
             }}
           >
             {/* Left Button - Plus */}
