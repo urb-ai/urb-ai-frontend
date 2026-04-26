@@ -736,6 +736,43 @@ export default function Layout({ children }) {
               {/* Separator */}
               <div style={{ borderTop: '1px solid #f0ebe3', margin: '4px 0' }} />
 
+              {/* GROUP 3.5: Add Credits */}
+              <button
+                onClick={() => {
+                  navigate('/settings/billing');
+                  setUserMenuOpen(false);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  background: 'transparent',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '400',
+                  color: '#1a1613',
+                  cursor: 'pointer',
+                  fontFamily: '"DM Sans", sans-serif',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  transition: 'background 0.2s',
+                  marginBottom: '4px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#f5f0e8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5c5466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Adaugă credite
+              </button>
+
+              {/* Separator */}
+              <div style={{ borderTop: '1px solid #f0ebe3', margin: '4px 0' }} />
+
               {/* GROUP 4: Get Extensions */}
               <button
                 onClick={() => {
