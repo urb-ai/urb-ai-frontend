@@ -60,12 +60,14 @@ html {
 }
 
 body {
-  background-color: var(--bg);
+  background-color: #f9f9f9;
   color: var(--text);
   font-family: var(--chat-font), system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6;
   transition: background-color 0.2s, color 0.2s;
+  margin: 0;
+  padding: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
