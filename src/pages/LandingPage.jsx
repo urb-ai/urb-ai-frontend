@@ -37,7 +37,7 @@ export default function LandingPage() {
       '--text2': '#4b5563',
       '--text3': '#9ca3af',
       '--accent': '#2563eb',
-      '--border': '#e0e0e0',
+      '--border': '#e4e4e4',
       '--border-hover': '#2563eb',
       '--btn-primary-bg': '#2563eb',
       '--btn-primary-text': '#ffffff',
