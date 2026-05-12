@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import Layout from '../components/Layout';
+import { SettingsProfilulMeu } from '../components/SettingsProfilulMeu';
+import { SettingsBeneficiari } from '../components/SettingsBeneficiari';
 
 export default function Settings() {
   const { user } = useAuthStore();
@@ -101,6 +103,8 @@ export default function Settings() {
   };
 
   const categories = [
+    { id: 'profile', label: 'Profilul meu' },
+    { id: 'beneficiari', label: 'Beneficiari' },
     { id: 'general', label: 'General' },
     { id: 'account', label: 'Cont' },
     { id: 'privacy', label: 'Confidențialitate' },
@@ -213,6 +217,16 @@ export default function Settings() {
 
         {/* RIGHT COLUMN - CONTENT */}
         <div style={{ flex: 1, maxWidth: '700px' }}>
+          {/* PROFILE TAB */}
+          {activeTab === 'profile' && (
+            <SettingsProfilulMeu />
+          )}
+
+          {/* BENEFICIARI TAB */}
+          {activeTab === 'beneficiari' && (
+            <SettingsBeneficiari />
+          )}
+
           {/* GENERAL TAB */}
           {activeTab === 'general' && (
             <>

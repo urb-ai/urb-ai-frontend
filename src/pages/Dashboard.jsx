@@ -1,275 +1,328 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { apiGet } from '../api/client';
+import { useProiecte } from '../hooks/useProiecte';
 import Layout from '../components/Layout';
+import { SaveIndicator } from '../components/SaveIndicator';
 
 export default function Dashboard() {
   const { user } = useAuthStore();
-  const [loading, setLoading] = useState(true);
-  const [greeting, setGreeting] = useState('');
-  const [input, setInput] = useState('');
-
-  // Determine greeting based on time of day
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Bună dimineața';
-    if (hour < 18) return 'Bună ziua';
-    return 'Bună seara';
-  };
-
-  useEffect(() => {
-    const checkHealth = async () => {
-      try {
-        await apiGet('/api/health');
-        console.log('✅ Backend health OK');
-      } catch (err) {
-        console.log('ℹ️ Backend not available, using local data');
-      } finally {
-        setLoading(false);
-        setGreeting(getGreeting());
-      }
-    };
-
-    checkHealth();
-  }, []);
+  const navigate = useNavigate();
+  const { proiecte, deleteProiect, loading, error } = useProiecte();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [menuOpen, setMenuOpen] = useState(null);
 
   const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'utilizator';
 
-  if (loading) {
-    return (
-      <Layout>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-          <div style={{ textAlign: 'center' }}>
-            <svg
-              style={{
-                width: '32px',
-                height: '32px',
-                animation: 'spin 1s linear infinite',
-                marginBottom: '16px',
-                color: '#c4893a',
-              }}
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.25" />
-              <path
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
-            <p style={{ color: '#9a938a', fontSize: '13px' }}>Se încarcă...</p>
-          </div>
-          <style>{`
-            @keyframes spin {
-              from { transform: rotate(0deg); }
-              to { transform: rotate(360deg); }
-            }
-          `}</style>
-        </div>
-      </Layout>
-    );
-  }
+  // Formateaza data in romana
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const months = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie',
+                   'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie'];
+    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+  };
+
+  // Filtreaza proiecte dupa search
+  const filteredProiecte = proiecte.filter(p =>
+    p.titlu?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.uat?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleDeleteProiect = async (id) => {
+    if (confirm('Sigur vrei să ștergi acest proiect?')) {
+      await deleteProiect(id);
+      setMenuOpen(null);
+    }
+  };
 
   return (
     <Layout>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-          background: '#f9f9f9',
-          padding: '60px 32px 80px',
-          fontFamily: '"DM Sans", sans-serif',
-        }}
-      >
-        {/* Greeting Section */}
-        <div style={{ marginBottom: '60px', textAlign: 'center' }}>
-          <div style={{ marginBottom: '16px' }}>
-            <span style={{ fontSize: '40px', color: '#c4893a' }}>❊</span>
+      <div style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '32px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <div>
+              <h1 style={{ fontSize: '28px', fontWeight: '600', color: '#1a1a1a', margin: '0 0 4px 0' }}>
+                Proiectele mele
+              </h1>
+              <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
+                {filteredProiecte.length} {filteredProiecte.length === 1 ? 'proiect activ' : 'proiecte active'}
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/proiect-nou')}
+              style={{
+                padding: '10px 20px',
+                background: '#2563eb',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: '600',
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.background = '#1d4ed8'}
+              onMouseLeave={(e) => e.target.style.background = '#2563eb'}
+            >
+              + Proiect nou
+            </button>
           </div>
-          <h1
+
+          {/* Search */}
+          <input
+            type="text"
+            placeholder="Caută după titlu sau localitate..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             style={{
-              fontSize: '32px',
-              fontWeight: '500',
-              color: '#1a1613',
-              margin: '0 0 8px 0',
-              letterSpacing: '-0.5px',
-              fontFamily: '"Instrument Serif", serif',
-            }}
-          >
-            {greeting}, {userName}
-          </h1>
-          <p
-            style={{
+              width: '100%',
+              padding: '10px 16px',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
               fontSize: '14px',
-              color: '#9a938a',
-              margin: 0,
-              fontWeight: '400',
+              fontFamily: 'inherit',
+              boxSizing: 'border-box'
             }}
-          >
-            Ce pot face pentru tine astazi?
-          </p>
+          />
         </div>
 
-        {/* Main Input Box */}
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '700px',
-            marginBottom: '48px',
-            position: 'relative',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'flex-end',
-              background: '#f9f9f9',
-              border: '1px solid #e0e0e0',
-              borderRadius: '16px',
-              padding: '14px 18px',
-              boxShadow: 'none',
-              transition: 'border-color 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#d0d0d0';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = '#e0e0e0';
-            }}
-          >
-            {/* Left Button - Plus */}
-            <button
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#9a938a',
-                cursor: 'pointer',
-                fontSize: '18px',
-                padding: '4px 8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'color 0.2s',
-                marginRight: '8px',
-              }}
-              onMouseEnter={(e) => (e.target.style.color = '#c4893a')}
-              onMouseLeave={(e) => (e.target.style.color = '#9a938a')}
-              title="Adaugă"
-            >
-              +
-            </button>
+        {/* Error message */}
+        {error && (
+          <div style={{
+            padding: '12px 16px',
+            background: '#fee2e2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            color: '#991b1b',
+            marginBottom: '24px',
+            fontSize: '14px'
+          }}>
+            Eroare la încărcare: {error}
+          </div>
+        )}
 
-            {/* Input Field */}
-            <input
-              type="text"
-              placeholder="How can I help you today?"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && input.trim()) {
-                  console.log('Mesaj:', input);
-                  setInput('');
-                }
-              }}
-              style={{
-                flex: 1,
-                border: 'none',
-                outline: 'none',
-                fontSize: '15px',
-                fontFamily: '"DM Sans", sans-serif',
-                color: '#1a1613',
-                backgroundColor: 'transparent',
-                padding: '8px 0',
-                '::placeholder': {
-                  color: '#d4c9bc',
-                },
-              }}
-            />
-
-            {/* Right Button - Microphone */}
+        {/* Loading skeleton */}
+        {loading ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '16px'
+          }}>
+            {[1, 2, 3].map(i => (
+              <div key={i} style={{
+                height: '240px',
+                background: '#f3f4f6',
+                borderRadius: '12px',
+                border: '1px solid #e5e7eb',
+                animation: 'pulse 2s infinite'
+              }} />
+            ))}
+          </div>
+        ) : filteredProiecte.length === 0 ? (
+          // Empty state
+          <div style={{
+            textAlign: 'center',
+            padding: '60px 32px',
+            background: '#f9fafb',
+            borderRadius: '12px',
+            border: '1px solid #e5e7eb'
+          }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📋</div>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1a1a1a', marginBottom: '8px' }}>
+              Nu ai niciun proiect încă
+            </h3>
+            <p style={{ fontSize: '14px', color: '#666', marginBottom: '24px' }}>
+              Creează-ți primul proiect pentru a începe
+            </p>
             <button
+              onClick={() => navigate('/proiect-nou')}
               style={{
-                background: 'transparent',
+                padding: '10px 20px',
+                background: '#2563eb',
+                color: 'white',
                 border: 'none',
-                color: '#9a938a',
-                cursor: 'pointer',
-                fontSize: '16px',
-                padding: '4px 8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'color 0.2s',
-                marginLeft: '8px',
+                borderRadius: '8px',
+                fontWeight: '600',
+                fontSize: '14px',
+                cursor: 'pointer'
               }}
-              onMouseEnter={(e) => (e.target.style.color = '#c4893a')}
-              onMouseLeave={(e) => (e.target.style.color = '#9a938a')}
-              title="Vorbire"
             >
-              🎤
+              + Creează primul proiect
             </button>
           </div>
-        </div>
+        ) : (
+          // Projects grid
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '16px'
+          }}>
+            {filteredProiecte.map(proiect => (
+              <div
+                key={proiect.id}
+                style={{
+                  background: 'white',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                  position: 'relative'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                  e.currentTarget.style.borderColor = '#d1d5db';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.borderColor = '#e5e7eb';
+                }}
+              >
+                {/* Menu button */}
+                <button
+                  onClick={() => setMenuOpen(menuOpen === proiect.id ? null : proiect.id)}
+                  style={{
+                    position: 'absolute',
+                    top: '16px',
+                    right: '16px',
+                    background: 'transparent',
+                    border: 'none',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    padding: '4px'
+                  }}
+                >
+                  ⋮
+                </button>
 
-        {/* Pill Buttons */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '12px',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            maxWidth: '700px',
-          }}
-        >
-          {[
-            { label: 'Documente', icon: '📄' },
-            { label: 'Proiecte', icon: '📋' },
-            { label: 'Legislație', icon: '⚖️' },
-            { label: 'Analiză', icon: '📊' },
-            { label: 'Upload', icon: '📤' },
-          ].map((btn) => (
-            <button
-              key={btn.label}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 18px',
-                background: 'white',
-                border: '1px solid #e5dfd6',
-                borderRadius: '20px',
-                fontSize: '13px',
-                fontWeight: '500',
-                color: '#5c5466',
-                cursor: 'pointer',
-                fontFamily: '"DM Sans", sans-serif',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#d4c9bc';
-                e.currentTarget.style.background = '#faf7f2';
-                e.currentTarget.style.color = '#1a1613';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#e5dfd6';
-                e.currentTarget.style.background = 'white';
-                e.currentTarget.style.color = '#5c5466';
-              }}
-            >
-              <span>{btn.icon}</span>
-              {btn.label}
-            </button>
-          ))}
-        </div>
+                {/* Context menu */}
+                {menuOpen === proiect.id && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '40px',
+                    right: '16px',
+                    background: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    zIndex: 10,
+                    minWidth: '160px'
+                  }}>
+                    <button
+                      onClick={() => {
+                        navigate(`/proiecte/${proiect.id}`);
+                        setMenuOpen(null);
+                      }}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '10px 16px',
+                        background: 'transparent',
+                        border: 'none',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        color: '#1a1a1a',
+                        borderBottom: '1px solid #e5e7eb'
+                      }}
+                    >
+                      ✏️ Editează
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProiect(proiect.id)}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '10px 16px',
+                        background: 'transparent',
+                        border: 'none',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        color: '#dc2626'
+                      }}
+                    >
+                      🗑️ Șterge
+                    </button>
+                  </div>
+                )}
+
+                {/* Title */}
+                <h3 style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: '#1a1a1a',
+                  margin: '0 0 12px 0',
+                  paddingRight: '32px'
+                }}>
+                  {proiect.titlu}
+                </h3>
+
+                {/* Location */}
+                {(proiect.uat || proiect.judet) && (
+                  <p style={{
+                    fontSize: '13px',
+                    color: '#666',
+                    margin: '0 0 12px 0'
+                  }}>
+                    📍 {proiect.uat}{proiect.judet ? `, ${proiect.judet}` : ''}
+                  </p>
+                )}
+
+                {/* Info row */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  margin: '12px 0',
+                  fontSize: '12px',
+                  color: '#666'
+                }}>
+                  <span>Modificat: {formatDate(proiect.updated_at)}</span>
+                  <span
+                    style={{
+                      padding: '4px 8px',
+                      background: '#dbeafe',
+                      color: '#1e40af',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      fontWeight: '600'
+                    }}
+                  >
+                    Activ
+                  </span>
+                </div>
+
+                {/* Action buttons */}
+                <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+                  <button
+                    onClick={() => navigate(`/proiecte/${proiect.id}`)}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      background: '#2563eb',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Deschide
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <style>{`
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
           }
         `}</style>
       </div>
