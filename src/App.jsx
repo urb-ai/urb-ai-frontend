@@ -36,7 +36,7 @@ const LoadingFallback = () => (
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
-    background: '#f5f0e8',
+    background: '#ffffff',
     fontFamily: '"DM Sans", system-ui, sans-serif',
     color: '#9a938a',
     fontSize: '0.9rem',

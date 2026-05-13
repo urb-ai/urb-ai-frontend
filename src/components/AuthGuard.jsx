@@ -20,7 +20,7 @@ export default function AuthGuard({ children }) {
           alignItems: 'center',
           justifyContent: 'center',
           minHeight: '100vh',
-          backgroundColor: '#f5f0e8',
+          backgroundColor: '#ffffff',
         }}
       >
         <div style={{ textAlign: 'center' }}>
