@@ -157,10 +157,10 @@ export default function Layout({ children }) {
             {/* Outlined Circle Icon */}
             <div
               style={{
-                width: '24px',
-                height: '24px',
+                width: '18px',
+                height: '18px',
                 borderRadius: '50%',
-                border: '1.5px solid #1a1613',
+                border: '1px solid #1a1613',
                 background: 'transparent',
                 display: 'flex',
                 alignItems: 'center',
@@ -168,7 +168,7 @@ export default function Layout({ children }) {
                 flexShrink: 0,
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
