@@ -128,20 +128,23 @@ export default function Layout({ children }) {
         </div>
 
         {/* SECTION 1: CHAT & SEARCH */}
-        <div style={{ padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
-          {/* Chat Nou - Icon Only Circular Button */}
+        <div style={{ padding: '0 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          {/* Chat Nou */}
           <button
             onClick={() => navigate('/app')}
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
               background: 'transparent',
               border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              gap: '10px',
               cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '400',
+              color: '#1a1613',
+              fontFamily: '"DM Sans", sans-serif',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
@@ -151,24 +154,42 @@ export default function Layout({ children }) {
               e.currentTarget.style.background = 'transparent';
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
+            {/* Filled Circle Icon */}
+            <div
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: '#1a1613',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            Chat Nou
           </button>
 
-          {/* Cautare - Icon Only Circular Button */}
+          {/* Cautare */}
           <button
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
               background: 'transparent',
               border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              gap: '10px',
               cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '400',
+              color: '#1a1613',
+              fontFamily: '"DM Sans", sans-serif',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
@@ -178,10 +199,25 @@ export default function Layout({ children }) {
               e.currentTarget.style.background = 'transparent';
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            {/* Outlined Circle Icon */}
+            <div
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                border: '1.5px solid #1a1613',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </div>
+            Cautare
           </button>
         </div>
 
