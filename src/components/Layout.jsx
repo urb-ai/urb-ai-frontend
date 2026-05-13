@@ -154,20 +154,21 @@ export default function Layout({ children }) {
               e.currentTarget.style.background = 'transparent';
             }}
           >
-            {/* Filled Circle Icon */}
+            {/* Outlined Circle Icon */}
             <div
               style={{
                 width: '24px',
                 height: '24px',
                 borderRadius: '50%',
-                background: '#1a1613',
+                border: '1.5px solid #1a1613',
+                background: 'transparent',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
@@ -199,24 +200,10 @@ export default function Layout({ children }) {
               e.currentTarget.style.background = 'transparent';
             }}
           >
-            {/* Outlined Circle Icon */}
-            <div
-              style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                border: '1.5px solid #1a1613',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
             Cautare
           </button>
         </div>
