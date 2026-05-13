@@ -127,11 +127,11 @@ export default function Layout({ children }) {
           </button>
         </div>
 
-        {/* MAIN ACTION BUTTONS */}
+        {/* SECTION 1: CHAT & SEARCH */}
         <div style={{ padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {/* + Proiect Nou */}
+          {/* Chat Nou */}
           <button
-            onClick={() => navigate('/proiect/nou')}
+            onClick={() => navigate('/app')}
             style={{
               background: 'transparent',
               border: 'none',
@@ -155,14 +155,13 @@ export default function Layout({ children }) {
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="16" />
-              <line x1="8" y1="12" x2="16" y2="12" />
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-            Proiect Nou
+            Chat Nou
           </button>
 
-          {/* Căutare */}
+          {/* Cautare */}
           <button
             style={{
               background: 'transparent',
@@ -190,79 +189,16 @@ export default function Layout({ children }) {
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            Căutare
-          </button>
-
-          {/* Setări */}
-          <button
-            style={{
-              background: 'transparent',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '400',
-              color: '#1a1613',
-              fontFamily: '"DM Sans", sans-serif',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m2.12 2.12l4.24 4.24M1 12h6m6 0h6m-16.78 7.78l4.24-4.24m2.12-2.12l4.24-4.24" />
-            </svg>
-            Setări
+            Cautare
           </button>
         </div>
 
         {/* SEPARATOR */}
         <div style={{ borderTop: '1px solid #e8e0d6', margin: '8px 16px' }} />
 
-        {/* NAVIGARE PRINCIPALĂ */}
+        {/* SECTION 2: NAVIGARE PRINCIPALĂ */}
         <nav style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          {/* Home */}
-          <button
-            onClick={() => navigate('/app')}
-            style={{
-              background: isActive('/app') ? 'rgba(0,0,0,0.06)' : 'transparent',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: isActive('/app') ? '500' : '400',
-              color: '#1a1613',
-              fontFamily: '"DM Sans", sans-serif',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive('/app')) e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive('/app')) e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-            Home
-          </button>
-
-          {/* Proiectanți */}
+          {/* Proiectanti */}
           <button
             onClick={() => navigate('/proiectanti')}
             style={{
@@ -293,7 +229,7 @@ export default function Layout({ children }) {
               <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
-            Proiectanți
+            Proiectanti
           </button>
 
           {/* Beneficiari */}
