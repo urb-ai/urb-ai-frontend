@@ -228,36 +228,12 @@ export default function Dashboard() {
                 Website
               </button>
 
-              {/* RIGHT: Microphone and Send button */}
+              {/* RIGHT: Send button */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
               }}>
-                {/* Microphone Button */}
-                <button
-                  type="button"
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#374151',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0',
-                    transition: 'color 0.2s',
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = '#1f2937'}
-                  onMouseLeave={(e) => e.target.style.color = '#374151'}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z" />
-                    <line x1="12" y1="15" x2="12" y2="21" />
-                    <line x1="8" y1="21" x2="16" y2="21" />
-                  </svg>
-                </button>
-
                 {/* Send Button */}
                 <button
                   type="submit"
