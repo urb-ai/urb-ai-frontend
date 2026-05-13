@@ -74,103 +74,219 @@ export default function Dashboard() {
         {/* Chat Input Container */}
         <div style={{
           width: '100%',
-          maxWidth: '700px',
+          maxWidth: '680px',
         }}>
           <form onSubmit={handleSendMessage} style={{
-            display: 'flex',
-            flexDirection: 'column',
             background: '#ffffff',
             border: '1px solid #e5e7eb',
-            borderRadius: '12px',
+            borderRadius: '16px',
             padding: '16px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            display: 'flex',
+            flexDirection: 'column',
             gap: '12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
           }}>
-            {/* Main input area with text and send button */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              alignItems: 'flex-end',
-            }}>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Pune o întrebare sau descrie ce ai nevoie..."
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontFamily: '"DM Sans", system-ui, sans-serif',
-                  fontSize: '14px',
-                  color: '#111827',
-                  resize: 'none',
-                  minHeight: '44px',
-                  maxHeight: '120px',
-                  outline: 'none',
-                  transition: 'border-color 0.2s',
-                  boxSizing: 'border-box',
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#2563eb'}
-                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-                rows="3"
-              />
+            {/* Textarea - no border, no background */}
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Cu ce te pot ajuta?"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                fontFamily: '"DM Sans", system-ui, sans-serif',
+                fontSize: '15px',
+                color: '#111827',
+                resize: 'none',
+                minHeight: '60px',
+                outline: 'none',
+                padding: '8px 0',
+                boxSizing: 'border-box',
+              }}
+              rows="3"
+            />
 
-              {/* Send Button */}
-              <button
-                type="submit"
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '50%',
-                  background: '#111827',
-                  border: 'none',
-                  color: 'white',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'background 0.2s',
-                  flexShrink: 0,
-                }}
-                onMouseEnter={(e) => e.target.style.background = '#2d2d30'}
-                onMouseLeave={(e) => e.target.style.background = '#111827'}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Bottom info with attachment button */}
+            {/* Bottom Bar */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              fontSize: '12px',
-              color: '#9ca3af',
+              gap: '12px',
+              justifyContent: 'space-between',
+              paddingTop: '12px',
+              borderTop: '1px solid #f3f4f6',
             }}>
+              {/* LEFT: Three icon buttons */}
+              <div style={{
+                display: 'flex',
+                gap: '8px',
+              }}>
+                {/* + Button */}
+                <button
+                  type="button"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '6px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#9ca3af',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#6b7080'}
+                  onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </button>
+
+                {/* Sliders/Filter Button */}
+                <button
+                  type="button"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '6px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#9ca3af',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#6b7080'}
+                  onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="4" y1="6" x2="20" y2="6" />
+                    <line x1="4" y1="12" x2="20" y2="12" />
+                    <line x1="4" y1="18" x2="20" y2="18" />
+                    <line x1="9" y1="2" x2="9" y2="4" />
+                    <line x1="9" y1="20" x2="9" y2="22" />
+                    <line x1="15" y1="2" x2="15" y2="4" />
+                    <line x1="15" y1="20" x2="15" y2="22" />
+                  </svg>
+                </button>
+
+                {/* Monitor/Screen Button */}
+                <button
+                  type="button"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '6px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#9ca3af',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#6b7080'}
+                  onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* MIDDLE: Website pill button */}
               <button
                 type="button"
                 style={{
-                  background: 'transparent',
+                  padding: '6px 12px',
+                  borderRadius: '16px',
+                  background: '#dbeafe',
                   border: 'none',
-                  color: '#9ca3af',
+                  color: '#2563eb',
+                  fontSize: '13px',
+                  fontWeight: '500',
                   cursor: 'pointer',
-                  padding: '0',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  transition: 'color 0.2s',
+                  transition: 'background 0.2s',
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
                 }}
-                onMouseEnter={(e) => e.target.style.color = '#6b7080'}
-                onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+                onMouseEnter={(e) => e.target.style.background = '#bfdbfe'}
+                onMouseLeave={(e) => e.target.style.background = '#dbeafe'}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                 </svg>
-                Atașează
+                Website
               </button>
+
+              {/* RIGHT: Microphone and Send button */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}>
+                {/* Microphone Button */}
+                <button
+                  type="button"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '6px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#9ca3af',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={(e) => e.target.style.color = '#6b7080'}
+                  onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v12a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="23" />
+                    <line x1="8" y1="23" x2="16" y2="23" />
+                  </svg>
+                </button>
+
+                {/* Send Button */}
+                <button
+                  type="submit"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: '#111827',
+                    border: 'none',
+                    color: '#ffffff',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'background 0.2s',
+                    flexShrink: 0,
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = '#2d2d30'}
+                  onMouseLeave={(e) => e.target.style.background = '#111827'}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <polyline points="19 12 12 19 5 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </form>
         </div>
