@@ -36,9 +36,148 @@ export default function Dashboard() {
     }
   };
 
+  const [message, setMessage] = useState('');
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (message.trim()) {
+      // TODO: Send message to chat API
+      console.log('Message:', message);
+      setMessage('');
+    }
+  };
+
   return (
     <Layout>
-      <div style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
+      {/* Centered Chat Interface */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: 'calc(100vh - 280px)',
+        padding: '32px',
+      }}>
+        {/* Heading */}
+        <h1 style={{
+          fontSize: '32px',
+          fontWeight: '400',
+          color: '#111827',
+          margin: '0 0 32px 0',
+          textAlign: 'center',
+          fontFamily: '"Instrument Serif", Georgia, serif',
+          maxWidth: '600px',
+        }}>
+          Ce pot face pentru tine?
+        </h1>
+
+        {/* Chat Input Container */}
+        <div style={{
+          width: '100%',
+          maxWidth: '700px',
+        }}>
+          <form onSubmit={handleSendMessage} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '16px',
+            gap: '12px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          }}>
+            {/* Main input area with text and send button */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'flex-end',
+            }}>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Pune o întrebare sau descrie ce ai nevoie..."
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  fontSize: '14px',
+                  color: '#111827',
+                  resize: 'none',
+                  minHeight: '44px',
+                  maxHeight: '120px',
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
+                  boxSizing: 'border-box',
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                rows="3"
+              />
+
+              {/* Send Button */}
+              <button
+                type="submit"
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  background: '#111827',
+                  border: 'none',
+                  color: 'white',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => e.target.style.background = '#2d2d30'}
+                onMouseLeave={(e) => e.target.style.background = '#111827'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Bottom info with attachment button */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              fontSize: '12px',
+              color: '#9ca3af',
+            }}>
+              <button
+                type="button"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#9ca3af',
+                  cursor: 'pointer',
+                  padding: '0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  transition: 'color 0.2s',
+                }}
+                onMouseEnter={(e) => e.target.style.color = '#6b7080'}
+                onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Atașează
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Projects Section Below (for reference) */}
+      <div style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto', display: 'none' }}>
         {/* Header */}
         <div style={{ marginBottom: '32px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
