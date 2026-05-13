@@ -4,16 +4,36 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Theme Variables */
+/* CSS Theme Variables - Arctic White Theme (Fixed) */
 :root, [data-theme="light"] {
-  --bg: #f5f0e8;
+  --bg: #f9f9f9;
+  --bg-alt: #f5f6f8;
+  --text: #111827;
+  --text-accent: #2563eb;
+  --text2: #4b5563;
+  --text3: #9ca3af;
   --surface: #ffffff;
-  --text: #1a1613;
-  --text2: #5c5466;
-  --text3: #9a938a;
-  --border: #ddd4c8;
-  --sidebar-bg: #ebe3d9;
-  --accent: #c4893a;
+  --accent: #2563eb;
+  --border: #e4e4e4;
+  --border-hover: #2563eb;
+  --btn-primary-bg: #2563eb;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #ffffff;
+  --btn-secondary-border: #e0e0e0;
+  --btn-secondary-text: #111827;
+  --btn-signup-bg: #111827;
+  --btn-signup-text: #ffffff;
+  --chat-bg: #f5f6f8;
+  --chat-border: #e0e0e0;
+  --chat-send-bg: #2563eb;
+  --navbar-bg: #f9f9f9;
+  --navbar-border: #e0e0e0;
+  --stats-color: #2563eb;
+  --checkmark-color: #2563eb;
+  --footer-bg: #111827;
+  --footer-text: #9ca3af;
+  --footer-text-main: #ffffff;
+  --sidebar-bg: #f9f9f9;
   --hover: rgba(0,0,0,0.04);
   --chat-font: 'DM Sans', sans-serif;
 }
@@ -60,7 +80,7 @@ html {
 }
 
 body {
-  background-color: #f9f9f9;
+  background-color: var(--bg);
   color: var(--text);
   font-family: var(--chat-font), system-ui, sans-serif;
   font-size: 14px;
