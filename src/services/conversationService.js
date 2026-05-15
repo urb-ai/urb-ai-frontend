@@ -1,8 +1,9 @@
-import { supabase } from '../lib/supabase';
+import { getSupabase } from '../lib/supabase';
 
 // Get all conversations for current user, ordered by most recent
 export async function getConversations() {
   try {
+    const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
@@ -23,6 +24,7 @@ export async function getConversations() {
 // Create new conversation with title
 export async function createConversation(title) {
   try {
+    const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
@@ -48,6 +50,7 @@ export async function createConversation(title) {
 // Update conversation title
 export async function updateConversationTitle(conversationId, newTitle) {
   try {
+    const supabase = getSupabase();
     const { data, error } = await supabase
       .from('conversations')
       .update({ title: newTitle, updated_at: new Date().toISOString() })
@@ -66,6 +69,7 @@ export async function updateConversationTitle(conversationId, newTitle) {
 // Delete conversation (cascades to messages)
 export async function deleteConversation(conversationId) {
   try {
+    const supabase = getSupabase();
     const { error } = await supabase
       .from('conversations')
       .delete()
@@ -82,6 +86,7 @@ export async function deleteConversation(conversationId) {
 // Get all messages for a conversation
 export async function getMessages(conversationId) {
   try {
+    const supabase = getSupabase();
     const { data, error } = await supabase
       .from('messages')
       .select('id, role, content, created_at')
@@ -99,6 +104,7 @@ export async function getMessages(conversationId) {
 // Save message to conversation
 export async function saveMessage(conversationId, role, content) {
   try {
+    const supabase = getSupabase();
     const { data, error } = await supabase
       .from('messages')
       .insert([
