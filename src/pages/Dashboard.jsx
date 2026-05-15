@@ -312,56 +312,6 @@ export default function Dashboard() {
               </div>
             </form>
 
-            {/* Suggestion Chips */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '12px',
-              maxWidth: '680px',
-              paddingLeft: '24px',
-              paddingRight: '24px',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-            }}>
-              {[
-                { text: 'Explică-mi ce este un PUZ', icon: '📋' },
-                { text: 'Vreau un memoriu tehnic', icon: '📝' },
-                { text: 'Analizează un document', icon: '🔍' },
-                { text: 'Legislație POT', icon: '⚖️' },
-              ].map((chip, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setMessage(chip.text)}
-                  style={{
-                    padding: '8px 14px',
-                    borderRadius: '20px',
-                    border: '1px solid #e0e0e0',
-                    background: '#ffffff',
-                    color: '#374151',
-                    fontSize: '12px',
-                    fontFamily: '"DM Sans", system-ui, sans-serif',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    textAlign: 'left',
-                    whiteSpace: 'nowrap',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#d0d0d0';
-                    e.currentTarget.style.background = '#fafafa';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = '#e0e0e0';
-                    e.currentTarget.style.background = '#ffffff';
-                  }}
-                >
-                  <span>{chip.icon}</span>
-                  <span>{chip.text}</span>
-                </button>
-              ))}
-            </div>
           </div>
         ) : (
           /* When messages exist: scroll area with messages, fixed input at bottom */
