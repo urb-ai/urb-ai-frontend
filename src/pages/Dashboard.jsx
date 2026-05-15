@@ -207,10 +207,13 @@ export default function Dashboard() {
             {/* Input Card */}
             <form onSubmit={handleSendMessage} style={{
               width: '100%',
-              maxWidth: '680px',
+              maxWidth: '760px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
               marginBottom: '24px',
               paddingLeft: '24px',
               paddingRight: '24px',
+              boxSizing: 'border-box',
             }}>
               <div style={{
                 background: '#ffffff',
@@ -329,8 +332,9 @@ export default function Dashboard() {
               {/* Messages Container */}
               <div style={{
                 width: '100%',
-                maxWidth: '680px',
-                margin: '0 auto',
+                maxWidth: '760px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '24px',
@@ -412,8 +416,9 @@ export default function Dashboard() {
                 onSubmit={handleSendMessage}
                 style={{
                   width: '100%',
-                  maxWidth: '680px',
-                  margin: '0 auto',
+                  maxWidth: '760px',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
                   paddingLeft: '24px',
                   paddingRight: '24px',
                   pointerEvents: 'auto',
