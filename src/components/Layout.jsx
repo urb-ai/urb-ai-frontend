@@ -1,15 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useConversationStore } from '../stores/conversationStore';
+import { groupConversationsByDate, deleteConversation, updateConversationTitle } from '../services/conversationService';
 
-export default function Layout({ children }) {
+export default function Layout({ children, onLoadConversation, onNewChat }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
+  const { conversations, activeConversationId, removeConversation, updateConversation } = useConversationStore();
   const [chatOpen, setChatOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1400);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [extensionsOpen, setExtensionsOpen] = useState(false);
+  const [conversationMenuOpen, setConversationMenuOpen] = useState(null);
+  const [renamingId, setRenamingId] = useState(null);
+  const [renameValue, setRenameValue] = useState('');
 
   // Listen to window resize
   if (typeof window !== 'undefined') {
@@ -131,7 +137,10 @@ export default function Layout({ children }) {
         <div style={{ padding: '0 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
           {/* Chat Nou */}
           <button
-            onClick={() => navigate('/app')}
+            onClick={() => {
+              onNewChat?.();
+              navigate('/app');
+            }}
             style={{
               background: 'transparent',
               border: 'none',
@@ -210,6 +219,253 @@ export default function Layout({ children }) {
 
         {/* SEPARATOR */}
         <div style={{ borderTop: '1px solid #e8e0d6', margin: '8px 16px' }} />
+
+        {/* SECTION 1.5: ISTORIC CONVERSAȚII */}
+        {conversations.length > 0 && (
+          <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            {/* Titlu Recente */}
+            <p style={{ fontSize: '11px', fontWeight: '600', color: '#9a938a', margin: '8px 16px 6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Recente
+            </p>
+
+            {/* Lista conversații */}
+            <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+              {Object.entries({
+                today: 'Azi',
+                yesterday: 'Ieri',
+                thisWeek: 'Săptămâna trecută',
+                older: 'Mai vechi',
+              }).map(([key, label]) => {
+                const grouped = groupConversationsByDate(conversations);
+                const items = grouped[key];
+                if (!items || items.length === 0) return null;
+
+                return (
+                  <div key={key}>
+                    {/* Group label */}
+                    <p style={{ fontSize: '12px', color: '#c4a66b', margin: '8px 16px 4px', fontWeight: '500' }}>
+                      {label}
+                    </p>
+                    {/* Items */}
+                    {items.map((conv) => (
+                      <div key={conv.id} style={{ position: 'relative', marginBottom: '2px' }}>
+                        <button
+                          onClick={() => onLoadConversation?.(conv.id)}
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            setConversationMenuOpen(conv.id);
+                          }}
+                          style={{
+                            width: 'calc(100% - 16px)',
+                            margin: '0 8px',
+                            padding: '8px 12px',
+                            background:
+                              activeConversationId === conv.id
+                                ? '#2563eb10'
+                                : 'transparent',
+                            border: activeConversationId === conv.id ? '1px solid #2563eb' : 'none',
+                            borderLeft: activeConversationId === conv.id ? '2px solid #2563eb' : '2px solid transparent',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: activeConversationId === conv.id ? '500' : '400',
+                            color: activeConversationId === conv.id ? '#2563eb' : '#1a1613',
+                            fontFamily: '"DM Sans", sans-serif',
+                            textAlign: 'left',
+                            transition: 'all 0.2s',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '8px',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (activeConversationId !== conv.id) {
+                              e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (activeConversationId !== conv.id) {
+                              e.currentTarget.style.background = 'transparent';
+                            }
+                          }}
+                        >
+                          <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {conv.title}
+                          </span>
+                          {/* Menu button appears on hover */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setConversationMenuOpen(
+                                conversationMenuOpen === conv.id ? null : conv.id
+                              );
+                            }}
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#9a938a',
+                              flexShrink: 0,
+                            }}
+                          >
+                            ⋯
+                          </button>
+                        </button>
+
+                        {/* Dropdown menu */}
+                        {conversationMenuOpen === conv.id && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: '32px',
+                              right: '8px',
+                              background: 'white',
+                              border: '1px solid #e8e0d6',
+                              borderRadius: '8px',
+                              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                              zIndex: 100,
+                              minWidth: '160px',
+                            }}
+                          >
+                            {/* Redenumire */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingId(conv.id);
+                                setRenameValue(conv.title);
+                                setConversationMenuOpen(null);
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '10px 14px',
+                                background: 'transparent',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontSize: '13px',
+                                color: '#1a1613',
+                                cursor: 'pointer',
+                                fontFamily: '"DM Sans", sans-serif',
+                                textAlign: 'left',
+                                transition: 'background 0.2s',
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#f5f0e8';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'transparent';
+                              }}
+                            >
+                              Redenumire
+                            </button>
+                            {/* Ștergere */}
+                            <button
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (
+                                  confirm(
+                                    'Sigur vrei să ștergi această conversație?'
+                                  )
+                                ) {
+                                  await deleteConversation(conv.id);
+                                  removeConversation(conv.id);
+                                  setConversationMenuOpen(null);
+                                }
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '10px 14px',
+                                background: 'transparent',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontSize: '13px',
+                                color: '#e74c3c',
+                                cursor: 'pointer',
+                                fontFamily: '"DM Sans", sans-serif',
+                                textAlign: 'left',
+                                transition: 'background 0.2s',
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#ffe8e8';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'transparent';
+                              }}
+                            >
+                              Șterge
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Rename input */}
+                        {renamingId === conv.id && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: '8px',
+                              right: '8px',
+                              background: 'white',
+                              border: '1px solid #2563eb',
+                              borderRadius: '6px',
+                              padding: '6px',
+                              display: 'flex',
+                              gap: '6px',
+                              zIndex: 101,
+                            }}
+                          >
+                            <input
+                              autoFocus
+                              value={renameValue}
+                              onChange={(e) =>
+                                setRenameValue(e.target.value)
+                              }
+                              onBlur={async () => {
+                                if (renameValue.trim()) {
+                                  await updateConversationTitle(
+                                    conv.id,
+                                    renameValue
+                                  );
+                                  updateConversation(conv.id, {
+                                    title: renameValue,
+                                  });
+                                }
+                                setRenamingId(null);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.currentTarget.blur();
+                                }
+                                if (e.key === 'Escape') {
+                                  setRenamingId(null);
+                                }
+                              }}
+                              style={{
+                                flex: 1,
+                                border: 'none',
+                                outline: 'none',
+                                fontSize: '13px',
+                                fontFamily: '"DM Sans", sans-serif',
+                                padding: '4px',
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* SECTION 2: NAVIGARE PRINCIPALĂ */}
         <nav style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>

@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { useAuthStore } from '../stores/authStore';
+import { useConversationStore } from '../stores/conversationStore';
 import { useProiecte } from '../hooks/useProiecte';
 import Layout from '../components/Layout';
 import { SaveIndicator } from '../components/SaveIndicator';
+import { getConversations, createConversation, saveMessage, getMessages, updateConversationTitle, generateTitleFromMessage } from '../services/conversationService';
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -42,6 +44,19 @@ export default function Dashboard() {
   const [loadingChat, setLoadingChat] = useState(false);
   const messagesEndRef = useRef(null);
 
+  // Conversation state from Zustand
+  const {
+    conversationId,
+    setConversationId,
+    conversations,
+    setConversations,
+    setActiveConversation,
+    addConversation,
+    removeConversation,
+    updateConversation,
+    resetConversation,
+  } = useConversationStore();
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -49,6 +64,30 @@ export default function Dashboard() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Load conversations on component mount
+  useEffect(() => {
+    const loadConversations = async () => {
+      const convs = await getConversations();
+      setConversations(convs);
+    };
+    loadConversations();
+  }, [setConversations]);
+
+  // Load specific conversation
+  const loadConversation = async (id) => {
+    const msgs = await getMessages(id);
+    setMessages(msgs);
+    setConversationId(id);
+    setActiveConversation(id);
+  };
+
+  // Start new conversation
+  const handleNewChat = () => {
+    setMessages([]);
+    setConversationId(null);
+    resetConversation();
+  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -64,6 +103,24 @@ export default function Dashboard() {
     setMessages(newMessages);
     setMessage('');
     setLoadingChat(true);
+
+    // Create conversation if this is the first message
+    let currentConversationId = conversationId;
+    if (!currentConversationId) {
+      const title = generateTitleFromMessage(userMessage.content);
+      const newConv = await createConversation(title);
+      if (newConv) {
+        currentConversationId = newConv.id;
+        setConversationId(newConv.id);
+        setActiveConversation(newConv.id);
+        addConversation(newConv);
+      }
+    }
+
+    // Save user message
+    if (currentConversationId) {
+      await saveMessage(currentConversationId, 'user', userMessage.content);
+    }
 
     // Add empty AI message that will be filled by streaming
     const aiMessage = {
@@ -134,6 +191,11 @@ export default function Dashboard() {
           }
         }
       }
+
+      // Save AI message to Supabase
+      if (conversationId) {
+        await saveMessage(conversationId, 'assistant', fullContent);
+      }
     } catch (error) {
       console.error('Stream error:', error);
       setMessages((prev) => {
@@ -151,7 +213,7 @@ export default function Dashboard() {
   };
 
   return (
-    <Layout>
+    <Layout onLoadConversation={loadConversation} onNewChat={handleNewChat}>
       <style>{`
         @keyframes slideUp {
           from {
