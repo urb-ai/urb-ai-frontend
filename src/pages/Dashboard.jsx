@@ -152,308 +152,235 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      {/* Centered Chat Interface */}
+      <style>{`
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .message-enter {
+          animation: slideUp 0.3s ease-out;
+        }
+      `}</style>
+
+      {/* Claude-style Chat Interface */}
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        minHeight: 'calc(100vh - 280px)',
-        padding: '32px',
+        height: '100vh',
+        background: '#ffffff',
+        position: 'relative',
       }}>
-        {/* Heading */}
-        {messages.length === 0 && (
-          <h1 style={{
-            fontSize: '32px',
-            fontWeight: '400',
-            color: '#111827',
-            margin: '0 0 32px 0',
-            textAlign: 'center',
-            fontFamily: '"Instrument Serif", Georgia, serif',
-            maxWidth: '600px',
-          }}>
-            Ce pot face pentru tine?
-          </h1>
-        )}
-
-        {/* Chat Container */}
+        {/* Messages Area */}
         <div style={{
-          width: '100%',
-          maxWidth: '680px',
+          flex: 1,
+          overflowY: 'auto',
           display: 'flex',
           flexDirection: 'column',
-          height: messages.length > 0 ? 'calc(100vh - 200px)' : 'auto',
+          alignItems: 'center',
+          paddingTop: messages.length === 0 ? 'max(80px, 10vh)' : '32px',
+          paddingBottom: '120px',
         }}>
-          {/* Messages Display Area */}
-          {messages.length > 0 && (
-            <div style={{
-              flex: 1,
-              overflowY: 'auto',
-              marginBottom: '20px',
-              padding: '16px',
-              background: '#f9fafb',
-              borderRadius: '16px',
-              border: '1px solid #e5e7eb',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
+          {/* Initial Heading */}
+          {messages.length === 0 && (
+            <h1 style={{
+              fontSize: '32px',
+              fontWeight: '400',
+              color: '#111827',
+              margin: 0,
+              textAlign: 'center',
+              fontFamily: '"Instrument Serif", Georgia, serif',
+              maxWidth: '600px',
             }}>
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                  }}
-                >
-                  <div
-                    style={{
-                      maxWidth: '85%',
-                      background: msg.role === 'user' ? '#2563eb' : '#ffffff',
-                      border: msg.role === 'user' ? 'none' : '1px solid #e5e7eb',
-                      borderRadius: '12px',
-                      padding: '12px 16px',
-                      fontSize: '14px',
-                      color: msg.role === 'user' ? '#ffffff' : '#374151',
-                      lineHeight: '1.6',
-                      fontFamily: '"DM Sans", system-ui, sans-serif',
-                      wordWrap: 'break-word',
-                    }}
-                  >
-                    {msg.role === 'assistant' ? (
-                      <ReactMarkdown
-                        components={{
-                          h2: ({children}) => <h2 style={{fontSize: '1.1rem', fontWeight: 600, marginTop: '1rem', marginBottom: '0.4rem', color: '#1e293b'}}>{children}</h2>,
-                          h3: ({children}) => <h3 style={{fontSize: '0.95rem', fontWeight: 600, marginTop: '0.8rem', marginBottom: '0.3rem', color: '#2563eb'}}>{children}</h3>,
-                          p: ({children}) => <p style={{marginBottom: '0.7rem', lineHeight: 1.7, color: '#374151'}}>{children}</p>,
-                          ul: ({children}) => <ul style={{paddingLeft: '1.2rem', marginBottom: '0.7rem'}}>{children}</ul>,
-                          ol: ({children}) => <ol style={{paddingLeft: '1.2rem', marginBottom: '0.7rem'}}>{children}</ol>,
-                          li: ({children}) => <li style={{marginBottom: '0.25rem', lineHeight: 1.6}}>{children}</li>,
-                          strong: ({children}) => <strong style={{fontWeight: 600, color: '#1e293b'}}>{children}</strong>,
-                          blockquote: ({children}) => <blockquote style={{borderLeft: '3px solid #2563eb', paddingLeft: '0.8rem', margin: '0.6rem 0', color: '#6b7280', fontStyle: 'italic'}}>{children}</blockquote>,
-                          code: ({children}) => <code style={{background: '#f1f5f9', padding: '0.1rem 0.3rem', borderRadius: '3px', fontSize: '0.85em', fontFamily: 'monospace'}}>{children}</code>,
-                          hr: () => <hr style={{border: 'none', borderTop: '1px solid #e2e8f0', margin: '0.8rem 0'}} />
-                        }}
-                      >{msg.content}</ReactMarkdown>
-                    ) : (
-                      msg.content
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {loadingChat && (
-                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                  <div
-                    style={{
-                      background: '#ffffff',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '12px',
-                      padding: '12px 16px',
-                      fontSize: '14px',
-                      color: '#374151',
-                    }}
-                  >
-                    <span style={{ animation: 'pulse 1s infinite' }}>●●●</span>
-                  </div>
-                </div>
-              )}
-
-              <div ref={messagesEndRef} />
-            </div>
+              Ce pot face pentru tine?
+            </h1>
           )}
 
-          {/* Chat Input Container */}
+          {/* Messages Container */}
           <div style={{
             width: '100%',
-          }}>
-          <form onSubmit={handleSendMessage} style={{
-            background: '#ffffff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '16px',
-            padding: '16px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            maxWidth: '700px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
+            gap: '24px',
+            paddingLeft: '32px',
+            paddingRight: '32px',
           }}>
-            {/* Textarea - no border, no background */}
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Cu ce te pot ajuta?"
-              style={{
-                background: 'transparent',
-                border: 'none',
-                fontFamily: '"DM Sans", system-ui, sans-serif',
-                fontSize: '15px',
-                color: '#111827',
-                resize: 'none',
-                minHeight: '60px',
-                outline: 'none',
-                padding: '8px 0',
-                boxSizing: 'border-box',
-              }}
-              rows="3"
-            />
-
-            {/* Bottom Bar */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              justifyContent: 'space-between',
-              paddingTop: '12px',
-              borderTop: '1px solid #f3f4f6',
-            }}>
-              {/* LEFT: Three icon buttons */}
-              <div style={{
-                display: 'flex',
-                gap: '8px',
-              }}>
-                {/* + Button */}
-                <button
-                  type="button"
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className="message-enter"
+                style={{
+                  display: 'flex',
+                  justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                  width: '100%',
+                }}
+              >
+                <div
                   style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '6px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#9ca3af',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'color 0.2s',
+                    maxWidth: msg.role === 'user' ? '70%' : '100%',
+                    background: msg.role === 'user' ? '#2563eb' : 'transparent',
+                    borderRadius: msg.role === 'user' ? '18px' : '0',
+                    padding: msg.role === 'user' ? '12px 16px' : '0',
+                    fontSize: '15px',
+                    color: msg.role === 'user' ? '#ffffff' : '#374151',
+                    lineHeight: '1.6',
+                    fontFamily: '"DM Sans", system-ui, sans-serif',
+                    wordWrap: 'break-word',
                   }}
-                  onMouseEnter={(e) => e.target.style.color = '#6b7080'}
-                  onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                </button>
-
-                {/* Sliders/Filter Button */}
-                <button
-                  type="button"
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '6px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#9ca3af',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'color 0.2s',
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = '#6b7080'}
-                  onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="4" y1="6" x2="20" y2="6" />
-                    <line x1="4" y1="12" x2="20" y2="12" />
-                    <line x1="4" y1="18" x2="20" y2="18" />
-                    <line x1="9" y1="2" x2="9" y2="4" />
-                    <line x1="9" y1="20" x2="9" y2="22" />
-                    <line x1="15" y1="2" x2="15" y2="4" />
-                    <line x1="15" y1="20" x2="15" y2="22" />
-                  </svg>
-                </button>
-
-                {/* Monitor/Screen Button */}
-                <button
-                  type="button"
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '6px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#9ca3af',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'color 0.2s',
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = '#6b7080'}
-                  onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                    <circle cx="12" cy="13" r="4" />
-                  </svg>
-                </button>
+                  {msg.role === 'assistant' ? (
+                    <ReactMarkdown
+                      components={{
+                        h2: ({children}) => <h2 style={{fontSize: '1.3rem', fontWeight: 600, marginTop: '1.2rem', marginBottom: '0.6rem', color: '#1e293b'}}>{children}</h2>,
+                        h3: ({children}) => <h3 style={{fontSize: '1.1rem', fontWeight: 600, marginTop: '1rem', marginBottom: '0.4rem', color: '#2563eb'}}>{children}</h3>,
+                        p: ({children}) => <p style={{marginBottom: '0.8rem', lineHeight: 1.8, color: '#374151'}}>{children}</p>,
+                        ul: ({children}) => <ul style={{paddingLeft: '1.5rem', marginBottom: '0.8rem'}}>{children}</ul>,
+                        ol: ({children}) => <ol style={{paddingLeft: '1.5rem', marginBottom: '0.8rem'}}>{children}</ol>,
+                        li: ({children}) => <li style={{marginBottom: '0.4rem', lineHeight: 1.7}}>{children}</li>,
+                        strong: ({children}) => <strong style={{fontWeight: 600, color: '#1e293b'}}>{children}</strong>,
+                        blockquote: ({children}) => <blockquote style={{borderLeft: '3px solid #2563eb', paddingLeft: '1rem', margin: '0.8rem 0', color: '#6b7280', fontStyle: 'italic'}}>{children}</blockquote>,
+                        code: ({children}) => <code style={{background: '#f1f5f9', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.9em', fontFamily: 'monospace'}}>{children}</code>,
+                        hr: () => <hr style={{border: 'none', borderTop: '1px solid #e2e8f0', margin: '1rem 0'}} />
+                      }}
+                    >{msg.content}</ReactMarkdown>
+                  ) : (
+                    msg.content
+                  )}
+                </div>
               </div>
+            ))}
 
-              {/* MIDDLE: Website pill button */}
+            {loadingChat && (
+              <div className="message-enter" style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <div style={{ fontSize: '15px', color: '#9ca3af' }}>
+                  <span style={{ animation: 'pulse 1.5s infinite' }}>●●●</span>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
+
+        {/* Fixed Input at Bottom */}
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.95) 20%, rgba(255, 255, 255, 1) 60%)',
+          paddingBottom: '24px',
+          paddingTop: '16px',
+          pointerEvents: 'none',
+        }}>
+          <form
+            onSubmit={handleSendMessage}
+            style={{
+              width: '100%',
+              maxWidth: '700px',
+              paddingLeft: '32px',
+              paddingRight: '32px',
+              pointerEvents: 'auto',
+            }}
+          >
+            <div style={{
+              background: '#f5f5f5',
+              borderRadius: '24px',
+              padding: '12px 16px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: '8px',
+            }}>
+              {/* Plus Button */}
               <button
                 type="button"
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '16px',
-                  background: '#dbeafe',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: 'transparent',
                   border: 'none',
-                  color: '#2563eb',
-                  fontSize: '13px',
-                  fontWeight: '500',
+                  color: '#9ca3af',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  transition: 'background 0.2s',
-                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  justifyContent: 'center',
+                  transition: 'color 0.2s',
+                  flexShrink: 0,
                 }}
-                onMouseEnter={(e) => e.target.style.background = '#bfdbfe'}
-                onMouseLeave={(e) => e.target.style.background = '#dbeafe'}
+                onMouseEnter={(e) => e.target.style.color = '#6b7280'}
+                onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
-                Website
               </button>
 
-              {/* RIGHT: Send button */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}>
-                {/* Send Button */}
-                <button
-                  type="submit"
-                  style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '50%',
-                    background: '#1a1a1a',
-                    border: 'none',
-                    color: '#ffffff',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'background 0.2s',
-                    flexShrink: 0,
-                  }}
-                  onMouseEnter={(e) => e.target.style.background = '#2d2d2d'}
-                  onMouseLeave={(e) => e.target.style.background = '#1a1a1a'}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <polyline points="19 12 12 5 5 12" />
-                  </svg>
-                </button>
-              </div>
+              {/* Textarea */}
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Cu ce te pot ajuta?"
+                style={{
+                  flex: 1,
+                  background: 'transparent',
+                  border: 'none',
+                  fontFamily: '"DM Sans", system-ui, sans-serif',
+                  fontSize: '15px',
+                  color: '#111827',
+                  resize: 'none',
+                  minHeight: '32px',
+                  maxHeight: '120px',
+                  outline: 'none',
+                  padding: '0 4px',
+                  boxSizing: 'border-box',
+                }}
+                rows="1"
+              />
+
+              {/* Send Button */}
+              <button
+                type="submit"
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: '#2563eb',
+                  border: 'none',
+                  color: '#ffffff',
+                  cursor: message.trim() ? 'pointer' : 'default',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                  flexShrink: 0,
+                  opacity: message.trim() ? 1 : 0.5,
+                }}
+                onMouseEnter={(e) => {
+                  if (message.trim()) e.target.style.background = '#1d4ed8';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = '#2563eb';
+                }}
+                disabled={!message.trim() || loadingChat}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <polyline points="19 12 12 5 5 12" />
+                </svg>
+              </button>
             </div>
           </form>
-          </div>
         </div>
       </div>
 
