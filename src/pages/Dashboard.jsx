@@ -188,17 +188,61 @@ export default function Dashboard() {
         }}>
           {/* Initial Heading */}
           {messages.length === 0 && (
-            <h1 style={{
-              fontSize: '32px',
-              fontWeight: '400',
-              color: '#111827',
-              margin: 0,
-              textAlign: 'center',
-              fontFamily: '"Instrument Serif", Georgia, serif',
-              maxWidth: '600px',
-            }}>
-              Ce pot face pentru tine?
-            </h1>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', maxWidth: '700px' }}>
+              <h1 style={{
+                fontSize: '28px',
+                fontWeight: 500,
+                color: '#1a1a1a',
+                margin: 0,
+                textAlign: 'center',
+                fontFamily: '"DM Sans", system-ui, sans-serif',
+              }}>
+                Ce pot face pentru tine?
+              </h1>
+
+              {/* Suggestion Chips */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '12px',
+                width: '100%',
+                paddingLeft: '32px',
+                paddingRight: '32px',
+              }}>
+                {[
+                  'Explică-mi ce este un PUZ',
+                  'Vreau un memoriu tehnic',
+                  'Analizează un document',
+                  'Ce spune legea despre POT',
+                ].map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setMessage(suggestion)}
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: '16px',
+                      border: '1px solid #d1d5db',
+                      background: '#ffffff',
+                      color: '#374151',
+                      fontSize: '13px',
+                      fontFamily: '"DM Sans", system-ui, sans-serif',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.borderColor = '#9ca3af';
+                      e.target.style.background = '#f9fafb';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.borderColor = '#d1d5db';
+                      e.target.style.background = '#ffffff';
+                    }}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Messages Container */}
@@ -294,7 +338,7 @@ export default function Dashboard() {
             <div style={{
               background: '#f5f5f5',
               borderRadius: '24px',
-              padding: '12px 16px',
+              padding: '14px 20px',
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
               display: 'flex',
               alignItems: 'flex-end',
@@ -330,7 +374,7 @@ export default function Dashboard() {
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Cu ce te pot ajuta?"
+                placeholder="Întreabă orice despre urbanism..."
                 style={{
                   flex: 1,
                   background: 'transparent',
@@ -352,8 +396,8 @@ export default function Dashboard() {
               <button
                 type="submit"
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '50%',
                   background: '#2563eb',
                   border: 'none',
