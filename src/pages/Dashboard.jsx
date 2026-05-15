@@ -175,6 +175,11 @@ export default function Dashboard() {
         height: '100vh',
         background: '#f5f5f0',
         position: 'relative',
+        marginLeft: '-32px',
+        marginRight: '-32px',
+        marginTop: '-24px',
+        marginBottom: '-24px',
+        width: 'calc(100% + 64px)',
       }}>
         {/* When no messages: centered vertical layout */}
         {messages.length === 0 ? (
@@ -310,11 +315,13 @@ export default function Dashboard() {
             {/* Suggestion Chips */}
             <div style={{
               display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
+              flexDirection: 'row',
+              gap: '12px',
               maxWidth: '680px',
               paddingLeft: '24px',
               paddingRight: '24px',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
             }}>
               {[
                 { text: 'Explică-mi ce este un PUZ', icon: '📋' },
@@ -326,19 +333,20 @@ export default function Dashboard() {
                   key={idx}
                   onClick={() => setMessage(chip.text)}
                   style={{
-                    padding: '8px 16px',
+                    padding: '8px 14px',
                     borderRadius: '20px',
                     border: '1px solid #e0e0e0',
                     background: '#ffffff',
                     color: '#374151',
-                    fontSize: '13px',
+                    fontSize: '12px',
                     fontFamily: '"DM Sans", system-ui, sans-serif',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    gap: '6px',
                     textAlign: 'left',
+                    whiteSpace: 'nowrap',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = '#d0d0d0';
