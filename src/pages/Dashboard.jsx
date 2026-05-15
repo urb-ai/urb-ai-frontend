@@ -173,259 +173,385 @@ export default function Dashboard() {
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        background: '#ffffff',
+        background: '#f5f5f0',
         position: 'relative',
       }}>
-        {/* Messages Area */}
-        <div style={{
-          flex: 1,
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          paddingTop: messages.length === 0 ? 'max(80px, 10vh)' : '32px',
-          paddingBottom: '120px',
-        }}>
-          {/* Initial Heading */}
-          {messages.length === 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', maxWidth: '700px' }}>
-              <h1 style={{
-                fontSize: '28px',
-                fontWeight: 500,
-                color: '#1a1a1a',
-                margin: 0,
-                textAlign: 'center',
-                fontFamily: '"DM Sans", system-ui, sans-serif',
-              }}>
-                Ce pot face pentru tine?
-              </h1>
-
-              {/* Suggestion Chips */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '12px',
-                width: '100%',
-                paddingLeft: '32px',
-                paddingRight: '32px',
-              }}>
-                {[
-                  'Explică-mi ce este un PUZ',
-                  'Vreau un memoriu tehnic',
-                  'Analizează un document',
-                  'Ce spune legea despre POT',
-                ].map((suggestion, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setMessage(suggestion)}
-                    style={{
-                      padding: '10px 14px',
-                      borderRadius: '16px',
-                      border: '1px solid #d1d5db',
-                      background: '#ffffff',
-                      color: '#374151',
-                      fontSize: '13px',
-                      fontFamily: '"DM Sans", system-ui, sans-serif',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.borderColor = '#9ca3af';
-                      e.target.style.background = '#f9fafb';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.borderColor = '#d1d5db';
-                      e.target.style.background = '#ffffff';
-                    }}
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Messages Container */}
+        {/* When no messages: centered vertical layout */}
+        {messages.length === 0 ? (
           <div style={{
-            width: '100%',
-            maxWidth: '700px',
+            flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            gap: '24px',
-            paddingLeft: '32px',
-            paddingRight: '32px',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingBottom: '60px',
           }}>
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className="message-enter"
-                style={{
-                  display: 'flex',
-                  justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                  width: '100%',
-                }}
-              >
-                <div
+            {/* Title */}
+            <h1 style={{
+              fontSize: '32px',
+              fontWeight: 600,
+              color: '#1a1a1a',
+              margin: '0 0 24px 0',
+              textAlign: 'center',
+              fontFamily: '"DM Sans", system-ui, sans-serif',
+              maxWidth: '600px',
+            }}>
+              Ce pot face pentru tine?
+            </h1>
+
+            {/* Input Card */}
+            <form onSubmit={handleSendMessage} style={{
+              width: '100%',
+              maxWidth: '680px',
+              marginBottom: '24px',
+              paddingLeft: '24px',
+              paddingRight: '24px',
+            }}>
+              <div style={{
+                background: '#ffffff',
+                border: '1px solid #e5e5e5',
+                borderRadius: '16px',
+                padding: '16px 20px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+              }}>
+                {/* Textarea */}
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Întreabă orice despre urbanism..."
                   style={{
-                    maxWidth: msg.role === 'user' ? '70%' : '100%',
-                    background: msg.role === 'user' ? '#2563eb' : 'transparent',
-                    borderRadius: msg.role === 'user' ? '18px' : '0',
-                    padding: msg.role === 'user' ? '12px 16px' : '0',
-                    fontSize: '15px',
-                    color: msg.role === 'user' ? '#ffffff' : '#374151',
-                    lineHeight: '1.6',
+                    background: 'transparent',
+                    border: 'none',
                     fontFamily: '"DM Sans", system-ui, sans-serif',
-                    wordWrap: 'break-word',
+                    fontSize: '15px',
+                    color: '#111827',
+                    resize: 'none',
+                    minHeight: '48px',
+                    maxHeight: '120px',
+                    outline: 'none',
+                    padding: '0',
+                    boxSizing: 'border-box',
+                  }}
+                  rows="2"
+                />
+
+                {/* Bottom Action Row */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingTop: '12px',
+                  borderTop: '1px solid #f0f0f0',
+                }}>
+                  {/* Plus Button */}
+                  <button
+                    type="button"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#9ca3af',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'color 0.2s',
+                      flexShrink: 0,
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#6b7280'}
+                    onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+
+                  {/* Send Button */}
+                  <button
+                    type="submit"
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#2563eb',
+                      border: 'none',
+                      color: '#ffffff',
+                      cursor: message.trim() ? 'pointer' : 'default',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'background 0.2s',
+                      flexShrink: 0,
+                      opacity: message.trim() ? 1 : 0.5,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (message.trim()) e.target.style.background = '#1d4ed8';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = '#2563eb';
+                    }}
+                    disabled={!message.trim() || loadingChat}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <polyline points="19 12 12 5 5 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Suggestion Chips */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              maxWidth: '680px',
+              paddingLeft: '24px',
+              paddingRight: '24px',
+            }}>
+              {[
+                { text: 'Explică-mi ce este un PUZ', icon: '📋' },
+                { text: 'Vreau un memoriu tehnic', icon: '📝' },
+                { text: 'Analizează un document', icon: '🔍' },
+                { text: 'Legislație POT', icon: '⚖️' },
+              ].map((chip, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setMessage(chip.text)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    border: '1px solid #e0e0e0',
+                    background: '#ffffff',
+                    color: '#374151',
+                    fontSize: '13px',
+                    fontFamily: '"DM Sans", system-ui, sans-serif',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#d0d0d0';
+                    e.currentTarget.style.background = '#fafafa';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#e0e0e0';
+                    e.currentTarget.style.background = '#ffffff';
                   }}
                 >
-                  {msg.role === 'assistant' ? (
-                    <ReactMarkdown
-                      components={{
-                        h2: ({children}) => <h2 style={{fontSize: '1.3rem', fontWeight: 600, marginTop: '1.2rem', marginBottom: '0.6rem', color: '#1e293b'}}>{children}</h2>,
-                        h3: ({children}) => <h3 style={{fontSize: '1.1rem', fontWeight: 600, marginTop: '1rem', marginBottom: '0.4rem', color: '#2563eb'}}>{children}</h3>,
-                        p: ({children}) => <p style={{marginBottom: '0.8rem', lineHeight: 1.8, color: '#374151'}}>{children}</p>,
-                        ul: ({children}) => <ul style={{paddingLeft: '1.5rem', marginBottom: '0.8rem'}}>{children}</ul>,
-                        ol: ({children}) => <ol style={{paddingLeft: '1.5rem', marginBottom: '0.8rem'}}>{children}</ol>,
-                        li: ({children}) => <li style={{marginBottom: '0.4rem', lineHeight: 1.7}}>{children}</li>,
-                        strong: ({children}) => <strong style={{fontWeight: 600, color: '#1e293b'}}>{children}</strong>,
-                        blockquote: ({children}) => <blockquote style={{borderLeft: '3px solid #2563eb', paddingLeft: '1rem', margin: '0.8rem 0', color: '#6b7280', fontStyle: 'italic'}}>{children}</blockquote>,
-                        code: ({children}) => <code style={{background: '#f1f5f9', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.9em', fontFamily: 'monospace'}}>{children}</code>,
-                        hr: () => <hr style={{border: 'none', borderTop: '1px solid #e2e8f0', margin: '1rem 0'}} />
-                      }}
-                    >{msg.content}</ReactMarkdown>
-                  ) : (
-                    msg.content
-                  )}
-                </div>
-              </div>
-            ))}
-
-            {loadingChat && (
-              <div className="message-enter" style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <div style={{ fontSize: '15px', color: '#9ca3af' }}>
-                  <span style={{ animation: 'pulse 1.5s infinite' }}>●●●</span>
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
-
-        {/* Fixed Input at Bottom */}
-        <div style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.95) 20%, rgba(255, 255, 255, 1) 60%)',
-          paddingBottom: '24px',
-          paddingTop: '16px',
-          pointerEvents: 'none',
-        }}>
-          <form
-            onSubmit={handleSendMessage}
-            style={{
-              width: '100%',
-              maxWidth: '700px',
-              paddingLeft: '32px',
-              paddingRight: '32px',
-              pointerEvents: 'auto',
-            }}
-          >
-            <div style={{
-              background: '#f5f5f5',
-              borderRadius: '24px',
-              padding: '14px 20px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-              display: 'flex',
-              alignItems: 'flex-end',
-              gap: '8px',
-            }}>
-              {/* Plus Button */}
-              <button
-                type="button"
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#9ca3af',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'color 0.2s',
-                  flexShrink: 0,
-                }}
-                onMouseEnter={(e) => e.target.style.color = '#6b7280'}
-                onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-              </button>
-
-              {/* Textarea */}
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Întreabă orice despre urbanism..."
-                style={{
-                  flex: 1,
-                  background: 'transparent',
-                  border: 'none',
-                  fontFamily: '"DM Sans", system-ui, sans-serif',
-                  fontSize: '15px',
-                  color: '#111827',
-                  resize: 'none',
-                  minHeight: '32px',
-                  maxHeight: '120px',
-                  outline: 'none',
-                  padding: '0 4px',
-                  boxSizing: 'border-box',
-                }}
-                rows="1"
-              />
-
-              {/* Send Button */}
-              <button
-                type="submit"
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  background: '#2563eb',
-                  border: 'none',
-                  color: '#ffffff',
-                  cursor: message.trim() ? 'pointer' : 'default',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'background 0.2s',
-                  flexShrink: 0,
-                  opacity: message.trim() ? 1 : 0.5,
-                }}
-                onMouseEnter={(e) => {
-                  if (message.trim()) e.target.style.background = '#1d4ed8';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = '#2563eb';
-                }}
-                disabled={!message.trim() || loadingChat}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <polyline points="19 12 12 5 5 12" />
-                </svg>
-              </button>
+                  <span>{chip.icon}</span>
+                  <span>{chip.text}</span>
+                </button>
+              ))}
             </div>
-          </form>
-        </div>
+          </div>
+        ) : (
+          /* When messages exist: scroll area with messages, fixed input at bottom */
+          <>
+            {/* Messages Area */}
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              paddingTop: '32px',
+              paddingBottom: '140px',
+            }}>
+              {/* Messages Container */}
+              <div style={{
+                width: '100%',
+                maxWidth: '680px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '24px',
+                paddingLeft: '24px',
+                paddingRight: '24px',
+              }}>
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className="message-enter"
+                    style={{
+                      display: 'flex',
+                      justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                      width: '100%',
+                    }}
+                  >
+                    <div
+                      style={{
+                        maxWidth: msg.role === 'user' ? '70%' : '100%',
+                        background: msg.role === 'user' ? '#2563eb' : 'transparent',
+                        borderRadius: msg.role === 'user' ? '18px' : '0',
+                        padding: msg.role === 'user' ? '12px 16px' : '0',
+                        fontSize: '15px',
+                        color: msg.role === 'user' ? '#ffffff' : '#374151',
+                        lineHeight: '1.6',
+                        fontFamily: '"DM Sans", system-ui, sans-serif',
+                        wordWrap: 'break-word',
+                      }}
+                    >
+                      {msg.role === 'assistant' ? (
+                        <ReactMarkdown
+                          components={{
+                            h2: ({children}) => <h2 style={{fontSize: '1.3rem', fontWeight: 600, marginTop: '1.2rem', marginBottom: '0.6rem', color: '#1e293b'}}>{children}</h2>,
+                            h3: ({children}) => <h3 style={{fontSize: '1.1rem', fontWeight: 600, marginTop: '1rem', marginBottom: '0.4rem', color: '#2563eb'}}>{children}</h3>,
+                            p: ({children}) => <p style={{marginBottom: '0.8rem', lineHeight: 1.8, color: '#374151'}}>{children}</p>,
+                            ul: ({children}) => <ul style={{paddingLeft: '1.5rem', marginBottom: '0.8rem'}}>{children}</ul>,
+                            ol: ({children}) => <ol style={{paddingLeft: '1.5rem', marginBottom: '0.8rem'}}>{children}</ol>,
+                            li: ({children}) => <li style={{marginBottom: '0.4rem', lineHeight: 1.7}}>{children}</li>,
+                            strong: ({children}) => <strong style={{fontWeight: 600, color: '#1e293b'}}>{children}</strong>,
+                            blockquote: ({children}) => <blockquote style={{borderLeft: '3px solid #2563eb', paddingLeft: '1rem', margin: '0.8rem 0', color: '#6b7280', fontStyle: 'italic'}}>{children}</blockquote>,
+                            code: ({children}) => <code style={{background: '#f1f5f9', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.9em', fontFamily: 'monospace'}}>{children}</code>,
+                            hr: () => <hr style={{border: 'none', borderTop: '1px solid #e2e8f0', margin: '1rem 0'}} />
+                          }}
+                        >{msg.content}</ReactMarkdown>
+                      ) : (
+                        msg.content
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {loadingChat && (
+                  <div className="message-enter" style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                    <div style={{ fontSize: '15px', color: '#9ca3af' }}>
+                      <span style={{ animation: 'pulse 1.5s infinite' }}>●●●</span>
+                    </div>
+                  </div>
+                )}
+
+                <div ref={messagesEndRef} />
+              </div>
+            </div>
+
+            {/* Fixed Input at Bottom */}
+            <div style={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              background: 'linear-gradient(to bottom, rgba(245, 245, 240, 0) 0%, rgba(245, 245, 240, 0.95) 20%, rgba(245, 245, 240, 1) 60%)',
+              paddingBottom: '24px',
+              paddingTop: '16px',
+              pointerEvents: 'none',
+            }}>
+              <form
+                onSubmit={handleSendMessage}
+                style={{
+                  width: '100%',
+                  maxWidth: '680px',
+                  paddingLeft: '24px',
+                  paddingRight: '24px',
+                  pointerEvents: 'auto',
+                }}
+              >
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e5e5e5',
+                  borderRadius: '16px',
+                  padding: '16px 20px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  gap: '8px',
+                }}>
+                  {/* Plus Button */}
+                  <button
+                    type="button"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#9ca3af',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'color 0.2s',
+                      flexShrink: 0,
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#6b7280'}
+                    onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+
+                  {/* Textarea */}
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Întreabă orice despre urbanism..."
+                    style={{
+                      flex: 1,
+                      background: 'transparent',
+                      border: 'none',
+                      fontFamily: '"DM Sans", system-ui, sans-serif',
+                      fontSize: '15px',
+                      color: '#111827',
+                      resize: 'none',
+                      minHeight: '32px',
+                      maxHeight: '120px',
+                      outline: 'none',
+                      padding: '0 4px',
+                      boxSizing: 'border-box',
+                    }}
+                    rows="1"
+                  />
+
+                  {/* Send Button */}
+                  <button
+                    type="submit"
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#2563eb',
+                      border: 'none',
+                      color: '#ffffff',
+                      cursor: message.trim() ? 'pointer' : 'default',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'background 0.2s',
+                      flexShrink: 0,
+                      opacity: message.trim() ? 1 : 0.5,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (message.trim()) e.target.style.background = '#1d4ed8';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = '#2563eb';
+                    }}
+                    disabled={!message.trim() || loadingChat}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <polyline points="19 12 12 5 5 12" />
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Projects Section Below (for reference) */}
