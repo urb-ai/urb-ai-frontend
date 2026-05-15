@@ -85,8 +85,9 @@ export default function Dashboard() {
   // Start new conversation
   const handleNewChat = () => {
     setMessages([]);
+    setMessage('');
     setConversationId(null);
-    resetConversation();
+    if (resetConversation) resetConversation();
   };
 
   const handleSendMessage = async (e) => {
