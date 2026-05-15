@@ -403,21 +403,24 @@ export default function Dashboard() {
             <div style={{
               position: 'fixed',
               bottom: 0,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '100%',
-              maxWidth: '760px',
+              left: '260px',
+              right: '0',
+              width: 'auto',
               background: 'linear-gradient(to bottom, rgba(245,245,240,0) 0%, rgba(245,245,240,0.95) 20%, rgba(245,245,240,1) 60%)',
               paddingBottom: '24px',
               paddingTop: '16px',
               paddingLeft: '24px',
               paddingRight: '24px',
               boxSizing: 'border-box',
+              display: 'flex',
+              justifyContent: 'center',
             }}>
               <form
                 onSubmit={handleSendMessage}
                 style={{
                   width: '100%',
+                  maxWidth: '760px',
+                  margin: '0 auto',
                   pointerEvents: 'auto',
                   boxSizing: 'border-box',
                 }}
