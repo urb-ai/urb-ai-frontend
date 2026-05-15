@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { useAuthStore } from '../stores/authStore';
 import { useProiecte } from '../hooks/useProiecte';
 import Layout from '../components/Layout';
@@ -219,7 +220,24 @@ export default function Dashboard() {
                       wordWrap: 'break-word',
                     }}
                   >
-                    {msg.content}
+                    {msg.role === 'assistant' ? (
+                      <ReactMarkdown
+                        components={{
+                          h2: ({children}) => <h2 style={{fontSize: '1.1rem', fontWeight: 600, marginTop: '1rem', marginBottom: '0.4rem', color: '#1e293b'}}>{children}</h2>,
+                          h3: ({children}) => <h3 style={{fontSize: '0.95rem', fontWeight: 600, marginTop: '0.8rem', marginBottom: '0.3rem', color: '#2563eb'}}>{children}</h3>,
+                          p: ({children}) => <p style={{marginBottom: '0.7rem', lineHeight: 1.7, color: '#374151'}}>{children}</p>,
+                          ul: ({children}) => <ul style={{paddingLeft: '1.2rem', marginBottom: '0.7rem'}}>{children}</ul>,
+                          ol: ({children}) => <ol style={{paddingLeft: '1.2rem', marginBottom: '0.7rem'}}>{children}</ol>,
+                          li: ({children}) => <li style={{marginBottom: '0.25rem', lineHeight: 1.6}}>{children}</li>,
+                          strong: ({children}) => <strong style={{fontWeight: 600, color: '#1e293b'}}>{children}</strong>,
+                          blockquote: ({children}) => <blockquote style={{borderLeft: '3px solid #2563eb', paddingLeft: '0.8rem', margin: '0.6rem 0', color: '#6b7280', fontStyle: 'italic'}}>{children}</blockquote>,
+                          code: ({children}) => <code style={{background: '#f1f5f9', padding: '0.1rem 0.3rem', borderRadius: '3px', fontSize: '0.85em', fontFamily: 'monospace'}}>{children}</code>,
+                          hr: () => <hr style={{border: 'none', borderTop: '1px solid #e2e8f0', margin: '0.8rem 0'}} />
+                        }}
+                      >{msg.content}</ReactMarkdown>
+                    ) : (
+                      msg.content
+                    )}
                   </div>
                 </div>
               ))}
