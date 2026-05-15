@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useProiecte } from '../hooks/useProiecte';
@@ -36,14 +36,75 @@ export default function Dashboard() {
     }
   };
 
+  const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const [loadingChat, setLoadingChat] = useState(false);
+  const messagesEndRef = useRef(null);
 
-  const handleSendMessage = (e) => {
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (message.trim()) {
-      // TODO: Send message to chat API
-      console.log('Message:', message);
-      setMessage('');
+    if (!message.trim() || loadingChat) return;
+
+    const userMessage = {
+      id: Date.now(),
+      role: 'user',
+      content: message,
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setMessage('');
+    setLoadingChat(true);
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+      const response = await fetch(`${API_URL}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: messages.concat(userMessage).map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+          userPlan: 'free',
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Eroare la backend');
+      }
+
+      const data = await response.json();
+      const aiContent = data.content || 'Fără răspuns';
+
+      const aiMessage = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: aiContent,
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: `❌ Eroare la conectare. Încearcă din nou.`,
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setLoadingChat(false);
     }
   };
 
@@ -54,28 +115,99 @@ export default function Dashboard() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         minHeight: 'calc(100vh - 280px)',
         padding: '32px',
       }}>
         {/* Heading */}
-        <h1 style={{
-          fontSize: '32px',
-          fontWeight: '400',
-          color: '#111827',
-          margin: '0 0 32px 0',
-          textAlign: 'center',
-          fontFamily: '"Instrument Serif", Georgia, serif',
-          maxWidth: '600px',
-        }}>
-          Ce pot face pentru tine?
-        </h1>
+        {messages.length === 0 && (
+          <h1 style={{
+            fontSize: '32px',
+            fontWeight: '400',
+            color: '#111827',
+            margin: '0 0 32px 0',
+            textAlign: 'center',
+            fontFamily: '"Instrument Serif", Georgia, serif',
+            maxWidth: '600px',
+          }}>
+            Ce pot face pentru tine?
+          </h1>
+        )}
 
-        {/* Chat Input Container */}
+        {/* Chat Container */}
         <div style={{
           width: '100%',
           maxWidth: '680px',
+          display: 'flex',
+          flexDirection: 'column',
+          height: messages.length > 0 ? 'calc(100vh - 200px)' : 'auto',
         }}>
+          {/* Messages Display Area */}
+          {messages.length > 0 && (
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              marginBottom: '20px',
+              padding: '16px',
+              background: '#f9fafb',
+              borderRadius: '16px',
+              border: '1px solid #e5e7eb',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+            }}>
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                  }}
+                >
+                  <div
+                    style={{
+                      maxWidth: '85%',
+                      background: msg.role === 'user' ? '#2563eb' : '#ffffff',
+                      border: msg.role === 'user' ? 'none' : '1px solid #e5e7eb',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      color: msg.role === 'user' ? '#ffffff' : '#374151',
+                      lineHeight: '1.6',
+                      fontFamily: '"DM Sans", system-ui, sans-serif',
+                      wordWrap: 'break-word',
+                    }}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+
+              {loadingChat && (
+                <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                  <div
+                    style={{
+                      background: '#ffffff',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      color: '#374151',
+                    }}
+                  >
+                    <span style={{ animation: 'pulse 1s infinite' }}>●●●</span>
+                  </div>
+                </div>
+              )}
+
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+
+          {/* Chat Input Container */}
+          <div style={{
+            width: '100%',
+          }}>
           <form onSubmit={handleSendMessage} style={{
             background: '#ffffff',
             border: '1px solid #e5e7eb',
@@ -262,6 +394,7 @@ export default function Dashboard() {
               </div>
             </div>
           </form>
+          </div>
         </div>
       </div>
 

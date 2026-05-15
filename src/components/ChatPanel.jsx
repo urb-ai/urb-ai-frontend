@@ -37,30 +37,19 @@ export default function ChatPanel() {
     setLoading(true);
 
     try {
-      // Get token from Supabase
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error('Trebuie să fii logat');
-      }
-
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-      // Make API request
-      const response = await fetch(`${API_URL}/api/v1/generate`, {
+      const response = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
           messages: messages.map((m) => ({
             role: m.role,
             content: m.content,
           })),
-          system: SYSTEM_PROMPT,
-          max_tokens: 1024,
-          stream: false,
+          userPlan: 'free',
         }),
       });
 
@@ -70,7 +59,7 @@ export default function ChatPanel() {
       }
 
       const data = await response.json();
-      const aiContent = data.content[0]?.text || 'Fără răspuns';
+      const aiContent = data.content || 'Fără răspuns';
 
       const aiMessage = {
         id: Date.now() + 1,

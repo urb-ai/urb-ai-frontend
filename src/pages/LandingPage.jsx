@@ -231,7 +231,7 @@ export default function LandingPage() {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-      const response = await fetch(`${API_URL}/api/v1/chat-public`, {
+      const response = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ export default function LandingPage() {
             })),
             userMessage,
           ],
-          max_tokens: 1024,
+          userPlan: 'free',
         }),
       });
 
@@ -254,7 +254,7 @@ export default function LandingPage() {
       }
 
       const data = await response.json();
-      const aiContent = data.content?.[0]?.text || data.content || 'Fără răspuns';
+      const aiContent = data.content || 'Fără răspuns';
 
       const aiMessage = {
         id: Date.now() + 1,
