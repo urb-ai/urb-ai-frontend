@@ -405,20 +405,22 @@ export default function Dashboard() {
               bottom: 0,
               left: 0,
               right: 0,
+              width: '100%',
+              maxWidth: '760px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
               display: 'flex',
               justifyContent: 'center',
               background: 'linear-gradient(to bottom, rgba(245, 245, 240, 0) 0%, rgba(245, 245, 240, 0.95) 20%, rgba(245, 245, 240, 1) 60%)',
               paddingBottom: '24px',
               paddingTop: '16px',
               pointerEvents: 'none',
+              boxSizing: 'border-box',
             }}>
               <form
                 onSubmit={handleSendMessage}
                 style={{
                   width: '100%',
-                  maxWidth: '760px',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
                   paddingLeft: '24px',
                   paddingRight: '24px',
                   pointerEvents: 'auto',
