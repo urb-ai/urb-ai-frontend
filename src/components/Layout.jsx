@@ -220,7 +220,141 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
         {/* SEPARATOR */}
         <div style={{ borderTop: '1px solid #e8e0d6', margin: '8px 16px' }} />
 
-        {/* SECTION 1.5: ISTORIC CONVERSAȚII */}
+        {/* SECTION 2: NAVIGARE PRINCIPALĂ */}
+        <nav style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          {/* Proiectanti */}
+          <button
+            onClick={() => navigate('/proiectanti')}
+            style={{
+              background: isActive('/proiectanti') ? 'rgba(0,0,0,0.06)' : 'transparent',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: isActive('/proiectanti') ? '500' : '400',
+              color: '#1a1613',
+              fontFamily: '"DM Sans", sans-serif',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive('/proiectanti')) e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive('/proiectanti')) e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            Proiectanti
+          </button>
+
+          {/* Beneficiari */}
+          <button
+            onClick={() => navigate('/beneficiari')}
+            style={{
+              background: isActive('/beneficiari') ? 'rgba(0,0,0,0.06)' : 'transparent',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: isActive('/beneficiari') ? '500' : '400',
+              color: '#1a1613',
+              fontFamily: '"DM Sans", sans-serif',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive('/beneficiari')) e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive('/beneficiari')) e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            Beneficiari
+          </button>
+
+          {/* Proiecte */}
+          <button
+            onClick={() => navigate('/proiecte')}
+            style={{
+              background: isActive('/proiecte') ? 'rgba(0,0,0,0.06)' : 'transparent',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: isActive('/proiecte') ? '500' : '400',
+              color: '#1a1613',
+              fontFamily: '"DM Sans", sans-serif',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive('/proiecte')) e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive('/proiecte')) e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+            </svg>
+            Proiecte
+          </button>
+
+          {/* Documente */}
+          <button
+            style={{
+              background: 'transparent',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '400',
+              color: '#1a1613',
+              fontFamily: '"DM Sans", sans-serif',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+              <polyline points="13 2 13 9 20 9" />
+            </svg>
+            Documente
+          </button>
+        </nav>
+
+        {/* SEPARATOR */}
+        <div style={{ borderTop: '1px solid #e8e0d6', margin: '8px 16px' }} />
+
+        {/* SECTION 3: ISTORIC CONVERSAȚII */}
         {conversations.length > 0 && (
           <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Titlu Recente */}
@@ -466,137 +600,6 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
             </div>
           </div>
         )}
-
-        {/* SECTION 2: NAVIGARE PRINCIPALĂ */}
-        <nav style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          {/* Proiectanti */}
-          <button
-            onClick={() => navigate('/proiectanti')}
-            style={{
-              background: isActive('/proiectanti') ? 'rgba(0,0,0,0.06)' : 'transparent',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: isActive('/proiectanti') ? '500' : '400',
-              color: '#1a1613',
-              fontFamily: '"DM Sans", sans-serif',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive('/proiectanti')) e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive('/proiectanti')) e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            Proiectanti
-          </button>
-
-          {/* Beneficiari */}
-          <button
-            onClick={() => navigate('/beneficiari')}
-            style={{
-              background: isActive('/beneficiari') ? 'rgba(0,0,0,0.06)' : 'transparent',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: isActive('/beneficiari') ? '500' : '400',
-              color: '#1a1613',
-              fontFamily: '"DM Sans", sans-serif',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive('/beneficiari')) e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive('/beneficiari')) e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-            Beneficiari
-          </button>
-
-          {/* Proiecte */}
-          <button
-            onClick={() => navigate('/proiecte')}
-            style={{
-              background: isActive('/proiecte') ? 'rgba(0,0,0,0.06)' : 'transparent',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: isActive('/proiecte') ? '500' : '400',
-              color: '#1a1613',
-              fontFamily: '"DM Sans", sans-serif',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive('/proiecte')) e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive('/proiecte')) e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-            </svg>
-            Proiecte
-          </button>
-
-          {/* Documente */}
-          <button
-            style={{
-              background: 'transparent',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '400',
-              color: '#1a1613',
-              fontFamily: '"DM Sans", sans-serif',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(0,0,0,0.04)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1613" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-              <polyline points="13 2 13 9 20 9" />
-            </svg>
-            Documente
-          </button>
-        </nav>
 
         {/* FOOTER */}
         <div style={{ padding: '12px 16px', borderTop: '1px solid #ddd4c8', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
