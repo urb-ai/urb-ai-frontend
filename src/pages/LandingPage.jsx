@@ -231,7 +231,15 @@ export default function LandingPage() {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-      const response = await fetch(`${API_URL}/api/chat`, {
+      // Add empty AI message that will be filled by streaming
+      const aiMessage = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: '',
+      };
+      setChatMessages((prev) => [...prev, aiMessage]);
+
+      const response = await fetch(`${API_URL}/api/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -250,26 +258,54 @@ export default function LandingPage() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Eroare la backend');
+        throw new Error('Stream failed');
       }
 
-      const data = await response.json();
-      const aiContent = data.content || 'Fără răspuns';
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullContent = '';
 
-      const aiMessage = {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: aiContent,
-      };
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      setChatMessages((prev) => [...prev, aiMessage]);
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (!data || data === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.done) break;
+
+              const token = parsed.content || '';
+              fullContent += token;
+
+              // Update the AI message in real-time
+              setChatMessages((prev) => {
+                const updated = [...prev];
+                updated[updated.length - 1] = {
+                  id: aiMessage.id,
+                  role: 'assistant',
+                  content: fullContent,
+                };
+                return updated;
+              });
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+      }
     } catch (error) {
       console.error('Public chat error:', error);
       const errorMessage = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: `❌ ${error.message}`,
+        content: `❌ Eroare la conectare. Încearcă din nou.`,
       };
       setChatMessages((prev) => [...prev, errorMessage]);
     } finally {
