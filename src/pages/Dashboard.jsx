@@ -330,11 +330,13 @@ export default function Dashboard() {
               <div style={{
                 width: '100%',
                 maxWidth: '680px',
+                margin: '0 auto',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '24px',
                 paddingLeft: '24px',
                 paddingRight: '24px',
+                boxSizing: 'border-box',
               }}>
                 {messages.map((msg) => (
                   <div
@@ -411,9 +413,11 @@ export default function Dashboard() {
                 style={{
                   width: '100%',
                   maxWidth: '680px',
+                  margin: '0 auto',
                   paddingLeft: '24px',
                   paddingRight: '24px',
                   pointerEvents: 'auto',
+                  boxSizing: 'border-box',
                 }}
               >
                 <div style={{
