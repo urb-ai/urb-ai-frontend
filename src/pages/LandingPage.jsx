@@ -237,8 +237,9 @@ export default function LandingPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          // Keep only last 10 messages to avoid exceeding limits
           messages: [
-            ...chatMessages.map((m) => ({
+            ...chatMessages.slice(-9).map((m) => ({
               role: m.role,
               content: m.content,
             })),

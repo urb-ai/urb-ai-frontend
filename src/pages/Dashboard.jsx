@@ -72,7 +72,8 @@ export default function Dashboard() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: messages.concat(userMessage).map((m) => ({
+          // Keep only last 10 messages to avoid exceeding limits
+          messages: messages.concat(userMessage).slice(-10).map((m) => ({
             role: m.role,
             content: m.content,
           })),

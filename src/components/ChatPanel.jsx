@@ -45,7 +45,8 @@ export default function ChatPanel() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: messages.map((m) => ({
+          // Keep only last 10 messages to avoid exceeding limits
+          messages: messages.slice(-10).map((m) => ({
             role: m.role,
             content: m.content,
           })),
