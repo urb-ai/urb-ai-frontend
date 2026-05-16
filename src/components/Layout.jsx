@@ -16,7 +16,6 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
   const [conversationMenuOpen, setConversationMenuOpen] = useState(null);
   const [renamingId, setRenamingId] = useState(null);
   const [renameValue, setRenameValue] = useState('');
-  const [conversationsLoading, setConversationsLoading] = useState(true);
 
   // Listen to window resize
   if (typeof window !== 'undefined') {
@@ -71,11 +70,6 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
       document.documentElement.style.setProperty(key, val);
     });
   }, []);
-
-  // Track when conversations finish loading
-  useEffect(() => {
-    setConversationsLoading(false);
-  }, [conversations]);
 
   const navItems = [
     { path: '/app', label: 'Dashboard' },
@@ -361,36 +355,14 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
         <div style={{ borderTop: '1px solid #e8e0d6', margin: '8px 16px' }} />
 
         {/* SECTION 3: ISTORIC CONVERSAȚII */}
-        <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: '100px' }}>
-          {/* Titlu Recente */}
-          <p style={{ fontSize: '11px', fontWeight: '600', color: '#9a938a', margin: '8px 16px 6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Recente
-          </p>
+        {conversations.length > 0 && (
+          <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            {/* Titlu Recente */}
+            <p style={{ fontSize: '11px', fontWeight: '600', color: '#9a938a', margin: '8px 16px 6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Recente
+            </p>
 
-          {/* Loading skeleton */}
-          {conversationsLoading && conversations.length === 0 ? (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', padding: '8px' }}>
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  style={{
-                    height: '36px',
-                    background: 'linear-gradient(90deg, #e8e0d6 25%, #f0e8de 50%, #e8e0d6 75%)',
-                    backgroundSize: '200% 100%',
-                    borderRadius: '6px',
-                    animation: 'shimmer 1.5s infinite',
-                  }}
-                />
-              ))}
-              <style>{`
-                @keyframes shimmer {
-                  0% { background-position: 200% 0; }
-                  100% { background-position: -200% 0; }
-                }
-              `}</style>
-            </div>
-          ) : conversations.length > 0 ? (
-            /* Lista conversații */
+            {/* Lista conversații */}
             <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
               {Object.entries({
                 today: 'Azi',
@@ -626,15 +598,8 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
                 );
               })}
             </div>
-          ) : (
-            /* Empty state */
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', textAlign: 'center' }}>
-              <p style={{ fontSize: '12px', color: '#9a938a', margin: 0 }}>
-                Nicio conversație
-              </p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* FOOTER */}
         <div style={{ padding: '12px 16px', borderTop: '1px solid #ddd4c8', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
