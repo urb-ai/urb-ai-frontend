@@ -72,15 +72,38 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
     });
   }, []);
 
-  // Load conversations on mount
+  // Load conversations on mount with localStorage cache
   const { setConversations } = useConversationStore();
   useEffect(() => {
     const loadConversations = async () => {
-      setConversationsLoading(true);
-      const convs = await getConversations();
-      setConversations(convs);
-      setConversationsLoading(false);
+      // Check localStorage cache first
+      const cached = localStorage.getItem('urb_conversations_cache');
+      if (cached) {
+        try {
+          const cachedConvs = JSON.parse(cached);
+          setConversations(cachedConvs);
+          setConversationsLoading(false);
+          console.log('[Layout] Loaded conversations from cache');
+        } catch (e) {
+          console.error('[Layout] Error parsing cached conversations:', e.message);
+        }
+      } else {
+        setConversationsLoading(true);
+      }
+
+      // Fetch fresh data in background
+      try {
+        const fresh = await getConversations();
+        setConversations(fresh);
+        localStorage.setItem('urb_conversations_cache', JSON.stringify(fresh));
+        console.log('[Layout] Conversations updated from Supabase and cached');
+      } catch (error) {
+        console.error('[Layout] Error fetching conversations:', error.message);
+      } finally {
+        setConversationsLoading(false);
+      }
     };
+
     loadConversations();
   }, [setConversations]);
 
