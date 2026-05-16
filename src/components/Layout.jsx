@@ -355,15 +355,16 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
         <div style={{ borderTop: '1px solid #e8e0d6', margin: '8px 16px' }} />
 
         {/* SECTION 3: ISTORIC CONVERSAȚII */}
-        {conversations.length > 0 && (
-          <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            {/* Titlu Recente */}
-            <p style={{ fontSize: '11px', fontWeight: '600', color: '#9a938a', margin: '8px 16px 6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Recente
-            </p>
+        <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: '120px' }}>
+          {conversations.length > 0 && (
+            <>
+              {/* Titlu Recente */}
+              <p style={{ fontSize: '11px', fontWeight: '600', color: '#9a938a', margin: '8px 16px 6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Recente
+              </p>
 
-            {/* Lista conversații */}
-            <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+              {/* Lista conversații */}
+              <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
               {Object.entries({
                 today: 'Azi',
                 yesterday: 'Ieri',
@@ -597,9 +598,10 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        )}
+              </div>
+            </>
+          )}
+        </div>
 
         {/* FOOTER */}
         <div style={{ padding: '12px 16px', borderTop: '1px solid #ddd4c8', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
