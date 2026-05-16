@@ -77,7 +77,11 @@ export default function Dashboard() {
   // Load specific conversation
   const loadConversation = async (id) => {
     const msgs = await getMessages(id);
-    setMessages(msgs);
+    const formatted = msgs.map(m => ({
+      role: m.role,
+      content: m.content
+    }));
+    setMessages(formatted);
     setConversationId(id);
     setActiveConversation(id);
   };
@@ -194,8 +198,8 @@ export default function Dashboard() {
       }
 
       // Save AI message to Supabase
-      if (conversationId) {
-        await saveMessage(conversationId, 'assistant', fullContent);
+      if (currentConversationId) {
+        await saveMessage(currentConversationId, 'assistant', fullContent);
       }
     } catch (error) {
       console.error('Stream error:', error);
