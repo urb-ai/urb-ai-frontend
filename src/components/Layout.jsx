@@ -221,7 +221,7 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
         <div style={{ borderTop: '1px solid #e8e0d6', margin: '8px 16px' }} />
 
         {/* SECTION 2: NAVIGARE PRINCIPALĂ */}
-        <nav style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <nav style={{ padding: '0 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
           {/* Proiectanti */}
           <button
             onClick={() => navigate('/proiectanti')}
