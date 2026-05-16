@@ -124,8 +124,8 @@ export default function Login() {
     }
   };
 
-  // Social button component
-  const SocialButton = ({ provider, icon, label, bgColor, textColor, hoverColor }) => (
+  // Social button component — unified styling
+  const SocialButton = ({ provider, icon, label }) => (
     <button
       onClick={() => {
         console.log(`[SocialButton] ${provider} button clicked`);
@@ -134,40 +134,37 @@ export default function Login() {
       disabled={loading}
       style={{
         width: '100%',
-        backgroundColor: bgColor,
-        border: bgColor === '#ffffff' ? '1px solid #ddd4c8' : 'none',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e5e7eb',
         borderRadius: '8px',
-        padding: '12px 16px',
+        padding: '12px 20px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
         gap: '12px',
         fontSize: '14px',
         fontWeight: '500',
-        color: textColor,
+        color: '#1a1a1a',
         cursor: loading ? 'not-allowed' : 'pointer',
         opacity: loading ? 0.6 : 1,
         transition: 'all 0.2s ease',
         marginBottom: '10px',
         fontFamily: '"DM Sans", system-ui, sans-serif',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
       }}
       onMouseEnter={(e) => {
         if (!loading) {
-          e.target.style.backgroundColor = hoverColor;
-          if (bgColor === '#ffffff') {
-            e.target.style.borderColor = '#c4893a';
-          }
+          e.target.style.backgroundColor = '#f9fafb';
         }
       }}
       onMouseLeave={(e) => {
-        e.target.style.backgroundColor = bgColor;
-        if (bgColor === '#ffffff') {
-          e.target.style.borderColor = '#ddd4c8';
-        }
+        e.target.style.backgroundColor = '#ffffff';
       }}
     >
-      {icon}
-      <span>{label}</span>
+      <div style={{ width: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {icon}
+      </div>
+      <span style={{ flex: 1, textAlign: 'center' }}>{label}</span>
+      <div style={{ width: '24px' }} />
     </button>
   );
 
@@ -354,6 +351,7 @@ export default function Login() {
           <>
             {/* Social Login Buttons */}
             <div style={{ marginBottom: '20px' }}>
+              {/* Google */}
               <SocialButton
                 provider="google"
                 icon={
@@ -365,48 +363,28 @@ export default function Login() {
                   </svg>
                 }
                 label="Continuă cu Google"
-                bgColor="#ffffff"
-                textColor="#1a1613"
-                hoverColor="#f9f6f2"
               />
 
+              {/* LinkedIn */}
               <SocialButton
                 provider="linkedin_oidc"
                 icon={
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#0A66C2">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                   </svg>
                 }
                 label="Continuă cu LinkedIn"
-                bgColor="#0A66C2"
-                textColor="white"
-                hoverColor="#004182"
               />
 
-              <SocialButton
-                provider="facebook"
-                icon={
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                }
-                label="Continuă cu Facebook"
-                bgColor="#1877F2"
-                textColor="white"
-                hoverColor="#0d5bbd"
-              />
-
+              {/* Apple */}
               <SocialButton
                 provider="apple"
                 icon={
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#000000">
                     <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                   </svg>
                 }
                 label="Continuă cu Apple"
-                bgColor="#000000"
-                textColor="white"
-                hoverColor="#333333"
               />
             </div>
 
@@ -606,7 +584,7 @@ export default function Login() {
         className="login-right-column"
         style={{
           flex: '0 0 50%',
-          backgroundColor: '#f5f0e8',
+          backgroundColor: '#f5f5f0',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -667,7 +645,7 @@ export default function Login() {
           </p>
 
           {/* Features List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px', flex: '1' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginBottom: '40px', flex: '1' }}>
             {[
               'Generează memorii tehnice în minute',
               'Legislație urbanistică actualizată automat',
@@ -677,21 +655,22 @@ export default function Login() {
                 key={index}
                 style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
+                  alignItems: 'flex-start',
+                  gap: '14px',
                   color: '#5c5466',
-                  fontSize: '0.88rem',
+                  fontSize: '1rem',
                   fontFamily: '"DM Sans", system-ui, sans-serif',
                   fontWeight: '400',
-                  lineHeight: '1.5',
+                  lineHeight: '1.6',
                 }}
               >
                 <span
                   style={{
-                    color: '#c4893a',
-                    fontWeight: '600',
+                    color: '#2563eb',
+                    fontWeight: '700',
                     flexShrink: 0,
-                    fontSize: '1.1rem',
+                    fontSize: '1.2rem',
+                    marginTop: '2px',
                   }}
                 >
                   ✓
