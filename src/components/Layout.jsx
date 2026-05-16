@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useConversationStore } from '../stores/conversationStore';
-import { groupConversationsByDate, deleteConversation, updateConversationTitle } from '../services/conversationService';
+import { groupConversationsByDate, deleteConversation, updateConversationTitle, getConversations } from '../services/conversationService';
 
 export default function Layout({ children, onLoadConversation, onNewChat }) {
   const navigate = useNavigate();
@@ -16,6 +16,7 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
   const [conversationMenuOpen, setConversationMenuOpen] = useState(null);
   const [renamingId, setRenamingId] = useState(null);
   const [renameValue, setRenameValue] = useState('');
+  const [conversationsLoading, setConversationsLoading] = useState(true);
 
   // Listen to window resize
   if (typeof window !== 'undefined') {
@@ -70,6 +71,18 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
       document.documentElement.style.setProperty(key, val);
     });
   }, []);
+
+  // Load conversations on mount
+  const { setConversations } = useConversationStore();
+  useEffect(() => {
+    const loadConversations = async () => {
+      setConversationsLoading(true);
+      const convs = await getConversations();
+      setConversations(convs);
+      setConversationsLoading(false);
+    };
+    loadConversations();
+  }, [setConversations]);
 
   const navItems = [
     { path: '/app', label: 'Dashboard' },
@@ -356,7 +369,14 @@ export default function Layout({ children, onLoadConversation, onNewChat }) {
 
         {/* SECTION 3: ISTORIC CONVERSAȚII */}
         <div style={{ flex: 1, padding: '0 8px', display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: '120px' }}>
-          {conversations.length > 0 && (
+          {conversationsLoading ? (
+            /* Loading placeholders */
+            <div style={{ padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ height: 16, background: '#e5e5e5', borderRadius: 4 }} />
+              <div style={{ height: 16, background: '#e5e5e5', borderRadius: 4 }} />
+              <div style={{ height: 16, background: '#e5e5e5', borderRadius: 4 }} />
+            </div>
+          ) : conversations.length > 0 && (
             <>
               {/* Titlu Recente */}
               <p style={{ fontSize: '11px', fontWeight: '600', color: '#9a938a', margin: '8px 16px 6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
